@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMPA — Jardín Digital de Contenidos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Instrument+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #e8e4d4;
+    --bg-warm: #f0ece0;
+    --surface: #f5f2e8;
+    --surface2: #ebe7da;
+    --border: #c8c1ab;
+    --border-light: #d8d2be;
+    --text: #3a3428;
+    --text-dim: #7a7260;
+    --text-light: #9e9480;
+    --accent: #5c7a4a;
+    --accent-dark: #4a6340;
+    --item: #7a8b6e;
+    --creator: #7b68ae;
+    --subject: #c4973b;
+    --coverage: #b5634b;
+    --type: #c27a8e;
+    --edge-color: #8a9e78;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Instrument Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  #header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px;
+    background: linear-gradient(180deg, var(--bg) 50%, transparent);
+    pointer-events: none;
+  }
+  #header > * { pointer-events: auto; }
+
+  .logo {
+    font-family: 'EB Garamond', serif;
+    font-size: 20px; font-weight: 600; letter-spacing: 0.3px;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent-dark); }
+  .logo .subtitle {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 11px; font-weight: 400; color: var(--text-dim);
+    display: block; margin-top: -2px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 10px; }
+
+  #search-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 9px 18px; width: 260px;
+    color: var(--text); font-family: 'Instrument Sans', sans-serif; font-size: 13px;
+    outline: none; transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  #search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(92,122,74,0.12); }
+  #search-box::placeholder { color: var(--text-light); }
+
+  #controls {
+    position: fixed; top: 68px; left: 24px; z-index: 100;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+
+  .filter-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border-light);
+    border-radius: 20px; padding: 7px 16px;
+    color: var(--text); font-family: 'Instrument Sans', sans-serif; font-size: 11px;
+    cursor: pointer; transition: all 0.25s; user-select: none;
+    box-shadow: 0 1px 3px rgba(58,52,40,0.06);
+  }
+  .filter-btn:hover { border-color: var(--accent); background: var(--bg-warm); }
+  .filter-btn.off { opacity: 0.35; }
+  .filter-btn .dot {
+    width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+  }
+  .filter-btn .count {
+    font-size: 10px; color: var(--text-light); margin-left: auto;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #back-btn {
+    display: none; align-items: center; gap: 6px;
+    background: var(--accent-dark); border: none; border-radius: 20px;
+    padding: 8px 18px; color: #f5f2e8; font-family: 'Instrument Sans', sans-serif;
+    font-size: 11px; font-weight: 500; cursor: pointer;
+    transition: background 0.2s; margin-bottom: 3px;
+    box-shadow: 0 2px 6px rgba(74,99,64,0.25);
+  }
+  #back-btn:hover { background: var(--accent); }
+  #back-btn.visible { display: flex; }
+
+  #hops-control {
+    display: none; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border-light);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 11px; color: var(--text); margin-bottom: 2px;
+    box-shadow: 0 1px 3px rgba(58,52,40,0.06);
+  }
+  #hops-control.visible { display: flex; }
+  #hops-control label { color: var(--text-dim); white-space: nowrap; font-size: 11px; }
+  .hops-btns { display: flex; gap: 4px; }
+  .hop-btn {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-dim); font-family: 'EB Garamond', serif;
+    font-size: 14px; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hop-btn:hover { border-color: var(--accent); }
+  .hop-btn.active {
+    background: var(--accent-dark); border-color: var(--accent-dark);
+    color: #f5f2e8; font-weight: 700;
+  }
+
+  #legend {
+    position: fixed; bottom: 20px; left: 24px; z-index: 100;
+    display: flex; gap: 18px; font-size: 10px; color: var(--text-dim);
+    font-family: 'Instrument Sans', sans-serif;
+    letter-spacing: 0.3px;
+  }
+  #legend .leg-item { display: flex; align-items: center; gap: 5px; }
+  #legend .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  #stats {
+    position: fixed; bottom: 20px; right: 24px; z-index: 100;
+    font-size: 11px; color: var(--text-light);
+    font-variant-numeric: tabular-nums;
+  }
+
+  #detail-panel {
+    position: fixed; top: 68px; right: 24px; z-index: 100;
+    width: 330px; max-height: calc(100vh - 100px);
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: 12px; padding: 22px;
+    display: none; overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(58,52,40,0.1);
+  }
+  #detail-panel.visible { display: block; }
+
+  #detail-panel .close-btn {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; color: var(--text-light);
+    font-size: 18px; cursor: pointer; line-height: 1;
+  }
+  #detail-panel .close-btn:hover { color: var(--text); }
+
+  #detail-panel .node-type-badge {
+    display: inline-block; font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.2px;
+    padding: 3px 10px; border-radius: 10px; margin-bottom: 10px;
+    font-family: 'Instrument Sans', sans-serif;
+  }
+
+  #detail-panel h2 {
+    font-family: 'EB Garamond', serif;
+    font-size: 17px; font-weight: 600; line-height: 1.4; margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  #detail-panel .meta-row {
+    font-size: 12px; color: var(--text-dim); margin-bottom: 5px;
+    line-height: 1.5;
+  }
+  #detail-panel .meta-row strong { color: var(--text); font-weight: 500; }
+
+  #detail-panel .abstract {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px; line-height: 1.65; color: var(--text-dim);
+    margin: 14px 0; font-style: italic;
+    border-left: 2px solid var(--border); padding-left: 14px;
+  }
+
+  #detail-panel .link-btn {
+    display: inline-block; margin-top: 14px;
+    background: var(--accent-dark); color: #f5f2e8; text-decoration: none;
+    font-size: 11px; font-weight: 500; padding: 8px 20px;
+    border-radius: 20px; transition: background 0.2s;
+    letter-spacing: 0.3px;
+  }
+  #detail-panel .link-btn:hover { background: var(--accent); }
+
+  #detail-panel .connections {
+    margin-top: 16px; border-top: 1px solid var(--border-light); padding-top: 14px;
+  }
+  #detail-panel .connections h3 {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-light); margin-bottom: 8px; font-weight: 500;
+  }
+  #detail-panel .conn-item {
+    font-size: 12px; padding: 3px 0; cursor: pointer; transition: color 0.2s;
+    color: var(--text-dim);
+  }
+  #detail-panel .conn-item:hover { color: var(--accent-dark); }
+  #detail-panel .conn-item .conn-dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    margin-right: 6px; vertical-align: middle;
+  }
+
+  svg { width: 100%; height: 100vh; display: block; position: relative; z-index: 1; }
+
+  #search-results {
+    position: fixed; top: 54px; right: 28px; z-index: 101;
+    width: 260px; background: var(--surface); border: 1px solid var(--border-light);
+    border-radius: 0 0 12px 12px; max-height: 240px; overflow-y: auto;
+    display: none;
+    box-shadow: 0 4px 16px rgba(58,52,40,0.1);
+  }
+  #search-results.visible { display: block; }
+  .search-item {
+    padding: 8px 18px; font-size: 12px; cursor: pointer;
+    border-bottom: 1px solid var(--border-light); transition: background 0.15s;
+    color: var(--text);
+  }
+  .search-item:hover { background: var(--surface2); }
+  .search-item .si-type {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px;
+    margin-left: 6px; font-weight: 500;
+  }
+
+  .tooltip {
+    position: fixed; padding: 7px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-light); border-radius: 8px;
+    font-size: 11px; color: var(--text); pointer-events: none;
+    z-index: 200; display: none; max-width: 260px;
+    box-shadow: 0 3px 12px rgba(58,52,40,0.12);
+    font-family: 'Instrument Sans', sans-serif;
+  }
+
+  /* Scrollbar */
+  #detail-panel::-webkit-scrollbar { width: 4px; }
+  #detail-panel::-webkit-scrollbar-track { background: transparent; }
+  #detail-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="logo">
+    <span>MAMPA</span>
+    <span class="subtitle">Jardín Digital de Contenidos</span>
+  </div>
+  <div class="header-right">
+    <input type="text" id="search-box" placeholder="Buscar en el jardín...">
+  </div>
+</div>
+<div id="search-results"></div>
+
+<div id="controls">
+  <button id="back-btn">← Volver al jardín</button>
+  <div id="hops-control">
+    <label>Saltos:</label>
+    <div class="hops-btns">
+      <button class="hop-btn" data-hops="1">1</button>
+      <button class="hop-btn active" data-hops="2">2</button>
+      <button class="hop-btn" data-hops="3">3</button>
+    </div>
+  </div>
+</div>
+
+<div id="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:var(--item)"></div>Fichas</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--creator)"></div>Autores</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--subject)"></div>Palabras clave</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--coverage)"></div>Áreas</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--type)"></div>Tipos</div>
+</div>
+
+<div id="stats"></div>
+<div id="detail-panel"></div>
+<div class="tooltip" id="tooltip"></div>
+
+<div id="loading" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'EB Garamond',serif;font-size:1.2rem;color:#6b5d4f;pointer-events:none;">Cargando jardín...</div>
+<svg id="graph"></svg>
+
+<script>
+
+// URL del archivo de datos — actualizá con tu usuario y repo de GitHub
+const DATA_URL = 'https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/data/graph.json';
+
+function initGraph(GRAPH_DATA) {
+  const typeLabels = {
+    authored_by: 'Autores',
+    tagged_with: 'Palabras clave',
+    belongs_to_area: 'Áreas temáticas',
+    is_type: 'Tipo de contenido'
+  };
+  const typeColors = {
+    authored_by: '#7b68ae',
+    tagged_with: '#c4973b',
+    belongs_to_area: '#b5634b',
+    is_type: '#c27a8e'
+  };
+  const colorMap = { item: '#7a8b6e', creator: '#7b68ae', subject: '#c4973b', coverage: '#b5634b', type: '#c27a8e' };
+  const typeNames = { item: 'Ficha', creator: 'Autor/a', subject: 'Palabra clave', coverage: 'Área', type: 'Tipo' };
+
+  const allNodes = GRAPH_DATA.nodes.map(n => ({
+    id: n.id, label: n.l, type: n.t, color: n.c,
+    url: n.url || '', abstract: n.abs || '', fullTitle: n.ft || n.l,
+    publisher: n.pub || '', issued: n.dt || '',
+    educationLevel: n.el || [], degree: n.d || 0
+  }));
+
+  const allEdges = GRAPH_DATA.edges.map(e => ({
+    source: e.s, target: e.t, relation: e.r
+  }));
+
+  const nodeMap = new Map(allNodes.map(n => [n.id, n]));
+
+  function formatDate(raw) {
+    if (!raw) return '';
+    const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return m[3] + '/' + m[2] + '/' + m[1];
+    return raw;
+  }
+
+  const activeRelations = new Set(Object.keys(typeLabels));
+  let focusedNodeId = null;
+  let maxHops = 2;
+
+  const controlsEl = document.getElementById('controls');
+  const backBtn = document.getElementById('back-btn');
+  const hopsControl = document.getElementById('hops-control');
+  const relCounts = {};
+  allEdges.forEach(e => { relCounts[e.relation] = (relCounts[e.relation] || 0) + 1; });
+
+  Object.entries(typeLabels).forEach(([rel, label]) => {
+    const btn = document.createElement('div');
+    btn.className = 'filter-btn';
+    btn.dataset.rel = rel;
+    btn.innerHTML = '<div class="dot" style="background:' + typeColors[rel] + '"></div>' + label + '<span class="count">' + (relCounts[rel] || 0) + '</span>';
+    btn.addEventListener('click', () => {
+      if (activeRelations.has(rel)) { activeRelations.delete(rel); btn.classList.add('off'); }
+      else { activeRelations.add(rel); btn.classList.remove('off'); }
+      updateGraph();
+    });
+    controlsEl.appendChild(btn);
+  });
+
+  backBtn.addEventListener('click', () => {
+    focusedNodeId = null;
+    backBtn.classList.remove('visible');
+    hopsControl.classList.remove('visible');
+    updateGraph();
+    setTimeout(() => {
+      svg.transition().duration(600).call(
+        zoom.transform,
+        d3.zoomIdentity.translate(width/2, height/2).scale(0.7).translate(-width/2, -height/2)
+      );
+    }, 50);
+  });
+
+  document.querySelectorAll('.hop-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      maxHops = parseInt(btn.dataset.hops);
+      document.querySelectorAll('.hop-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (focusedNodeId) updateGraph();
+    });
+  });
+
+  const svg = d3.select('#graph');
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const g = svg.append('g');
+  const edgeG = g.append('g').attr('class', 'edges');
+  const nodeG = g.append('g').attr('class', 'nodes');
+  const highlightG = g.append('g').attr('class', 'highlight');
+
+  const defs = svg.append('defs');
+  const glow = defs.append('filter').attr('id', 'glow').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+  glow.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'blur');
+  glow.append('feComposite').attr('in', 'SourceGraphic').attr('in2', 'blur').attr('operator', 'over');
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.05, 8])
+    .on('zoom', (e) => g.attr('transform', e.transform));
+  svg.call(zoom);
+
+  const simulation = d3.forceSimulation()
+    .force('link', d3.forceLink().id(d => d.id).distance(d => {
+      const st = nodeMap.get(typeof d.source === 'string' ? d.source : d.source.id);
+      const tt = nodeMap.get(typeof d.target === 'string' ? d.target : d.target.id);
+      if (st && st.type === 'coverage' || tt && tt.type === 'coverage') return 120;
+      if (st && st.type === 'type' || tt && tt.type === 'type') return 150;
+      return 60;
+    }))
+    .force('charge', d3.forceManyBody().strength(d => d.type === 'item' ? -15 : -60))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collision', d3.forceCollide().radius(d => getRadius(d) + 2))
+    .alphaDecay(0.02);
+
+  function getRadius(d) {
+    if (focusedNodeId && nodeDepth) {
+      const depth = nodeDepth.get(d.id) || maxHops;
+      const t = maxHops > 0 ? depth / maxHops : 0;
+      if (d.type === 'item') return Math.round(10 - 7 * t);
+      const base = Math.sqrt(d.degree || 1);
+      return Math.max(5, Math.round((14 - 9 * t) + base * (3 - 1.5 * t)));
+    }
+    if (d.type === 'item') return 3;
+    if (d.type === 'coverage') return Math.max(8, Math.sqrt(d.degree) * 2.5);
+    if (d.type === 'type') return Math.max(10, Math.sqrt(d.degree) * 2);
+    return Math.max(4, Math.sqrt(d.degree) * 1.5);
+  }
+
+  function getNodeOpacity(d) {
+    return d.type === 'item' ? 0.6 : 0.9;
+  }
+
+  let linkEls, nodeEls, labelEls;
+  let currentNodes = [], currentEdges = [];
+  let nodeDepth = null;
+
+  function getEdgeId(e) {
+    const sid = typeof e.source === 'string' ? e.source : e.source.id;
+    const tid = typeof e.target === 'string' ? e.target : e.target.id;
+    return sid + '|' + tid + '|' + e.relation;
+  }
+
+  function updateGraph() {
+    let filteredEdges = allEdges.filter(e => activeRelations.has(e.relation));
+
+    if (focusedNodeId) {
+      const adj = new Map();
+      filteredEdges.forEach(e => {
+        const sid = typeof e.source === 'string' ? e.source : e.source.id;
+        const tid = typeof e.target === 'string' ? e.target : e.target.id;
+        if (!adj.has(sid)) adj.set(sid, new Set());
+        if (!adj.has(tid)) adj.set(tid, new Set());
+        adj.get(sid).add(tid);
+        adj.get(tid).add(sid);
+      });
+
+      nodeDepth = new Map();
+      nodeDepth.set(focusedNodeId, 0);
+      let frontier = new Set([focusedNodeId]);
+      for (let hop = 1; hop <= maxHops; hop++) {
+        const nextFrontier = new Set();
+        frontier.forEach(id => {
+          (adj.get(id) || new Set()).forEach(nbr => {
+            if (!nodeDepth.has(nbr)) {
+              nodeDepth.set(nbr, hop);
+              nextFrontier.add(nbr);
+            }
+          });
+        });
+        frontier = nextFrontier;
+      }
+
+      const neighborIds = new Set(nodeDepth.keys());
+      currentEdges = filteredEdges.filter(e => {
+        const sid = typeof e.source === 'string' ? e.source : e.source.id;
+        const tid = typeof e.target === 'string' ? e.target : e.target.id;
+        return neighborIds.has(sid) && neighborIds.has(tid);
+      });
+      currentNodes = allNodes.filter(n => neighborIds.has(n.id));
+    } else {
+      nodeDepth = null;
+      currentEdges = filteredEdges;
+      const connectedIds = new Set();
+      currentEdges.forEach(e => {
+        connectedIds.add(typeof e.source === 'string' ? e.source : e.source.id);
+        connectedIds.add(typeof e.target === 'string' ? e.target : e.target.id);
+      });
+      currentNodes = allNodes.filter(n => connectedIds.has(n.id));
+    }
+
+    if (focusedNodeId) {
+      const n = currentNodes.length;
+      const chargeStr = n < 30 ? -300 : n < 80 ? -200 : -140;
+      simulation
+        .force('charge', d3.forceManyBody().strength(chargeStr))
+        .force('collision', d3.forceCollide().radius(d => getRadius(d) + 8))
+        .force('link', d3.forceLink().id(d => d.id).distance(d => {
+          const sid = typeof d.source === 'string' ? d.source : d.source.id;
+          const tid = typeof d.target === 'string' ? d.target : d.target.id;
+          const minD = Math.min(nodeDepth.get(sid) || maxHops, nodeDepth.get(tid) || maxHops);
+          return 100 + (minD / maxHops) * 60;
+        }));
+    } else {
+      simulation
+        .force('charge', d3.forceManyBody().strength(d => d.type === 'item' ? -15 : -60))
+        .force('collision', d3.forceCollide().radius(d => getRadius(d) + 2))
+        .force('link', d3.forceLink().id(d => d.id).distance(d => {
+          const st = nodeMap.get(typeof d.source === 'string' ? d.source : d.source.id);
+          const tt = nodeMap.get(typeof d.target === 'string' ? d.target : d.target.id);
+          if (st && st.type === 'coverage' || tt && tt.type === 'coverage') return 120;
+          if (st && st.type === 'type' || tt && tt.type === 'type') return 150;
+          return 60;
+        }));
+    }
+
+    // --- Edges ---
+    const edgeColor = '#8a9e78';
+    linkEls = edgeG.selectAll('line').data(currentEdges, getEdgeId);
+    linkEls.exit().transition().duration(300).attr('stroke-opacity', 0).remove();
+    linkEls = linkEls.enter().append('line')
+      .attr('stroke', edgeColor)
+      .attr('stroke-opacity', 0)
+      .attr('stroke-width', focusedNodeId ? 1 : 0.5)
+      .merge(linkEls);
+    linkEls.transition().duration(400)
+      .attr('stroke', edgeColor)
+      .attr('stroke-opacity', d => {
+        if (!focusedNodeId || !nodeDepth) return 0.18;
+        const sid = typeof d.source === 'string' ? d.source : d.source.id;
+        const tid = typeof d.target === 'string' ? d.target : d.target.id;
+        const minDepth = Math.min(nodeDepth.get(sid) || maxHops, nodeDepth.get(tid) || maxHops);
+        return 0.4 - (minDepth / maxHops) * 0.25;
+      })
+      .attr('stroke-width', d => {
+        if (!focusedNodeId || !nodeDepth) return 0.5;
+        const sid = typeof d.source === 'string' ? d.source : d.source.id;
+        const tid = typeof d.target === 'string' ? d.target : d.target.id;
+        const minDepth = Math.min(nodeDepth.get(sid) || maxHops, nodeDepth.get(tid) || maxHops);
+        return 1.2 - (minDepth / maxHops) * 0.6;
+      });
+
+    // --- Nodes ---
+    nodeEls = nodeG.selectAll('circle').data(currentNodes, d => d.id);
+    nodeEls.exit().transition().duration(300).attr('r', 0).remove();
+    const entered = nodeEls.enter().append('circle')
+      .attr('r', 0)
+      .attr('fill', d => d.color)
+      .attr('stroke', 'none')
+      .attr('cursor', 'pointer')
+      .on('mouseover', onHover)
+      .on('mouseout', onHoverOut)
+      .on('click', onClick)
+      .call(d3.drag()
+        .on('start', dragStart)
+        .on('drag', dragging)
+        .on('end', dragEnd));
+    nodeEls = entered.merge(nodeEls);
+    nodeEls.transition().duration(400)
+      .attr('r', d => getRadius(d))
+      .attr('fill', d => d.color)
+      .attr('opacity', d => getNodeOpacity(d));
+
+    // --- Labels ---
+    const labelThreshold = focusedNodeId ? 0 : 10;
+    const labelNodes = currentNodes.filter(n =>
+      (n.id === focusedNodeId) || (n.type !== 'item' && (focusedNodeId ? true : n.degree >= labelThreshold))
+    );
+    labelEls = nodeG.selectAll('text').data(labelNodes, d => d.id);
+    labelEls.exit().transition().duration(200).attr('fill-opacity', 0).remove();
+    labelEls = labelEls.enter().append('text')
+      .attr('font-size', d => focusedNodeId ? 11 : (d.type === 'coverage' ? 11 : 9))
+      .attr('fill', d => d.id === focusedNodeId ? '#3a3428' : d.color)
+      .attr('fill-opacity', 0)
+      .attr('text-anchor', 'middle')
+      .attr('dy', d => -getRadius(d) - 5)
+      .attr('font-family', "'EB Garamond', serif")
+      .attr('font-weight', d => d.id === focusedNodeId ? 700 : 400)
+      .attr('font-style', d => d.id === focusedNodeId ? 'normal' : 'italic')
+      .attr('pointer-events', 'none')
+      .text(d => {
+        const max = d.id === focusedNodeId ? 50 : 30;
+        return d.label.length > max ? d.label.slice(0, max - 3) + '...' : d.label;
+      })
+      .merge(labelEls);
+    labelEls.transition().duration(400)
+      .attr('fill', d => d.id === focusedNodeId ? '#3a3428' : d.color)
+      .attr('font-weight', d => d.id === focusedNodeId ? 700 : 400)
+      .attr('fill-opacity', d => {
+        if (d.id === focusedNodeId) return 1;
+        return 0.9;
+      })
+      .attr('font-size', d => {
+        if (!focusedNodeId || !nodeDepth) return d.type === 'coverage' ? 11 : 9;
+        const depth = nodeDepth.get(d.id) || maxHops;
+        return Math.round(13 - (depth / maxHops) * 4);
+      })
+      .attr('dy', d => -getRadius(d) - 5);
+
+    // --- Highlight ring ---
+    highlightG.selectAll('*').remove();
+    if (focusedNodeId) {
+      const fn = currentNodes.find(n => n.id === focusedNodeId);
+      if (fn) {
+        const r = getRadius(fn);
+        const outer = highlightG.append('circle')
+          .attr('r', r + 12)
+          .attr('fill', 'none')
+          .attr('stroke', fn.color)
+          .attr('stroke-width', 1.5);
+        outer.append('animate')
+          .attr('attributeName', 'stroke-opacity')
+          .attr('values', '0.6;0.1;0.6')
+          .attr('dur', '2s')
+          .attr('repeatCount', 'indefinite');
+        outer.append('animate')
+          .attr('attributeName', 'r')
+          .attr('values', (r + 8) + ';' + (r + 20) + ';' + (r + 8))
+          .attr('dur', '2s')
+          .attr('repeatCount', 'indefinite');
+        highlightG.append('circle')
+          .attr('r', r + 4)
+          .attr('fill', 'none')
+          .attr('stroke', fn.color)
+          .attr('stroke-width', 2)
+          .attr('stroke-opacity', 0.6)
+          .attr('filter', 'url(#glow)');
+      }
+    }
+
+    simulation.nodes(currentNodes);
+    simulation.force('link').links(currentEdges);
+    simulation.force('center', d3.forceCenter(width / 2, height / 2));
+    simulation.alpha(0.8).restart();
+
+    const label = focusedNodeId ? ' (vecindario ' + maxHops + (maxHops === 1 ? ' salto' : ' saltos') + ')' : '';
+    document.getElementById('stats').textContent =
+      currentNodes.length + ' nodos · ' + currentEdges.length + ' aristas' + label;
+  }
+
+  simulation.on('tick', () => {
+    if (linkEls) linkEls
+      .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    if (nodeEls) nodeEls
+      .attr('cx', d => d.x).attr('cy', d => d.y);
+    if (labelEls) labelEls
+      .attr('x', d => d.x).attr('y', d => d.y);
+    if (focusedNodeId) {
+      const fn = currentNodes.find(n => n.id === focusedNodeId);
+      if (fn) highlightG.selectAll('circle').attr('cx', fn.x).attr('cy', fn.y);
+    }
+  });
+
+  function focusOnNode(d) {
+    focusedNodeId = d.id;
+    backBtn.classList.add('visible');
+    hopsControl.classList.add('visible');
+    updateGraph();
+    showDetail(d);
+  }
+
+  const tooltip = document.getElementById('tooltip');
+
+  function onHover(e, d) {
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 12) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    const extra = d.type === 'item' ? '' : ' (' + d.degree + ' fichas)';
+    tooltip.textContent = d.label + extra;
+
+    if (focusedNodeId) return;
+
+    const connSet = new Set();
+    currentEdges.forEach(edge => {
+      const sid = typeof edge.source === 'string' ? edge.source : edge.source.id;
+      const tid = typeof edge.target === 'string' ? edge.target : edge.target.id;
+      if (sid === d.id) connSet.add(tid);
+      if (tid === d.id) connSet.add(sid);
+    });
+    connSet.add(d.id);
+    nodeEls.attr('opacity', n => connSet.has(n.id) ? 1 : 0.06);
+    linkEls.attr('stroke-opacity', edge => {
+      const sid = typeof edge.source === 'string' ? edge.source : edge.source.id;
+      const tid = typeof edge.target === 'string' ? edge.target : edge.target.id;
+      return (sid === d.id || tid === d.id) ? 0.5 : 0.02;
+    });
+    if (labelEls) labelEls.attr('fill-opacity', n => connSet.has(n.id) ? 1 : 0.05);
+  }
+
+  function onHoverOut() {
+    tooltip.style.display = 'none';
+    if (focusedNodeId) return;
+    nodeEls.attr('opacity', d => d.type === 'item' ? 0.6 : 0.9);
+    linkEls.attr('stroke-opacity', 0.18);
+    if (labelEls) labelEls.attr('fill-opacity', 0.9);
+  }
+
+  function onClick(e, d) { e.stopPropagation(); focusOnNode(d); }
+
+  function showDetail(d) {
+    const panel = document.getElementById('detail-panel');
+    panel.classList.add('visible');
+
+    let html = '<button class="close-btn">&times;</button>';
+    html += '<div class="node-type-badge" style="background:' + colorMap[d.type] + '18;color:' + colorMap[d.type] + '">' + typeNames[d.type] + '</div>';
+    html += '<h2>' + (d.fullTitle || d.label) + '</h2>';
+
+    if (d.type === 'item') {
+      if (d.publisher) html += '<div class="meta-row"><strong>Editor:</strong> ' + d.publisher + '</div>';
+      if (d.issued) html += '<div class="meta-row"><strong>Fecha:</strong> ' + formatDate(d.issued) + '</div>';
+      if (d.educationLevel && d.educationLevel.length)
+        html += '<div class="meta-row"><strong>Nivel:</strong> ' + d.educationLevel.join(', ') + '</div>';
+      if (d.abstract) html += '<div class="abstract">' + d.abstract + '</div>';
+      if (d.url) html += '<a class="link-btn" href="' + d.url + '" target="_blank" rel="noopener">Ver en MAMPA ↗</a>';
+    } else {
+      html += '<div class="meta-row"><strong>Conexiones:</strong> ' + d.degree + ' fichas</div>';
+    }
+
+    const connections = [];
+    currentEdges.forEach(edge => {
+      const sid = typeof edge.source === 'string' ? edge.source : edge.source.id;
+      const tid = typeof edge.target === 'string' ? edge.target : edge.target.id;
+      if (sid === d.id) connections.push({ node: nodeMap.get(tid), rel: edge.relation });
+      if (tid === d.id) connections.push({ node: nodeMap.get(sid), rel: edge.relation });
+    });
+
+    if (connections.length > 0) {
+      html += '<div class="connections"><h3>Conexiones (' + connections.length + ')</h3>';
+      connections.sort((a, b) => (a.node.type > b.node.type ? 1 : -1));
+      connections.slice(0, 40).forEach(c => {
+        html += '<div class="conn-item" data-id="' + c.node.id + '"><span class="conn-dot" style="background:' + c.node.color + '"></span>' + c.node.label + '</div>';
+      });
+      if (connections.length > 40) html += '<div class="meta-row">... y ' + (connections.length - 40) + ' más</div>';
+      html += '</div>';
+    }
+
+    panel.innerHTML = html;
+    panel.querySelector('.close-btn').addEventListener('click', () => panel.classList.remove('visible'));
+    panel.querySelectorAll('.conn-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const n = nodeMap.get(el.dataset.id);
+        if (n) focusOnNode(n);
+      });
+    });
+  }
+
+  function dragStart(e, d) { if (!e.active) simulation.alphaTarget(0.1).restart(); d.fx = d.x; d.fy = d.y; }
+  function dragging(e, d) { d.fx = e.x; d.fy = e.y; }
+  function dragEnd(e, d) { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
+
+  const searchBox = document.getElementById('search-box');
+  const searchResults = document.getElementById('search-results');
+
+  searchBox.addEventListener('input', () => {
+    const q = searchBox.value.toLowerCase().trim();
+    if (q.length < 2) { searchResults.classList.remove('visible'); return; }
+    const matches = allNodes.filter(n => n.label.toLowerCase().includes(q)).slice(0, 12);
+    if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
+    searchResults.innerHTML = matches.map(n => {
+      return '<div class="search-item" data-id="' + n.id + '">' + n.label + '<span class="si-type" style="color:' + n.color + '">' + typeNames[n.type] + '</span></div>';
+    }).join('');
+    searchResults.classList.add('visible');
+    searchResults.querySelectorAll('.search-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const n = nodeMap.get(el.dataset.id);
+        if (n) focusOnNode(n);
+        searchResults.classList.remove('visible');
+        searchBox.value = '';
+      });
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#search-results') && !e.target.closest('#search-box'))
+      searchResults.classList.remove('visible');
+  });
+
+  svg.on('click', () => {
+    document.getElementById('detail-panel').classList.remove('visible');
+  });
+
+  updateGraph();
+  setTimeout(() => {
+    svg.transition().duration(800).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(width/2, height/2).scale(0.7).translate(-width/2, -height/2)
+    );
+  }, 100);
+
+}
+
+fetch(DATA_URL)
+  .then(r => r.json())
+  .then(data => {
+    const el = document.getElementById('loading');
+    if (el) el.remove();
+    initGraph(data);
+  })
+  .catch(err => {
+    const el = document.getElementById('loading');
+    if (el) el.textContent = 'Error al cargar datos: ' + err.message;
+  });
+</script>
+</body>
+</html>
