@@ -49,13 +49,15 @@
 
   .back-link {
     font-family: 'Instrument Sans', sans-serif;
-    font-size: 11px; font-weight: 500;
-    color: var(--text-dim); text-decoration: none;
-    letter-spacing: 0.5px; transition: color 0.2s;
-    display: flex; align-items: center; gap: 6px;
+    font-size: 15px; font-weight: 600;
+    color: var(--text); text-decoration: none;
+    letter-spacing: 0.3px; transition: color 0.2s;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border: 1px solid var(--border);
+    border-radius: 20px; background: rgba(36,32,24,0.6);
   }
-  .back-link:hover { color: var(--accent); }
-  .back-link::before { content: '←'; }
+  .back-link:hover { color: var(--accent); border-color: var(--accent-dim); }
+  .back-link::before { content: '←'; font-size: 16px; }
 
   .narr-logo {
     font-family: 'EB Garamond', serif;
@@ -388,7 +390,7 @@
 </div>
 
 <header id="narr-header">
-  <a href="./index.html" class="back-link" target="_blank" rel="noopener">Grafo interactivo</a>
+  <a href="./index.html" class="back-link">Grafo interactivo</a>
   <div class="narr-logo">MAMPA <span>Narrativa de datos</span></div>
 </header>
 
@@ -537,7 +539,7 @@
         El grafo no es solo una visualización: es una forma distinta de pensar los datos. Cada concepto revela una dimensión del repositorio que el formato tabular no puede mostrar.
       </p>
       <p>
-        <a href="./index.html" target="_blank" rel="noopener" style="color:var(--accent);font-family:'EB Garamond',serif;font-size:17px;">
+        <a href="./index.html" style="color:var(--accent);font-family:'EB Garamond',serif;font-size:17px;">
           Explorá el grafo interactivo →
         </a>
       </p>
