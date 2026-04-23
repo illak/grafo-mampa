@@ -537,7 +537,7 @@
         El grafo no es solo una visualización: es una forma distinta de pensar los datos. Cada concepto revela una dimensión del repositorio que el formato tabular no puede mostrar.
       </p>
       <p>
-        <a href="./index.html" style="color:var(--accent);font-family:'EB Garamond',serif;font-size:17px;">
+        <a href="./index.html" target="_blank" rel="noopener" style="color:var(--accent);font-family:'EB Garamond',serif;font-size:17px;">
           Explorá el grafo interactivo →
         </a>
       </p>
@@ -820,11 +820,13 @@ function render(nodes, edges, opts={}) {
   nodeEls.exit().transition().duration(300).attr('r',0).remove();
   const entered = nodeEls.enter().append('circle')
     .attr('r',0).attr('fill',d=>fillFn(d)).attr('opacity',0)
-    .attr('cursor','pointer')
-    .call(d3.drag()
-      .on('start',(e,d)=>{ if(!e.active) simulation.alphaTarget(0.1).restart(); d.fx=d.x; d.fy=d.y; })
-      .on('drag', (e,d)=>{ d.fx=e.x; d.fy=e.y; })
-      .on('end',  (e,d)=>{ if(!e.active) simulation.alphaTarget(0); d.fx=null; d.fy=null; }))
+    .attr('cursor', opts.fixedPos ? 'default' : 'pointer')
+    .call(opts.fixedPos
+      ? d3.drag().filter(()=>false) // drag deshabilitado en escenas con posiciones fijas
+      : d3.drag()
+        .on('start',(e,d)=>{ if(!e.active) simulation.alphaTarget(0.1).restart(); d.fx=d.x; d.fy=d.y; })
+        .on('drag', (e,d)=>{ d.fx=e.x; d.fy=e.y; })
+        .on('end',  (e,d)=>{ if(!e.active) simulation.alphaTarget(0); d.fx=null; d.fy=null; }))
     .on('mouseover', (e,d) => {
       const extra = d.type!=='item' && d.degree ? ` · ${d.degree} fichas` : '';
       tip.style('display','block')
