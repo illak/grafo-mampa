@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMPA — Narrativa del Grafo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Raleway:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  #mampa-narrativa {
+    --bg:          #eae6df;
+    --bg-warm:     #f8f8f8;
+    --surface:     #ffffff;
+    --surface2:    #eeeeee;
+    --border:      #cccccc;
+    --border-light: #e0e0e0;
+    --text:        #1a1a1a;
+    --text-dim:    #666666;
+    --text-light:  #999999;
+    --accent:      #5c7a4a;
+    --accent-dark: #4a6340;
+    --canvas-bg:   #eae6df;
+    --item:        #7a8b6e;
+    --creator:     #5896d1;
+    --subject:     #5b9d98;
+    --coverage:    #994578;
+    --type:        #d07e32;
+    --edge-color:  #8a9e78;
+
+    font-family: 'Raleway', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    box-sizing: border-box;
+  }
+
+  #mampa-narrativa *, #mampa-narrativa *::before, #mampa-narrativa *::after {
+    box-sizing: border-box;
+  }
+
+  /* ─── HEADER ─────────────────────────────────── */
+  #mampa-narrativa #narr-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px;
+    background: linear-gradient(180deg, var(--bg) 60%, transparent);
+    pointer-events: none;
+  }
+  #mampa-narrativa #narr-header > * { pointer-events: auto; }
+
+  #mampa-narrativa .back-link {
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px; font-weight: 500;
+    color: var(--text); text-decoration: none;
+    letter-spacing: 0.3px; transition: color 0.2s;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border: 1px solid var(--border);
+    border-radius: 20px; background: rgba(255,255,255,0.6);
+  }
+  #mampa-narrativa .back-link:hover { color: var(--accent); border-color: var(--accent); }
+  #mampa-narrativa .back-link::before { content: '←'; font-size: 16px; }
+
+  #mampa-narrativa .narr-logo {
+    font-family: 'Raleway', sans-serif;
+    font-size: 17px; font-weight: 600;
+    color: var(--text); letter-spacing: 0.3px;
+  }
+  #mampa-narrativa .narr-logo span {
+    color: var(--accent-dark);
+  }
+  #mampa-narrativa .narr-logo .subtitle {
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px; font-weight: 400; color: var(--text-dim);
+    display: block; margin-top: -2px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* ─── MAIN LAYOUT ─────────────────────────────── */
+  #mampa-narrativa #narrativa-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ─── SCROLL COLUMN (left) ────────────────────── */
+  #mampa-narrativa #scroll-col {
+    overflow-y: scroll;
+    height: 100vh;
+    scroll-behavior: smooth;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  #mampa-narrativa #scroll-col::-webkit-scrollbar { width: 4px; }
+  #mampa-narrativa #scroll-col::-webkit-scrollbar-track { background: transparent; }
+  #mampa-narrativa #scroll-col::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ─── PROGRESS DOTS ───────────────────────────── */
+  #mampa-narrativa #progress-dots {
+    position: fixed;
+    top: 50%;
+    left: calc(33.33% - 20px);
+    transform: translateY(-50%);
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  #mampa-narrativa .p-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border);
+    transition: all 0.4s ease;
+  }
+  #mampa-narrativa .p-dot.active {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(92,122,74,0.4);
+  }
+
+  /* ─── STORY SECTIONS ──────────────────────────── */
+  #mampa-narrativa .story-section {
+    min-height: 100vh;
+    padding: 18vh 72px 18vh 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+  #mampa-narrativa .story-section:first-child { padding-top: 40vh; }
+  #mampa-narrativa .story-section:last-child  { padding-bottom: 40vh; }
+  #mampa-narrativa .story-section.neighborhood-section { min-height: 100vh; }
+
+  #mampa-narrativa .section-num {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-light); margin-bottom: 18px;
+  }
+
+  #mampa-narrativa .story-section h1 {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 600; line-height: 1.2;
+    color: var(--text); margin-bottom: 28px;
+    letter-spacing: -0.3px;
+  }
+  #mampa-narrativa .story-section h2 {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(22px, 2.8vw, 34px);
+    font-weight: 500; line-height: 1.3;
+    color: var(--text); margin-bottom: 22px;
+    letter-spacing: -0.2px;
+  }
+
+  #mampa-narrativa .story-section p {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(15px, 1.5vw, 18px);
+    line-height: 1.75;
+    color: var(--text-dim);
+    margin-bottom: 18px;
+    max-width: 520px;
+  }
+
+  #mampa-narrativa .story-section p strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  #mampa-narrativa .story-section ul {
+    list-style: none;
+    margin: 0 0 20px 0;
+    max-width: 520px;
+  }
+  #mampa-narrativa .story-section ul li {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(15px, 1.4vw, 17px);
+    line-height: 1.65;
+    color: var(--text-dim);
+    padding: 6px 0 6px 20px;
+    position: relative;
+    border-bottom: 1px solid var(--border-light);
+  }
+  #mampa-narrativa .story-section ul li:last-child { border-bottom: none; }
+  #mampa-narrativa .story-section ul li::before {
+    content: '';
+    position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text-light);
+  }
+  #mampa-narrativa .story-section ul li strong { color: var(--text); font-weight: 600; }
+
+  /* colored bullets */
+  #mampa-narrativa .story-section ul li.c-item::before   { background: var(--item); }
+  #mampa-narrativa .story-section ul li.c-creator::before { background: var(--creator); }
+  #mampa-narrativa .story-section ul li.c-subject::before { background: var(--subject); }
+  #mampa-narrativa .story-section ul li.c-coverage::before { background: var(--coverage); }
+  #mampa-narrativa .story-section ul li.c-type::before   { background: var(--type); }
+
+  #mampa-narrativa .hop-indicator {
+    display: flex; gap: 10px; margin-bottom: 24px;
+  }
+  #mampa-narrativa .hop-pill {
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px; font-weight: 600;
+    padding: 5px 16px; border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    transition: all 0.4s;
+    cursor: pointer;
+  }
+  #mampa-narrativa .hop-pill.active {
+    background: var(--accent);
+    border-color: var(--accent-dark);
+    color: #ffffff;
+  }
+
+  /* ─── CANVAS COLUMN (right) ───────────────────── */
+  #mampa-narrativa #canvas-col {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--canvas-bg);
+    border-left: 1px solid var(--border);
+  }
+
+  #mampa-narrativa #story-graph {
+    width: 100%; height: 100vh;
+    display: block;
+  }
+
+  /* ─── SCENE LABEL ─────────────────────────────── */
+  #mampa-narrativa #scene-label {
+    position: absolute;
+    top: 24px; left: 24px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-light);
+    pointer-events: none;
+    transition: opacity 0.4s;
+    z-index: 10;
+  }
+
+  /* ─── FILTER PILLS (scene 7 y 8) ──────────────── */
+  #mampa-narrativa #filter-pills {
+    position: absolute;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 8px;
+    z-index: 20;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 90%;
+  }
+  #mampa-narrativa #filter-pills.visible { display: flex; }
+
+  #mampa-narrativa .f-pill {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 6px 14px; border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  #mampa-narrativa .f-pill .fp-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+  }
+  #mampa-narrativa .f-pill.active {
+    background: var(--surface2);
+    color: var(--text);
+    border-color: var(--text-light);
+  }
+  #mampa-narrativa .f-pill.off { opacity: 0.3; }
+
+  /* ─── LOADING ─────────────────────────────────── */
+  #mampa-narrativa #loading-screen {
+    position: fixed; inset: 0; z-index: 999;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px;
+    transition: opacity 0.6s ease;
+  }
+  #mampa-narrativa #loading-screen.fade {
+    opacity: 0; pointer-events: none;
+  }
+  #mampa-narrativa .loading-text {
+    font-family: 'EB Garamond', serif;
+    font-size: 18px; color: var(--text-dim);
+    font-style: italic;
+  }
+  #mampa-narrativa .loading-bar {
+    width: 160px; height: 1px;
+    background: var(--border);
+    position: relative; overflow: hidden;
+  }
+  #mampa-narrativa .loading-bar::after {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--accent);
+    animation: loadbar 1.2s ease infinite;
+  }
+  @keyframes loadbar { to { left: 100%; } }
+
+  /* ─── TOOLTIP ─────────────────────────────────── */
+  #mampa-narrativa .mampa-tip {
+    position: fixed;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    pointer-events: none;
+    z-index: 500;
+    max-width: 240px;
+    line-height: 1.5;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+
+  /* ─── MOBILE ──────────────────────────────────── */
+  @media (max-width: 768px) {
+    #mampa-narrativa #narrativa-wrapper {
+      grid-template-columns: 1fr;
+      grid-template-rows: 45vh 1fr;
+      overflow: auto;
+      height: auto;
+    }
+    #mampa-narrativa #canvas-col {
+      position: sticky; top: 0;
+      height: 45vh; order: -1;
+      border-left: none;
+      border-bottom: 1px solid var(--border);
+    }
+    #mampa-narrativa #story-graph { height: 45vh; }
+    #mampa-narrativa #scroll-col {
+      height: auto; overflow-y: visible;
+    }
+    #mampa-narrativa .story-section {
+      min-height: 80vh;
+      padding: 60px 28px 60px 28px;
+    }
+    #mampa-narrativa .story-section.neighborhood-section { min-height: 80vh; }
+    #mampa-narrativa #progress-dots { display: none; }
+    #mampa-narrativa #narr-header { padding: 12px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="mampa-narrativa">
+
+<div id="loading-screen">
+  <div class="loading-text">Tejiendo el grafo...</div>
+  <div class="loading-bar"></div>
+</div>
+
+<header id="narr-header">
+  <a href="./index_isep.html" class="back-link">Grafo interactivo</a>
+  <div class="narr-logo"><span>MAMPA</span><span class="subtitle">Narrativa de datos</span></div>
+</header>
+
+<div id="narrativa-wrapper">
+
+  <!-- ═══ COLUMNA IZQUIERDA: texto narrativo ══════ -->
+  <div id="scroll-col">
+
+    <!-- 01 INTRO -->
+    <section class="story-section" data-scene="intro">
+      <div class="section-num">01 — Introducción</div>
+      <h1>Una forma de visualizar datos</h1>
+      <p>
+        Imaginá por un momento que cada ficha del repositorio MAMPA —cada material educativo, cada artículo, cada libro— es una persona en una sala.
+      </p>
+      <p>
+        Cada vez que dos de esas personas <strong>comparten algo en común</strong> —un autor, una palabra clave, un área disciplinar—, se toman de la mano.
+        Al cabo de un rato, la sala se reorganiza sola: los grupos más conectados quedan cerca, los que tienen poco en común se alejan.
+      </p>
+      <p>
+        Eso es exactamente lo que hace la Red de Contenidos MAMPA. No es una lista, no es una tabla. Es un <strong>grafo</strong>: una trama viva donde los datos dejan de estar quietos y empiezan a vincularse.
+      </p>
+      <p>
+        Las fichas de MAMPA dejan de ser piezas aisladas. Cada una se vuelve una puerta. La navegación ya no responde a un orden predefinido, sino a la <strong>curiosidad de quien explora</strong>.
+      </p>
+    </section>
+
+    <!-- 02 NODOS -->
+    <section class="story-section" data-scene="nodes">
+      <div class="section-num">02 — Anatomía del grafo</div>
+      <h2>Nodos: las entidades</h2>
+      <p>
+        Cada círculo en la visualización es un <strong>nodo</strong>, y representa una entidad. En nuestro grafo conviven cinco tipos, cada uno con su color:
+      </p>
+      <ul>
+        <li class="c-item"><strong>Fichas:</strong> los 657 recursos del repositorio MAMPA. Son el corazón del grafo.</li>
+        <li class="c-creator"><strong>Autores:</strong> las personas o colectivos que produjeron esos recursos.</li>
+        <li class="c-subject"><strong>Palabras clave:</strong> los descriptores temáticos asignados a cada ficha.</li>
+        <li class="c-coverage"><strong>Áreas temáticas:</strong> las 15 grandes áreas de cobertura disciplinar.</li>
+        <li class="c-type"><strong>Tipos de contenido:</strong> la clasificación formal del recurso.</li>
+      </ul>
+      <p>
+        El <strong>tamaño de cada nodo no es arbitrario</strong>: es proporcional a su cantidad de conexiones. Un autor con 46 fichas se ve más grande que uno con 2. Esto se llama <strong>grado del nodo</strong>.
+      </p>
+    </section>
+
+    <!-- 03 ARISTAS -->
+    <section class="story-section" data-scene="edges">
+      <div class="section-num">03 — Anatomía del grafo</div>
+      <h2>Aristas: las relaciones</h2>
+      <p>
+        Las líneas que conectan nodos son <strong>aristas</strong>, y cada una representa una relación concreta:
+      </p>
+      <ul>
+        <li>Una ficha → su/s autor/es: relación de <strong>autoría</strong></li>
+        <li>Una ficha → sus palabras clave: relación de <strong>etiquetado</strong></li>
+        <li>Una ficha → su área temática: relación de <strong>pertenencia</strong></li>
+        <li>Una ficha → su tipo de contenido: relación de <strong>clasificación</strong></li>
+      </ul>
+      <p>
+        Estas aristas no son inventadas ni inferidas: son el reflejo directo de los metadatos de cada ficha en el repositorio MAMPA. <strong>El grafo no agrega información nueva; la reorganiza para que se pueda ver.</strong>
+      </p>
+    </section>
+
+    <!-- 04 CERCANÍA -->
+    <section class="story-section" data-scene="proximity">
+      <div class="section-num">04 — Lógica del espacio</div>
+      <h2>Cercanía, distancia y espacio</h2>
+      <p>
+        Los nodos no están ubicados en posiciones fijas. Se distribuyen mediante un <strong>algoritmo de simulación de fuerzas</strong>: los nodos conectados se atraen como si estuvieran unidos por resortes, y todos se repelen entre sí como partículas con la misma carga eléctrica.
+      </p>
+      <ul>
+        <li><strong>Nodos cercanos</strong> comparten muchas conexiones. Dos fichas próximas probablemente comparten autores o área temática.</li>
+        <li><strong>Nodos lejanos</strong> tienen poco o nada en común.</li>
+        <li><strong>Nodos centrales</strong> son los más conectados: funcionan como articuladores de la red.</li>
+        <li><strong>Nodos periféricos</strong> tienden a ser más especializados o menos conectados.</li>
+      </ul>
+      <p>
+        La posición no es un dato en sí mismo, sino una <strong>consecuencia de las relaciones</strong>.
+      </p>
+    </section>
+
+    <!-- 05 COMUNIDADES -->
+    <section class="story-section" data-scene="communities">
+      <div class="section-num">05 — Comunidades</div>
+      <h2>Los clusters que emergen</h2>
+      <p>
+        Cuando miramos el grafo completo, notamos <strong>agrupamientos naturales</strong>: zonas más densas donde muchos nodos están interconectados. Estos agrupamientos se llaman <strong>comunidades o clusters</strong>, y emergen sin que nadie los haya definido a priori.
+      </p>
+      <p>
+        En MAMPA, las comunidades más evidentes se organizan alrededor de las <strong>áreas temáticas</strong>. Los recursos de <strong>Lenguas Extranjeras</strong> tienden a compartir autores, palabras clave y tipos de contenido entre sí, formando una región densa que se distingue de la región de Ciencias Naturales o Matemática.
+      </p>
+      <p>
+        Pero lo más interesante no son las comunidades en sí, sino lo que ocurre <strong>entre ellas</strong>: palabras clave puente, autores transversales, fichas "anómalas" que por su combinación inusual de metadatos quedan alejadas de cualquier cluster denso.
+      </p>
+    </section>
+
+    <!-- 06 VECINDARIO -->
+    <section class="story-section neighborhood-section" data-scene="neighborhood">
+      <div class="section-num">06 — El vecindario</div>
+      <h2>Explorar con foco</h2>
+      <p>
+        La visualización permite reducir el grafo al <strong>vecindario</strong> de un nodo: el conjunto de nodos directamente conectados a él. Este concepto se puede extender a múltiples niveles de profundidad o "saltos".
+      </p>
+
+      <div class="hop-indicator" id="hop-indicator">
+        <div class="hop-pill active" id="hop-pill-0">Nodo solo</div>
+        <div class="hop-pill" id="hop-pill-1">1 salto</div>
+        <div class="hop-pill" id="hop-pill-2">2 saltos</div>
+        <div class="hop-pill" id="hop-pill-3">3 saltos</div>
+      </div>
+
+      <ul>
+        <li><strong>1 salto:</strong> veo el nodo seleccionado y todos los nodos directamente conectados. Si selecciono un autor, veo sus fichas.</li>
+        <li><strong>2 saltos:</strong> además de los vecinos directos, veo los vecinos de los vecinos. Se revelan conexiones indirectas.</li>
+        <li><strong>3 saltos:</strong> el vecindario puede incluir una porción significativa del grafo. Lo que se vuelve visible es la <strong>región de la red</strong> en la que habita ese nodo.</li>
+      </ul>
+    </section>
+
+    <!-- 07 FILTROS -->
+    <section class="story-section" data-scene="filters">
+      <div class="section-num">07 — Filtros</div>
+      <h2>Descomponer la complejidad</h2>
+      <p>
+        El grafo completo tiene más de <strong>1200 nodos y 5200 aristas</strong>. Eso es mucho para absorber de una sola vez. Los filtros por tipo de relación permiten descomponer esa complejidad:
+      </p>
+      <ul>
+        <li><strong>Solo autores:</strong> se revelan las redes de colaboración y los autores más prolíficos.</li>
+        <li><strong>Solo palabras clave:</strong> se ve la estructura temática y los clusters por afinidad de contenido.</li>
+        <li><strong>Solo áreas temáticas:</strong> las 15 áreas funcionan como polos de atracción.</li>
+        <li><strong>Combinando filtros:</strong> cada combinación cuenta una historia diferente sobre el mismo conjunto de datos.</li>
+      </ul>
+      <p>
+        Usá los botones del panel para explorar distintas capas del grafo.
+      </p>
+    </section>
+
+    <!-- 08 FINAL: GRAFO COMPLETO -->
+    <section class="story-section" data-scene="glossary">
+      <div class="section-num">08 — Final</div>
+      <h2>El grafo completo</h2>
+      <p>
+        Hasta aquí llegamos. Lo que viste a lo largo de estas secciones no es solo una explicación, sino una <strong>invitación</strong>.
+      </p>
+      <p>
+        Ahora tenés el grafo completo frente a vos. Cada nodo, cada arista, cada conexión está ahí para que explores. <strong>Hacé clic en cualquier ficha</strong> para ver su vecindario, <strong>usá los filtros</strong> para descomponer la complejidad, <strong>arrastrá los nodos</strong> para reorganizar el espacio.
+      </p>
+      <p>
+        Este grafo vive, cambia y crece con cada nuevo recurso que se incorpora al repositorio MAMPA. No es un producto terminado: es una <strong>herramienta de descubrimiento</strong>.
+      </p>
+      <p>
+        <a href="./index_isep.html" style="color:var(--accent);font-family:'EB Garamond',serif;font-size:17px;">
+          Abrir en pantalla completa →
+        </a>
+      </p>
+    </section>
+
+  </div><!-- /scroll-col -->
+
+  <!-- ═══ COLUMNA DERECHA: canvas D3 ══════════════ -->
+  <div id="canvas-col">
+    <div id="scene-label">01 / Introducción</div>
+    <svg id="story-graph"></svg>
+
+    <!-- Filter pills para escena 7 y 8 -->
+    <div id="filter-pills">
+      <div class="f-pill active" data-rel="authored_by">
+        <span class="fp-dot" style="background:var(--creator)"></span>Autores
+      </div>
+      <div class="f-pill active" data-rel="tagged_with">
+        <span class="fp-dot" style="background:var(--subject)"></span>Palabras clave
+      </div>
+      <div class="f-pill active" data-rel="belongs_to_area">
+        <span class="fp-dot" style="background:var(--coverage)"></span>Áreas temáticas
+      </div>
+      <div class="f-pill active" data-rel="is_type">
+        <span class="fp-dot" style="background:var(--type)"></span>Tipos
+      </div>
+    </div>
+  </div><!-- /canvas-col -->
+
+</div><!-- /narrativa-wrapper -->
+
+<!-- Progress dots -->
+<div id="progress-dots">
+  <div class="p-dot active" data-scene="intro"></div>
+  <div class="p-dot" data-scene="nodes"></div>
+  <div class="p-dot" data-scene="edges"></div>
+  <div class="p-dot" data-scene="proximity"></div>
+  <div class="p-dot" data-scene="communities"></div>
+  <div class="p-dot" data-scene="neighborhood"></div>
+  <div class="p-dot" data-scene="filters"></div>
+  <div class="p-dot" data-scene="glossary"></div>
+</div>
+
+</div><!-- /mampa-narrativa -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  NARRATIVA MAMPA — Scrollytelling (embeddable, scoped under #mampa-narrativa)
+// ═══════════════════════════════════════════════════════════════
+
+const DATA_URL = './data/graph.json';
+
+const SCENE_LABELS = {
+  intro:'01 / Introducción', nodes:'02 / Nodos', edges:'03 / Aristas',
+  proximity:'04 / Espacio', communities:'05 / Comunidades',
+  neighborhood:'06 / Vecindario', filters:'07 / Filtros', glossary:'08 / Grafo completo',
+};
+
+const COLOR = { item:'#7a8b6e', creator:'#5896d1', subject:'#5b9d98', coverage:'#994578', type:'#d07e32' };
+const TYPE_LABEL = { item:'Ficha', creator:'Autor/a', subject:'Palabra clave', coverage:'Área temática', type:'Tipo' };
+const REL_COLOR  = { authored_by:'#5896d1', tagged_with:'#5b9d98', belongs_to_area:'#994578', is_type:'#d07e32' };
+const REL_LABEL  = { authored_by:'autoría', tagged_with:'etiquetado', belongs_to_area:'pertenencia', is_type:'clasificación' };
+
+// Nodos protagonistas para escenas educativas
+const ITEM_ID     = 'item_734';
+const CREATOR_ID  = 'creator_dc6661a2';
+const SUBJECT_ID  = 'subject_f8e8cb67';
+const COVERAGE_ID = 'coverage_20aed093';
+const TYPE_ID     = 'type_6829c5ba';
+
+// ─── Estado global ────────────────────────────────────────────
+let allNodes, allEdges, nodeMap, adjMap;
+let SUBSETS = {};
+let svg, g, edgeG, nodeG, labelG, annotG;
+let zoom, tip;
+let simulation;
+let linkEls, nodeEls, labelEls;
+let W, H;
+let currentScene = null;
+let sceneToken   = 0;
+let currentHop   = -1;
+let filterActive = { authored_by:true, tagged_with:true, belongs_to_area:true, is_type:true };
+let filterTimer  = null;
+let filterTouched = false;
+
+// ─── Utilidades ───────────────────────────────────────────────
+function nodeRadius(d, big = false) {
+  if (big) {
+    if (d.type === 'item')     return 8;
+    if (d.type === 'coverage') return Math.max(10, Math.sqrt(d.degree||1) * 3);
+    return Math.max(6, Math.sqrt(d.degree||1) * 2.4);
+  }
+  if (d.type === 'item')     return 3;
+  if (d.type === 'coverage') return Math.max(9, Math.sqrt(d.degree||1) * 2.8);
+  if (d.type === 'type')     return Math.max(10, Math.sqrt(d.degree||1) * 2.2);
+  return Math.max(4, Math.sqrt(d.degree||1) * 1.8);
+}
+
+function edgeKey(e) {
+  const s = typeof e.source==='object' ? e.source.id : e.source;
+  const t = typeof e.target==='object' ? e.target.id : e.target;
+  return s+'|'+t+'|'+e.relation;
+}
+
+function srcId(e) { return typeof e.source==='object' ? e.source.id : e.source; }
+function tgtId(e) { return typeof e.target==='object' ? e.target.id : e.target; }
+
+function bfs(startId, edges, maxHops) {
+  const adj = new Map();
+  edges.forEach(e => {
+    const s = typeof e.source==='object' ? e.source.id : e.source;
+    const t = typeof e.target==='object' ? e.target.id : e.target;
+    if (!adj.has(s)) adj.set(s,[]);
+    if (!adj.has(t)) adj.set(t,[]);
+    adj.get(s).push(t); adj.get(t).push(s);
+  });
+  const depth = new Map([[startId,0]]);
+  let frontier = [startId];
+  for (let h=1; h<=maxHops; h++) {
+    const next = [];
+    frontier.forEach(id => (adj.get(id)||[]).forEach(nb => {
+      if (!depth.has(nb)) { depth.set(nb,h); next.push(nb); }
+    }));
+    frontier = next;
+  }
+  return depth;
+}
+
+// ─── Pre-computar subsets ─────────────────────────────────────
+function buildSubsets() {
+  const leDepth = bfs(COVERAGE_ID, allEdges, 2);
+  const leIds = new Set(leDepth.keys());
+
+  const hops = {};
+  for (let h=0; h<=3; h++) hops[h] = bfs(ITEM_ID, allEdges, h);
+
+  const rawEdges = allEdges.map(e=>({ source:srcId(e), target:tgtId(e), relation:e.relation }));
+  const hopEdges = {};
+  for (let h=0; h<=3; h++) {
+    const ids = hops[h];
+    hopEdges[h] = rawEdges.filter(e=>ids.has(e.source)&&ids.has(e.target));
+  }
+
+  const itemEdges = allEdges.filter(e => e.source===ITEM_ID || e.target===ITEM_ID);
+
+  const proxNonItem = allNodes.filter(n => n.type!=='item').slice(0,25);
+  const proxIds = new Set(proxNonItem.map(n=>n.id));
+  proxNonItem.forEach(n => {
+    allEdges.filter(e => e.source===n.id || e.target===n.id).slice(0,4).forEach(e=>{
+      proxIds.add(e.source); proxIds.add(e.target);
+    });
+  });
+  const proxNodes = allNodes.filter(n => proxIds.has(n.id)).slice(0,90);
+  const proxSet   = new Set(proxNodes.map(n=>n.id));
+  const proxEdges = allEdges.filter(e => proxSet.has(e.source) && proxSet.has(e.target));
+
+  const filtIds = new Set(allNodes.filter(n=>n.type!=='item').map(n=>n.id));
+  allEdges.forEach(e=>{
+    if (filtIds.has(e.source)||filtIds.has(e.target)) { filtIds.add(e.source); filtIds.add(e.target); }
+  });
+  const filtNodes = allNodes.filter(n=>filtIds.has(n.id)).slice(0,180);
+  const filtSet   = new Set(filtNodes.map(n=>n.id));
+  const filtEdges = allEdges.filter(e => filtSet.has(e.source) && filtSet.has(e.target));
+
+  SUBSETS = { leIds, hops, hopEdges, rawEdges, itemEdges, proxNodes, proxEdges, filtNodes, filtEdges };
+}
+
+// ─── D3 init ──────────────────────────────────────────────────
+function initD3() {
+  svg = d3.select('#story-graph');
+  W = svg.node().clientWidth;
+  H = svg.node().clientHeight;
+
+  const defs = svg.append('defs');
+  ['sglow','sglow2'].forEach((id,i) => {
+    const f = defs.append('filter').attr('id',id)
+      .attr('x','-70%').attr('y','-70%').attr('width','240%').attr('height','240%');
+    f.append('feGaussianBlur').attr('stdDeviation', i===0?5:10).attr('result','blur');
+    f.append('feComposite').attr('in','SourceGraphic').attr('in2','blur').attr('operator','over');
+  });
+
+  g      = svg.append('g');
+  edgeG  = g.append('g').attr('class','edges');
+  nodeG  = g.append('g').attr('class','nodes');
+  labelG = g.append('g').attr('class','labels');
+  annotG = g.append('g').attr('class','annots').attr('pointer-events','none');
+
+  zoom = d3.zoom().scaleExtent([0.04,10])
+    .on('zoom', e => g.attr('transform', e.transform));
+  svg.call(zoom);
+  svg.on('dblclick.zoom', () => svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity));
+
+  // Tooltip scoped dentro de #mampa-narrativa
+  tip = d3.select('#mampa-narrativa').append('div')
+    .attr('class', 'mampa-tip')
+    .style('display','none');
+
+  simulation = d3.forceSimulation()
+    .force('link', d3.forceLink().id(d=>d.id).distance(70))
+    .force('charge', d3.forceManyBody().strength(d=>d.type==='item'?-15:-60))
+    .force('center', d3.forceCenter(W/2, H/2))
+    .force('collision', d3.forceCollide().radius(d=>nodeRadius(d)+2))
+    .alphaDecay(0.022)
+    .on('tick', onTick);
+
+  linkEls = edgeG.selectAll('line');
+  nodeEls = nodeG.selectAll('circle');
+  labelEls = labelG.selectAll('text');
+}
+
+function onTick() {
+  if (linkEls) linkEls
+    .attr('x1',d=>d.source.x).attr('y1',d=>d.source.y)
+    .attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+  if (nodeEls) nodeEls.attr('cx',d=>d.x).attr('cy',d=>d.y);
+  if (labelEls) labelEls.attr('x',d=>d.x).attr('y',d=>d.y);
+}
+
+// ─── Render central ───────────────────────────────────────────
+function render(nodes, edges, opts={}) {
+  const big         = opts.big || false;
+  const edgeStroke  = opts.edgeStroke  || ((e)=>REL_COLOR[e.relation]||'#8a9e78');
+  const edgeOpacity = opts.edgeOpacity || 0.18;
+  const edgeWidth   = opts.edgeWidth   || 0.6;
+  const fillFn      = opts.fillFn      || (d=>d.color);
+  const opacityFn   = opts.opacityFn   || (d=>d.type==='item'?0.55:0.9);
+  const alpha       = opts.alpha       != null ? opts.alpha : 0.8;
+
+  nodes.forEach(n => { n.fx=null; n.fy=null; });
+  if (opts.fixedPos) opts.fixedPos.forEach((pos,id)=>{
+    const n=nodes.find(nd=>nd.id===id); if(n){n.fx=pos[0];n.fy=pos[1];}
+  });
+
+  // ── EDGES ──
+  linkEls = edgeG.selectAll('line').data(edges, edgeKey);
+  linkEls.exit().transition().duration(300).attr('stroke-opacity',0).remove();
+  linkEls = linkEls.enter().append('line')
+    .attr('stroke', d=>edgeStroke(d))
+    .attr('stroke-opacity',0).attr('stroke-width',edgeWidth)
+    .merge(linkEls);
+  linkEls.transition().duration(500)
+    .attr('stroke', d=>edgeStroke(d))
+    .attr('stroke-opacity', typeof edgeOpacity==='function' ? edgeOpacity : edgeOpacity)
+    .attr('stroke-width', edgeWidth);
+
+  // ── NODES ──
+  const savedOpacityFn = opacityFn;
+  nodeEls = nodeG.selectAll('circle').data(nodes, d=>d.id);
+  nodeEls.exit().transition().duration(300).attr('r',0).remove();
+  const entered = nodeEls.enter().append('circle')
+    .attr('r',0).attr('fill',d=>fillFn(d)).attr('opacity',0)
+    .attr('cursor', opts.fixedPos ? 'default' : 'pointer')
+    .call(opts.fixedPos
+      ? d3.drag().filter(()=>false)
+      : d3.drag()
+        .on('start',(e,d)=>{ if(!e.active) simulation.alphaTarget(0.1).restart(); d.fx=d.x; d.fy=d.y; })
+        .on('drag', (e,d)=>{ d.fx=e.x; d.fy=e.y; })
+        .on('end',  (e,d)=>{ if(!e.active) simulation.alphaTarget(0); d.fx=null; d.fy=null; }))
+    .on('mouseover', (e,d) => {
+      const extra = d.type!=='item' && d.degree ? ` · ${d.degree} fichas` : '';
+      tip.style('display','block')
+        .style('left',(e.clientX+14)+'px').style('top',(e.clientY-8)+'px')
+        .html(`<span style="color:${d.color};font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase">${TYPE_LABEL[d.type]||d.type}</span><br>${d.label}${extra}`);
+      const conn = new Set([d.id]);
+      if (linkEls) linkEls.each(dd=>{ if(srcId(dd)===d.id) conn.add(tgtId(dd)); if(tgtId(dd)===d.id) conn.add(srcId(dd)); });
+      nodeEls.attr('opacity',n=>conn.has(n.id)?1:0.05);
+      if (linkEls) linkEls.attr('stroke-opacity',dd=>(srcId(dd)===d.id||tgtId(dd)===d.id)?0.7:0.02);
+    })
+    .on('mousemove',e=>{ tip.style('left',(e.clientX+14)+'px').style('top',(e.clientY-8)+'px'); })
+    .on('mouseout', ()=>{
+      tip.style('display','none');
+      nodeEls.attr('opacity',n=>savedOpacityFn(n));
+      if (linkEls) linkEls.attr('stroke-opacity', typeof edgeOpacity==='function'?edgeOpacity:edgeOpacity);
+    });
+
+  nodeEls = entered.merge(nodeEls);
+  nodeEls.transition().duration(500)
+    .delay((d,i)=>opts.stagger?Math.min(i*20,600):0)
+    .attr('r', d=>nodeRadius(d,big))
+    .attr('fill', d=>fillFn(d))
+    .attr('opacity', d=>opacityFn(d))
+    .attr('filter', d=>opts.glowFn?opts.glowFn(d):null);
+
+  // ── LABELS ──
+  const labelNodes = opts.labelNodes !== undefined
+    ? opts.labelNodes
+    : nodes.filter(n=>n.type!=='item' && (n.degree||0)>=(big?0:8));
+  const labelSize  = opts.labelSize || (d=>d.type==='coverage'?12:10);
+
+  labelEls = labelG.selectAll('text').data(labelNodes, d=>d.id);
+  labelEls.exit().transition().duration(200).attr('fill-opacity',0).remove();
+  labelEls = labelEls.enter().append('text')
+    .attr('pointer-events','none').attr('text-anchor','middle')
+    .attr('font-family',"'EB Garamond',serif").attr('font-style','italic')
+    .attr('fill',d=>d.color).attr('fill-opacity',0)
+    .attr('font-size',d=>labelSize(d))
+    .attr('dy',d=>-(nodeRadius(d,big)+6))
+    .text(d=>d.label.length>30?d.label.slice(0,28)+'…':d.label)
+    .merge(labelEls);
+  labelEls.transition().duration(500)
+    .attr('fill',d=>d.color).attr('fill-opacity',0.88)
+    .attr('font-size',d=>labelSize(d))
+    .attr('dy',d=>-(nodeRadius(d,big)+6));
+
+  // ── SIM ──
+  if (opts.charge)    simulation.force('charge', d3.forceManyBody().strength(opts.charge));
+  if (opts.linkDist)  simulation.force('link', d3.forceLink().id(d=>d.id).distance(opts.linkDist));
+  simulation.force('collision', d3.forceCollide().radius(d=>nodeRadius(d,big)+(big?8:2)));
+  simulation.force('center', d3.forceCenter(W/2,H/2));
+  simulation.nodes(nodes);
+  simulation.force('link').links(edges);
+  simulation.alpha(alpha).restart();
+
+  annotG.selectAll('*').remove();
+}
+
+function zoomToNodes(nodes, padPx=60, delay=800) {
+  setTimeout(()=>{
+    const xs = nodes.map(n=>n.x).filter(Boolean);
+    const ys = nodes.map(n=>n.y).filter(Boolean);
+    if (!xs.length) return;
+    const x0=Math.min(...xs)-padPx, x1=Math.max(...xs)+padPx;
+    const y0=Math.min(...ys)-padPx, y1=Math.max(...ys)+padPx;
+    const sc = Math.min(0.9, Math.min(W/(x1-x0), H/(y1-y0)));
+    const tx = W/2 - sc*(x0+x1)/2;
+    const ty = H/2 - sc*(y0+y1)/2;
+    svg.transition().duration(700).call(zoom.transform,
+      d3.zoomIdentity.translate(tx,ty).scale(sc));
+  }, delay);
+}
+
+// ─── ESCENAS ──────────────────────────────────────────────────
+
+function sceneIntro() {
+  simulation
+    .force('charge', d3.forceManyBody().strength(d=>d.type==='item'?-12:-55))
+    .force('link', d3.forceLink().id(d=>d.id).distance(d=>{
+      const st=nodeMap.get(srcId(d)), tt=nodeMap.get(tgtId(d));
+      if(st?.type==='coverage'||tt?.type==='coverage') return 120;
+      if(st?.type==='type'||tt?.type==='type') return 150;
+      return 60;
+    }));
+
+  render(allNodes, allEdges, {
+    edgeStroke: ()=>'#8a9e78', edgeOpacity:0.1, edgeWidth:0.4,
+    stagger:true, alpha:0.9,
+    opacityFn: d=>d.type==='item'?0.45:0.88,
+  });
+
+  zoomToNodes(allNodes, 40, 1800);
+}
+
+function sceneNodes() {
+  const ids = [ITEM_ID, CREATOR_ID, SUBJECT_ID, COVERAGE_ID, TYPE_ID];
+  const nodes = ids.map(id=>({...nodeMap.get(id)})).filter(Boolean);
+
+  const cx=W/2, cy=H/2, rr=Math.min(W,H)*0.30;
+  const fixedPos = new Map();
+  nodes.forEach((n,i)=>{
+    const a=(i/nodes.length)*Math.PI*2-Math.PI/2;
+    fixedPos.set(n.id,[cx+Math.cos(a)*rr, cy+Math.sin(a)*rr]);
+    n.fx=fixedPos.get(n.id)[0]; n.fy=fixedPos.get(n.id)[1];
+  });
+
+  render(nodes, [], {
+    big:true, fixedPos, alpha:0.1,
+    opacityFn:()=>0.95,
+    labelNodes: nodes,
+    labelSize: ()=>13,
+    charge: ()=>-50,
+  });
+
+  const tok = sceneToken;
+  setTimeout(()=>{
+    if(sceneToken!==tok) return;
+    const descs = {
+      item:'657 recursos', creator:'Daveloza, Valeria — 46 fichas',
+      subject:'pedagogía — 22 conexiones', coverage:'Lenguas Extranjeras — 121 items',
+      type:'Libro'
+    };
+    nodes.forEach((n,i)=>{
+      const a = (i/nodes.length)*Math.PI*2-Math.PI/2;
+      const nx = fixedPos.get(n.id)[0], ny = fixedPos.get(n.id)[1];
+      const r  = nodeRadius(n,true);
+      const lx = cx+Math.cos(a)*(rr+r+52);
+      const ly = cy+Math.sin(a)*(rr+r+52);
+
+      const badge = annotG.append('g').attr('opacity',0);
+      badge.append('text').attr('x',lx).attr('y',ly-7)
+        .attr('text-anchor','middle')
+        .attr('font-family',"'Raleway',sans-serif")
+        .attr('font-size',9.5).attr('font-weight',600).attr('letter-spacing',1.5)
+        .attr('fill',n.color).text(TYPE_LABEL[n.type]);
+      badge.append('text').attr('x',lx).attr('y',ly+9)
+        .attr('text-anchor','middle')
+        .attr('font-family',"'EB Garamond',serif")
+        .attr('font-size',11.5).attr('fill','#666666')
+        .text(descs[n.type]);
+      badge.transition().delay(i*150+300).duration(400).attr('opacity',1);
+
+      annotG.append('line')
+        .attr('x1',nx).attr('y1',ny).attr('x2',lx).attr('y2',ly-18)
+        .attr('stroke',n.color).attr('stroke-opacity',0)
+        .attr('stroke-width',0.6).attr('stroke-dasharray','3,4')
+        .transition().delay(i*150+200).duration(350).attr('stroke-opacity',0.4);
+    });
+  }, 400);
+
+  svg.call(zoom.transform, d3.zoomIdentity);
+}
+
+function sceneEdges() {
+  const center   = {...nodeMap.get(ITEM_ID)};
+  const tgt1     = {...nodeMap.get(CREATOR_ID)};
+  const tgt2     = {...nodeMap.get(SUBJECT_ID)};
+  const tgt3     = {...nodeMap.get(COVERAGE_ID)};
+  const tgt4     = {...nodeMap.get(TYPE_ID)};
+  const nodes    = [center,tgt1,tgt2,tgt3,tgt4].filter(Boolean);
+
+  const r = Math.min(W, H) * 0.22;
+  const cx = W/2, cy = H/2;
+  const fixedPos = new Map([
+    [center.id, [cx,      cy]],
+    [tgt1.id,   [cx,      cy - r]],
+    [tgt2.id,   [cx + r,  cy]],
+    [tgt3.id,   [cx,      cy + r]],
+    [tgt4.id,   [cx - r,  cy]],
+  ]);
+  nodes.forEach(n=>{ n.fx=fixedPos.get(n.id)[0]; n.fy=fixedPos.get(n.id)[1]; });
+
+  const edges = [
+    {source:ITEM_ID, target:CREATOR_ID,  relation:'authored_by'},
+    {source:ITEM_ID, target:SUBJECT_ID,  relation:'tagged_with'},
+    {source:ITEM_ID, target:COVERAGE_ID, relation:'belongs_to_area'},
+    {source:ITEM_ID, target:TYPE_ID,     relation:'is_type'},
+  ];
+
+  render(nodes, edges, {
+    big:true, fixedPos, alpha:0.05,
+    edgeStroke: e=>REL_COLOR[e.relation],
+    edgeOpacity: 0.8, edgeWidth: 2,
+    opacityFn:()=>0.95,
+    labelNodes: nodes,
+    labelSize: d=>d.id===ITEM_ID?13:11,
+    charge:()=>-60,
+  });
+
+  const tok = sceneToken;
+  setTimeout(()=>{
+    if(sceneToken!==tok) return;
+    edges.forEach((e,i)=>{
+      const sp=fixedPos.get(e.source), tp=fixedPos.get(e.target);
+      const mx=(sp[0]+tp[0])/2, my=(sp[1]+tp[1])/2;
+      const bg=annotG.append('g').attr('opacity',0);
+      bg.append('rect')
+        .attr('x',mx-42).attr('y',my-11).attr('width',84).attr('height',20)
+        .attr('rx',10).attr('fill','#ffffff').attr('fill-opacity',0.9);
+      bg.append('text').attr('x',mx).attr('y',my+4)
+        .attr('text-anchor','middle')
+        .attr('font-family',"'Raleway',sans-serif")
+        .attr('font-size',9.5).attr('font-weight',600).attr('letter-spacing',0.5)
+        .attr('fill',REL_COLOR[e.relation]).text(REL_LABEL[e.relation]);
+      bg.transition().delay(i*300+500).duration(400).attr('opacity',1);
+    });
+  }, 300);
+
+  svg.call(zoom.transform, d3.zoomIdentity);
+}
+
+function sceneProximity() {
+  const rawNodes = SUBSETS.proxNodes;
+  const rawSet = new Set(rawNodes.map(n=>n.id));
+  const edges = SUBSETS.proxEdges
+    .map(e=>({source:srcId(e), target:tgtId(e), relation:e.relation}))
+    .filter(e=>rawSet.has(e.source)&&rawSet.has(e.target));
+  const connected = new Set();
+  edges.forEach(e=>{ connected.add(e.source); connected.add(e.target); });
+  const nodes = rawNodes.filter(n=>connected.has(n.id)).map(n=>({...n, x:W/2, y:H/2, vx:0, vy:0, fx:null, fy:null}));
+  const nodeSet = new Set(nodes.map(n=>n.id));
+
+  render(nodes, edges, {
+    edgeStroke:()=>'#8a9e78', edgeOpacity:0.2, edgeWidth:0.6,
+    stagger:true, alpha:1.0,
+    opacityFn: d=>d.type==='item'?0.5:0.9,
+    charge: d=>d.type==='item'?-25:-100,
+    linkDist: d=>{
+      const sn=nodeMap.get(srcId(d)), tn=nodeMap.get(tgtId(d));
+      return (sn?.type==='coverage'||tn?.type==='coverage')?110:55;
+    },
+  });
+
+  const tok = sceneToken;
+  setTimeout(()=>{
+    if(sceneToken!==tok) return;
+    const placed = [...nodes].filter(n=>n.x&&n.y);
+    if (placed.length < 4) return;
+
+    const byDegree = [...placed].sort((a,b)=>(b.degree||0)-(a.degree||0));
+    const central = byDegree[0];
+    const periph  = byDegree[byDegree.length-1];
+
+    let near1=null, near2=null;
+    for (const e of edges) {
+      const s=nodes.find(n=>n.id===srcId(e)), t=nodes.find(n=>n.id===tgtId(e));
+      if (s&&t&&s.id!==central.id&&t.id!==central.id) { near1=s; near2=t; break; }
+    }
+    let far1=null, far2=null, maxD=0;
+    const adj = new Map();
+    edges.forEach(e=>{
+      if(!adj.has(e.source)) adj.set(e.source,new Set());
+      if(!adj.has(e.target)) adj.set(e.target,new Set());
+      adj.get(e.source).add(e.target); adj.get(e.target).add(e.source);
+    });
+    for (let i=0;i<placed.length;i++) for (let j=i+1;j<placed.length;j++) {
+      const a=placed[i], b=placed[j];
+      if (adj.get(a.id)?.has(b.id)) continue;
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (d>maxD) { maxD=d; far1=a; far2=b; }
+    }
+
+    const pairs = [
+      [central, 'CENTRAL',    '#5c7a4a', 'top'],
+      [periph,  'PERIFÉRICO', '#d07e32', 'top'],
+    ];
+    if (near1 && near2) {
+      pairs.push([near1, 'CERCANOS', '#5b9d98', 'top']);
+    }
+    if (far1 && far2) {
+      pairs.push([far1, 'LEJANOS', '#5896d1', 'top']);
+    }
+
+    const annotTexts = pairs.map(([n,lbl,col])=>{
+      return annotG.append('text')
+        .attr('x', n.x).attr('y', n.y - nodeRadius(n) - 14)
+        .attr('text-anchor','middle')
+        .attr('font-family',"'Raleway',sans-serif")
+        .attr('font-size',9).attr('font-weight',600).attr('letter-spacing',1.5)
+        .attr('fill',col).attr('fill-opacity',0).text(lbl)
+        .call(sel => sel.transition().duration(500).attr('fill-opacity',1));
+    });
+
+    const lineRefs = [];
+    if (near1 && near2) {
+      lineRefs.push({a:near1, b:near2, color:'#5b9d98', dash:'2,3',
+        line: annotG.insert('line',':first-child')
+          .attr('x1',near1.x).attr('y1',near1.y).attr('x2',near2.x).attr('y2',near2.y)
+          .attr('stroke','#5b9d98').attr('stroke-width',1).attr('stroke-dasharray','2,3').attr('stroke-opacity',0)
+          .call(s=>s.transition().duration(500).attr('stroke-opacity',0.6))});
+    }
+    if (far1 && far2) {
+      lineRefs.push({a:far1, b:far2, color:'#5896d1', dash:'1,5',
+        line: annotG.insert('line',':first-child')
+          .attr('x1',far1.x).attr('y1',far1.y).attr('x2',far2.x).attr('y2',far2.y)
+          .attr('stroke','#5896d1').attr('stroke-width',1).attr('stroke-dasharray','1,5').attr('stroke-opacity',0)
+          .call(s=>s.transition().duration(500).attr('stroke-opacity',0.5))});
+    }
+
+    simulation.on('tick.annot04', ()=>{
+      if(sceneToken!==tok){ simulation.on('tick.annot04', null); return; }
+      pairs.forEach(([n,,],i)=>{
+        annotTexts[i].attr('x', n.x).attr('y', n.y - nodeRadius(n) - 14);
+      });
+      lineRefs.forEach(ref=>{
+        ref.line.attr('x1',ref.a.x).attr('y1',ref.a.y).attr('x2',ref.b.x).attr('y2',ref.b.y);
+      });
+    });
+  }, 2200);
+
+  zoomToNodes(nodes, 60, 1400);
+}
+
+function sceneCommunities() {
+  const leIds = SUBSETS.leIds;
+  const leNodes = allNodes.filter(n=>leIds.has(n.id));
+
+  render(allNodes, allEdges, {
+    edgeStroke: ()=>'var(--border)', edgeOpacity:0.04, edgeWidth:0.4,
+    stagger:false, alpha:0.5,
+    fillFn:    d=>leIds.has(d.id)?d.color:'#d4cfc6',
+    opacityFn: d=>leIds.has(d.id)?0.95:0.15,
+    glowFn:    d=>d.id===COVERAGE_ID?'url(#sglow2)':null,
+    labelNodes: leNodes.filter(n=>n.type!=='item'),
+    labelSize: d=>d.id===COVERAGE_ID?14:10,
+    charge: d=>d.type==='item'?-12:-55,
+    linkDist: d=>{
+      const sn=nodeMap.get(srcId(d)),tn=nodeMap.get(tgtId(d));
+      if(sn?.type==='coverage'||tn?.type==='coverage') return 120;
+      if(sn?.type==='type'||tn?.type==='type') return 150;
+      return 60;
+    },
+  });
+
+  const tok = sceneToken;
+  setTimeout(()=>{
+    if(sceneToken!==tok) return;
+    linkEls.transition().duration(500)
+      .attr('stroke',   e=>(leIds.has(srcId(e))&&leIds.has(tgtId(e)))?'#994578':'var(--border-light)')
+      .attr('stroke-opacity', e=>(leIds.has(srcId(e))&&leIds.has(tgtId(e)))?0.35:0.04);
+
+    zoomToNodes(leNodes, 80, 1200);
+  }, 200);
+}
+
+function sceneNeighborhood(hop) {
+  currentHop = hop;
+  document.querySelectorAll('.hop-pill').forEach((p,i)=>p.classList.toggle('active',i===hop));
+
+  const depth = SUBSETS.hops[hop];
+
+  const CAP = hop===0 ? 1 : hop===1 ? 999 : hop===2 ? 60 : 120;
+  const allInHop = allNodes.filter(n=>depth.has(n.id));
+  allInHop.sort((a,b)=>{
+    const dA=depth.get(a.id), dB=depth.get(b.id);
+    if (dA!==dB) return dA-dB;
+    return (b.degree||0)-(a.degree||0);
+  });
+  const picked = allInHop.slice(0, CAP);
+  if (!picked.find(n=>n.id===ITEM_ID)) picked.unshift(nodeMap.get(ITEM_ID));
+
+  const nodes = picked.map(n=>({...n, x: W/2, y: H/2, vx: 0, vy: 0, fx: null, fy: null}));
+  const nSet = new Set(nodes.map(n=>n.id));
+
+  const edges = hop===0 ? [] : SUBSETS.hopEdges[hop]
+    .filter(e=>nSet.has(e.source)&&nSet.has(e.target))
+    .map(e=>({source:e.source, target:e.target, relation:e.relation}));
+
+  const n = nodes.length;
+  const chg   = n<=1 ? -300 : n<8 ? -260 : n<30 ? -140 : -80;
+  const lDist = n<=1 ? 0    : n<8 ? 80   : n<30 ? 55   : 40;
+  const alpha  = n<=1 ? 0.1 : 0.9;
+  const zDelay = n<=1 ? 200 : n<8 ? 700  : n<30 ? 1300 : 2000;
+
+  render(nodes, edges, {
+    big: hop <= 1,
+    alpha,
+    edgeStroke: e=>REL_COLOR[e.relation]||'#8a9e78',
+    edgeOpacity: 0.6, edgeWidth: hop<=1 ? 1.6 : 0.8,
+    stagger: true,
+    opacityFn: d=>{
+      const d2=depth.get(d.id)||0;
+      return d.id===ITEM_ID ? 1 : Math.max(0.4, 1-d2*0.18);
+    },
+    glowFn: d=>d.id===ITEM_ID?'url(#sglow)':null,
+    labelNodes: hop<=2
+      ? nodes.filter(n2=>n2.type!=='item'||n2.id===ITEM_ID)
+      : nodes.filter(n2=>n2.id===ITEM_ID||(n2.type!=='item'&&(n2.degree||0)>=8)),
+    labelSize: d=>d.id===ITEM_ID?14:10,
+    charge: chg,
+    linkDist: ()=>lDist,
+  });
+
+  zoomToNodes(nodes, 50, zDelay);
+}
+
+function sceneFilters() {
+  Object.keys(filterActive).forEach(k => filterActive[k] = true);
+  document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('off'));
+  applyFilter(true);
+  document.getElementById('filter-pills').classList.add('visible');
+
+  if (!filterTouched) {
+    const steps = [
+      { authored_by:true,  tagged_with:true,  belongs_to_area:true,  is_type:true  },
+      { authored_by:true,  tagged_with:false, belongs_to_area:false, is_type:false },
+      { authored_by:true,  tagged_with:true,  belongs_to_area:true,  is_type:true  },
+      { authored_by:false, tagged_with:true,  belongs_to_area:false, is_type:false },
+      { authored_by:true,  tagged_with:true,  belongs_to_area:true,  is_type:true  },
+      { authored_by:false, tagged_with:false, belongs_to_area:true,  is_type:false },
+      { authored_by:true,  tagged_with:true,  belongs_to_area:true,  is_type:true  },
+      { authored_by:false, tagged_with:false, belongs_to_area:false, is_type:true  },
+    ];
+    let step = 0;
+    filterTimer = setInterval(() => {
+      if (currentScene !== 'filters' || filterTouched) { clearInterval(filterTimer); return; }
+      step = (step + 1) % steps.length;
+      Object.assign(filterActive, steps[step]);
+      document.querySelectorAll('.f-pill').forEach(p =>
+        p.classList.toggle('off', !filterActive[p.dataset.rel])
+      );
+      applyFilter(false);
+    }, 3000);
+  }
+}
+
+function applyFilter(withAlpha) {
+  const edges = allEdges
+    .filter(e => filterActive[e.relation])
+    .map(e=>({source:srcId(e), target:tgtId(e), relation:e.relation}));
+  const conn = new Set();
+  edges.forEach(e => { conn.add(srcId(e)); conn.add(tgtId(e)); });
+  const nodes = allNodes.filter(n => conn.has(n.id));
+
+  render(nodes, edges, {
+    edgeStroke: e => REL_COLOR[e.relation],
+    edgeOpacity: 0.15, edgeWidth: 0.5,
+    alpha: withAlpha ? 0.8 : 0.25,
+    stagger: withAlpha,
+    opacityFn: d => d.type==='item' ? 0.5 : 0.9,
+    labelNodes: nodes.filter(n => n.type!=='item' && (n.degree||0)>=8),
+    labelSize: d => d.type==='coverage' ? 11 : 9,
+    charge: d => d.type==='item' ? -12 : -55,
+    linkDist: d => {
+      const sn=nodeMap.get(srcId(d)), tn=nodeMap.get(tgtId(d));
+      if(sn?.type==='coverage'||tn?.type==='coverage') return 120;
+      if(sn?.type==='type'||tn?.type==='type') return 150;
+      return 60;
+    },
+  });
+
+  if (withAlpha) zoomToNodes(nodes, 40, 1800);
+}
+
+function sceneGlossary() {
+  simulation
+    .force('charge', d3.forceManyBody().strength(d=>d.type==='item'?-12:-55))
+    .force('link', d3.forceLink().id(d=>d.id).distance(d=>{
+      const st=nodeMap.get(srcId(d)), tt=nodeMap.get(tgtId(d));
+      if(st?.type==='coverage'||tt?.type==='coverage') return 120;
+      if(st?.type==='type'||tt?.type==='type') return 150;
+      return 60;
+    }));
+
+  render(allNodes, allEdges, {
+    edgeStroke: e => REL_COLOR[e.relation] || '#8a9e78',
+    edgeOpacity: 0.12, edgeWidth: 0.4,
+    stagger: true, alpha: 0.8,
+    opacityFn: d => d.type==='item' ? 0.45 : 0.88,
+    labelNodes: allNodes.filter(n => n.type!=='item' && (n.degree||0) >= 6),
+    labelSize: d => d.type==='coverage' ? 11 : 9,
+  });
+
+  document.getElementById('filter-pills').classList.add('visible');
+
+  zoomToNodes(allNodes, 40, 1800);
+}
+
+// ─── Despachador ──────────────────────────────────────────────
+const SCENES = {
+  intro, nodes:sceneNodes, edges:sceneEdges, proximity:sceneProximity,
+  communities:sceneCommunities,
+  neighborhood: () => sceneNeighborhood(0),
+  filters:sceneFilters, glossary:sceneGlossary,
+};
+function intro() { sceneIntro(); }
+
+let transitionBusy = false;
+
+function transitionToScene(name) {
+  if (transitionBusy && name === currentScene) return;
+  transitionBusy = true;
+  currentScene = name;
+  sceneToken++;
+
+  clearInterval(filterTimer);
+  filterTouched = false;
+  currentHop = -1;
+
+  document.getElementById('scene-label').textContent = SCENE_LABELS[name]||name;
+  document.querySelectorAll('.p-dot').forEach(d=>d.classList.toggle('active',d.dataset.scene===name));
+
+  const canvasCol = document.getElementById('canvas-col');
+  canvasCol.style.transition='opacity 0.2s';
+  canvasCol.style.opacity=0;
+
+  setTimeout(()=>{
+    svg.style('display',null);
+    document.getElementById('filter-pills').classList.remove('visible');
+    Object.keys(filterActive).forEach(k => filterActive[k] = true);
+    document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('off'));
+
+    clearInterval(filterTimer);
+    filterTimer = null;
+
+    simulation.on('tick.annot04', null);
+    simulation.stop();
+    simulation.force('link').links([]);
+    simulation.nodes([]);
+
+    svg.call(zoom.transform, d3.zoomIdentity);
+
+    edgeG.selectAll('line').remove();
+    nodeG.selectAll('circle').remove();
+    labelG.selectAll('text').remove();
+    annotG.selectAll('*').remove();
+    linkEls = edgeG.selectAll('line');
+    nodeEls = nodeG.selectAll('circle');
+    labelEls = labelG.selectAll('text');
+
+    SCENES[name]();
+
+    canvasCol.style.transition='opacity 0.45s';
+    canvasCol.style.opacity=1;
+    setTimeout(()=>{ transitionBusy=false; }, 460);
+  }, 220);
+}
+
+// ─── IntersectionObserver ────────────────────────────────────
+function setupObserver() {
+  const scrollCol = document.getElementById('scroll-col');
+
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      const name = entry.target.dataset.scene;
+      if (!name) return;
+      const rect = entry.boundingClientRect;
+      const root = entry.rootBounds;
+      if (!root) return;
+      const visible = Math.max(0, Math.min(rect.bottom, root.bottom) - Math.max(rect.top, root.top));
+      const viewportCoverage = visible / root.height;
+      if (entry.isIntersecting && viewportCoverage >= 0.35) {
+        if (name!==currentScene) transitionToScene(name);
+      } else if (!entry.isIntersecting && currentScene===name) {
+        currentScene = null;
+      }
+    });
+  },{root:scrollCol, threshold:[0,0.1,0.25,0.5,0.75,1], rootMargin:'0px'});
+
+  document.querySelectorAll('.story-section').forEach(s=>io.observe(s));
+}
+
+// ─── Filtros pills ────────────────────────────────────────────
+function setupNeighborhoodPills() {
+  document.querySelectorAll('.hop-pill').forEach((pill, i) => {
+    pill.addEventListener('click', () => sceneNeighborhood(i));
+  });
+}
+
+function setupFilterPills() {
+  document.querySelectorAll('.f-pill').forEach(pill=>{
+    pill.addEventListener('click',()=>{
+      filterTouched=true; clearInterval(filterTimer);
+      const rel=pill.dataset.rel;
+      filterActive[rel]=!filterActive[rel];
+      pill.classList.toggle('off',!filterActive[rel]);
+      if (currentScene==='filters') applyFilter(false);
+    });
+  });
+}
+
+// ─── Bootstrap ───────────────────────────────────────────────
+fetch(DATA_URL)
+  .then(r=>r.json())
+  .then(data=>{
+    allNodes = data.nodes.map(n=>({
+      id:n.id, label:n.l, type:n.t, color:n.c,
+      degree:n.d||0, url:n.url||'', abstract:n.abs||'', fullTitle:n.ft||n.l,
+    }));
+    allEdges = data.edges.map(e=>({source:e.s, target:e.t, relation:e.r}));
+    nodeMap  = new Map(allNodes.map(n=>[n.id,n]));
+
+    buildSubsets();
+    initD3();
+    setupObserver();
+    setupNeighborhoodPills();
+    setupFilterPills();
+
+    const ls = document.getElementById('loading-screen');
+    ls.classList.add('fade');
+    setTimeout(()=>ls.remove(), 700);
+
+    setTimeout(()=>transitionToScene('intro'), 150);
+  })
+  .catch(err=>{
+    document.querySelector('.loading-text').textContent='Error: '+err.message;
+  });
+</script>
+</body>
+</html>
