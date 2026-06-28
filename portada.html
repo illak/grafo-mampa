@@ -3,10 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAMPA — Jardín Digital de Contenidos</title>
+<title>MAMPA — Red de Contenidos MAMPA</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+  @keyframes cta-pulse {
+    0%, 100% { box-shadow: 0 4px 16px rgba(18,155,216,0.3); transform: scale(1); }
+    50%      { box-shadow: 0 4px 28px rgba(18,155,216,0.55); transform: scale(1.04); }
+  }
 
   :root {
     --bg: #e8e4d4;
@@ -20,12 +25,11 @@
     --text-light: #9e9480;
     --accent: #129bd8;
     --accent-dark: #0d7ab0;
-    --hero-bg: #994578;
-    --hero-bg-light: #b0588a;
-    --hero-text: #f5f0f0;
-    --hero-dim: #d4aac4;
+    --hero-bg: #f0ece0;
+    --hero-text: #3a3428;
+    --hero-dim: #7a7260;
     --hero-accent-1: #5b9d98;
-    --hero-accent-2: #994578;
+    --hero-accent-2: #155180;
     --item: #7a8b6e;
     --creator: #7b68ae;
     --subject: #c4973b;
@@ -44,17 +48,17 @@
     height: 100vh;
   }
 
-  /* ── Grid principal ── */
+  /* ── Contenedor principal: grafo ocupa toda la pantalla ── */
   #portada {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    height: 100vh;
+    position: relative;
     width: 100vw;
+    height: 100vh;
+    overflow: hidden;
   }
 
-  /* ── Panel izquierdo: grafo ── */
+  /* ── Panel del grafo: pantalla completa ── */
   #graph-panel {
-    position: relative;
+    position: absolute; inset: 0; z-index: 1;
     overflow: hidden;
     background: var(--bg);
   }
@@ -63,6 +67,21 @@
     width: 100%;
     height: 100%;
     display: block;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Vignette: oscurece los bordes, sensación de "ventana" */
+  #graph-panel::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center,
+      transparent 50%,
+      rgba(232,228,212,0.15) 70%,
+      rgba(232,228,212,0.40) 85%,
+      rgba(232,228,212,0.65) 100%
+    );
   }
 
   /* Header dentro del panel del grafo */
@@ -283,30 +302,35 @@
   #detail-panel::-webkit-scrollbar-track { background: transparent; }
   #detail-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* ── Panel derecho: hero ── */
+  /* ── Panel derecho: hero flotante sobre el grafo ── */
   #hero-panel {
-    background: var(--hero-bg);
+    position: absolute; top: 0; right: 0; z-index: 10;
+    width: 34%;
+    height: 100%;
+    background: rgba(240,236,224,0.20);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     color: var(--hero-text);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     justify-content: center;
-    padding: 60px 48px;
-    position: relative;
+    padding: 60px 40px;
     overflow: hidden;
-    z-index: 10;
+    border-left: 1px solid rgba(200,193,171,0.20);
   }
 
   /* Contenedor semitransparente para que el texto resalte sobre el fondo */
   #hero-panel .hero-content {
-    background: rgba(25, 15, 30, 0.20);
+    background: rgba(255,255,255,0.55);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 16px;
     padding: 32px 36px;
     position: relative; z-index: 1;
-    max-width: 90%;
+    max-width: 100%;
+    box-shadow: 0 2px 20px rgba(58,52,40,0.06);
   }
 
   #hero-panel .hero-logo {
@@ -355,7 +379,8 @@
     transition: all 0.3s;
     position: relative; z-index: 1;
     align-self: center;
-    box-shadow: 0 4px 16px rgba(18,155,216,0.35);
+    box-shadow: 0 4px 16px rgba(18,155,216,0.3);
+    animation: cta-pulse 2.5s ease-in-out infinite;
   }
   #hero-panel .hero-cta:hover {
     background: #0d7ab0;
@@ -372,35 +397,29 @@
   #hero-panel .hero-stats {
     display: flex; gap: 32px;
     margin-top: 48px; padding-top: 32px;
-    border-top: 1px solid rgba(240,244,248,0.12);
+    border-top: 1px solid rgba(58,52,40,0.10);
     position: relative; z-index: 1;
   }
-  #hero-panel .hero-stat { text-align: left; }
+  #hero-panel .hero-stat { text-align: center; }
   #hero-panel .hero-stat .num {
     font-family: var(--font);
     font-size: 28px; font-weight: 600;
-    color: var(--hero-text);
+    color: var(--accent-dark);
   }
   #hero-panel .hero-stat .label {
     font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
     color: var(--hero-dim); margin-top: 4px;
   }
 
-  /* Indicador sutil de "mové el mouse" en auto-play */
+  /* Invitación previa al CTA */
   #wake-hint {
-    position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
     font-family: var(--font);
-    font-size: 14px; font-weight: 500;
-    color: var(--text);
-    letter-spacing: 0.6px;
-    background: rgba(240,236,224,0.85);
-    padding: 6px 18px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
-    pointer-events: none; z-index: 200;
-    opacity: 1; transition: opacity 0.5s;
+    font-size: 13px; font-weight: 400;
+    color: var(--text-dim);
+    margin: 0 0 16px 0;
+    letter-spacing: 0.2px;
+    line-height: 1.4;
   }
-  #wake-hint.fading { opacity: 0; }
 
   /* Botón CTA flotante solo en móvil */
   #mobile-cta {
@@ -425,15 +444,22 @@
     color: var(--text-dim); pointer-events: none; z-index: 300;
   }
 
-  /* Responsive: en móvil solo el grafo + CTA flotante */
+  /* Responsive: en móvil el hero se apila abajo o se oculta */
   @media (max-width: 900px) {
-    #portada {
-      grid-template-columns: 1fr;
-      grid-template-rows: 100vh;
+    #hero-panel {
+      position: absolute; bottom: 0; right: 0; left: 0; top: auto;
+      width: 100%; height: auto;
+      padding: 32px 24px;
+      background: rgba(240,236,224,0.90);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-left: none;
+      border-top: 1px solid rgba(200,193,171,0.25);
     }
-    #hero-panel { display: none; }
-    #mobile-cta { display: block; }
+    #hero-panel .hero-content { padding: 20px 24px; max-width: 100%; }
     #hero-panel .hero-title { font-size: 28px; }
+    #hero-panel .hero-stats { margin-top: 28px; padding-top: 20px; }
+    #mobile-cta { display: none; }
   }
 </style>
 </head>
@@ -444,59 +470,35 @@
   <!-- ========== PANEL IZQUIERDO: GRAFO ========== -->
   <div id="graph-panel">
 
+    <!-- Logo/identidad en esquina superior izquierda -->
     <div id="graph-header">
       <div class="logo">
         <span>MAMPA</span>
-        <span class="subtitle">Jardín Digital de Contenidos</span>
+        <span class="subtitle">Red de Contenidos</span>
       </div>
-    </div>
-
-    <div id="search-row">
-      <input type="text" id="search-box" placeholder="Buscar en el jardín...">
-      <div id="search-results"></div>
-    </div>
-
-    <div id="controls">
-      <button id="back-btn">← Volver al jardín</button>
-      <div id="hops-control">
-        <label>Saltos:</label>
-        <div class="hops-btns">
-          <button class="hop-btn" data-hops="1">1</button>
-          <button class="hop-btn active" data-hops="2">2</button>
-          <button class="hop-btn" data-hops="3">3</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="legend">
-      <div class="leg-item"><div class="leg-dot" style="background:var(--item)"></div>Fichas</div>
-      <div class="leg-item"><div class="leg-dot" style="background:var(--creator)"></div>Autores</div>
-      <div class="leg-item"><div class="leg-dot" style="background:var(--subject)"></div>Palabras clave</div>
-      <div class="leg-item"><div class="leg-dot" style="background:var(--coverage)"></div>Áreas</div>
-      <div class="leg-item"><div class="leg-dot" style="background:var(--type)"></div>Tipos</div>
     </div>
 
     <div id="stats"></div>
     <div id="detail-panel"></div>
     <div class="tooltip" id="tooltip"></div>
-    <div id="wake-hint">Mové el mouse para explorar</div>
     <a href="https://mampa.isep-cba.edu.ar/" id="mobile-cta">Ingresar al portal</a>
-    <div id="loading">Cargando jardín...</div>
+    <div id="loading">Cargando red...</div>
     <svg id="graph"></svg>
   </div>
 
   <!-- ========== PANEL DERECHO: HERO ========== -->
   <div id="hero-panel">
     <div class="hero-content">
-      <div class="hero-logo"><img src="./imgs/logo_mampa.png" alt="MAMPA"></div>
+      <div class="hero-logo"><img src="./imgs/logo_mampa_2.png" alt="MAMPA"></div>
       <h1 class="hero-title">
         El repositorio<br>
         <em>cobró vida</em>
       </h1>
       <p class="hero-text">
-        Más de 600 recursos educativos conectados en un jardín digital interactivo.
+        Más de 600 recursos educativos conectados en una red de contenidos interactiva.
         Explorá, descubrí y navegá el conocimiento como nunca antes.
       </p>
+      <p id="wake-hint">La red te espera. Navegala en el portal.</p>
       <a href="https://mampa.isep-cba.edu.ar/" class="hero-cta">
         Ingresar al portal
       </a>
@@ -525,43 +527,9 @@ const DATA_URL = './data/graph.json';
    ═══════════════════════════════════════════ */
 function initGraph(GRAPH_DATA) {
 
-  /* ── MODO AUTO-PLAY → INTERACTIVO ── */
-  let interactiveMode = false;
-
-  function activateInteractiveMode() {
-    if (interactiveMode) return;
-    interactiveMode = true;
-
-    // Dejar que la simulación se asiente naturalmente
-    simulation.alphaTarget(0);
-
-    // Fade-in de controles
-    document.getElementById('controls').classList.add('visible');
-    document.getElementById('search-row').classList.add('visible');
-    document.getElementById('legend').classList.add('visible');
-    document.getElementById('stats').classList.add('visible');
-
-    // Ocultar hint
-    document.getElementById('wake-hint').classList.add('fading');
-
-    // Habilitar interacción de clic en nodos
-    if (nodeEls) {
-      nodeEls.on('click', onClick);
-      nodeEls.attr('cursor', 'pointer');
-    }
-
-    // Habilitar zoom con scroll libre (no solo Ctrl)
-    zoom.filter(event => {
-      if (event.type === 'wheel') return true;
-      return !event.button;
-    });
-    svg.on('.zoom', null);
-    svg.call(zoom);
-
-    // Detener rotación y resetear a 0°
-    if (rotRaf) cancelAnimationFrame(rotRaf);
-    rotG.attr('transform', 'rotate(0,' + (width/2) + ',' + (height/2) + ')');
-  }
+  /* ── MODO AUTO-PLAY PERMANENTE: sin interacción ── */
+  // El grafo es atmósfera visual, no herramienta. Se mueve con
+  // rotación lenta + latido suave, sin responder al usuario.
   const typeLabels = {
     authored_by: 'Autores',
     tagged_with: 'Palabras clave',
@@ -602,50 +570,8 @@ function initGraph(GRAPH_DATA) {
   }
 
   const activeRelations = new Set(Object.keys(typeLabels));
-  let focusedNodeId = null;
-  let maxHops = 2;
-  let isDragging = false;  // bloquea hover durante arrastre de nodos
-
-  const controlsEl = document.getElementById('controls');
-  const backBtn = document.getElementById('back-btn');
-  const hopsControl = document.getElementById('hops-control');
-  const relCounts = {};
-  allEdges.forEach(e => { relCounts[e.relation] = (relCounts[e.relation] || 0) + 1; });
-
-  Object.entries(typeLabels).forEach(([rel, label]) => {
-    const btn = document.createElement('div');
-    btn.className = 'filter-btn';
-    btn.dataset.rel = rel;
-    btn.innerHTML = '<div class="dot" style="background:' + typeColors[rel] + '"></div>' + label + '<span class="count">' + (relCounts[rel] || 0) + '</span>';
-    btn.addEventListener('click', () => {
-      if (activeRelations.has(rel)) { activeRelations.delete(rel); btn.classList.add('off'); }
-      else { activeRelations.add(rel); btn.classList.remove('off'); }
-      updateGraph();
-    });
-    controlsEl.appendChild(btn);
-  });
-
-  backBtn.addEventListener('click', () => {
-    focusedNodeId = null;
-    backBtn.classList.remove('visible');
-    hopsControl.classList.remove('visible');
-    updateGraph();
-    setTimeout(() => {
-      svg.transition().duration(600).call(
-        zoom.transform,
-        d3.zoomIdentity.translate(width/2, height/2).scale(0.7).translate(-width/2, -height/2)
-      );
-    }, 50);
-  });
-
-  document.querySelectorAll('.hop-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      maxHops = parseInt(btn.dataset.hops);
-      document.querySelectorAll('.hop-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (focusedNodeId) updateGraph();
-    });
-  });
+  let focusedNodeId = null;   // nunca se activa en splash
+  let maxHops = 2;            // idem
 
   const container = document.getElementById('graph-panel');
   const svg = d3.select('#graph');
@@ -686,21 +612,15 @@ function initGraph(GRAPH_DATA) {
     .alphaDecay(0.015);
 
   function getRadius(d) {
-    if (focusedNodeId && nodeDepth) {
-      const depth = nodeDepth.get(d.id) || maxHops;
-      const t = maxHops > 0 ? depth / maxHops : 0;
-      if (d.type === 'item') return Math.round(10 - 7 * t);
-      const base = Math.sqrt(d.degree || 1);
-      return Math.max(5, Math.round((14 - 9 * t) + base * (3 - 1.5 * t)));
-    }
+    // Nodos con presencia suficiente para apreciar la red
     if (d.type === 'item') return 3;
-    if (d.type === 'coverage') return Math.max(8, Math.sqrt(d.degree) * 2.5);
-    if (d.type === 'type') return Math.max(10, Math.sqrt(d.degree) * 2);
-    return Math.max(4, Math.sqrt(d.degree) * 1.5);
+    if (d.type === 'coverage') return Math.max(8, Math.sqrt(d.degree) * 2);
+    if (d.type === 'type') return Math.max(9, Math.sqrt(d.degree) * 1.8);
+    return Math.max(4, Math.sqrt(d.degree) * 1.4);
   }
 
   function getNodeOpacity(d) {
-    return d.type === 'item' ? 0.6 : 0.9;
+    return d.type === 'item' ? 0.35 : 0.55;
   }
 
   let linkEls, nodeEls, labelEls;
@@ -819,19 +739,7 @@ function initGraph(GRAPH_DATA) {
       .attr('r', 0)
       .attr('fill', d => d.color)
       .attr('stroke', 'none')
-      .attr('cursor', interactiveMode ? 'pointer' : 'default')
-      .on('mouseover', onHover)
-      .on('mouseout', onHoverOut)
-      .call(d3.drag()
-        .on('start', dragStart)
-        .on('drag', dragging)
-        .on('end', dragEnd));
-
-    // En modo auto-play, NO asignar click
-    if (interactiveMode) {
-      entered.on('click', onClick);
-    }
-
+      .attr('cursor', 'default');
     nodeEls = entered.merge(nodeEls);
     nodeEls.transition().duration(400)
       .attr('r', d => getRadius(d))
@@ -930,168 +838,16 @@ function initGraph(GRAPH_DATA) {
   });
 
   function focusOnNode(d) {
-    if (!interactiveMode) return;
-    focusedNodeId = d.id;
-    backBtn.classList.add('visible');
-    hopsControl.classList.add('visible');
-    updateGraph();
-    showDetail(d);
+    // Deshabilitado en splash: el grafo no responde a clics
   }
 
   const tooltip = document.getElementById('tooltip');
 
-  function onHover(e, d) {
-    if (!interactiveMode) return; // Sin tooltips en auto-play
-    if (isDragging) return;       // No interferir durante arrastre
-    const rect = container.getBoundingClientRect();
-    tooltip.style.display = 'block';
-    tooltip.style.left = (e.clientX - rect.left + 12) + 'px';
-    tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
-    const extra = d.type === 'item' ? '' : ' (' + d.degree + ' fichas)';
-    tooltip.textContent = d.label + extra;
-
-    if (focusedNodeId) return;
-
-    const connSet = new Set();
-    currentEdges.forEach(edge => {
-      const sid = typeof edge.source === 'string' ? edge.source : edge.source.id;
-      const tid = typeof edge.target === 'string' ? edge.target : edge.target.id;
-      if (sid === d.id) connSet.add(tid);
-      if (tid === d.id) connSet.add(sid);
-    });
-    connSet.add(d.id);
-    nodeEls.attr('opacity', n => connSet.has(n.id) ? 1 : 0.06);
-    linkEls.attr('stroke-opacity', edge => {
-      const sid = typeof edge.source === 'string' ? edge.source : edge.source.id;
-      const tid = typeof edge.target === 'string' ? edge.target : edge.target.id;
-      return (sid === d.id || tid === d.id) ? 0.5 : 0.02;
-    });
-    if (labelEls) labelEls.attr('fill-opacity', n => connSet.has(n.id) ? 1 : 0.05);
-  }
-
-  function onHoverOut() {
-    tooltip.style.display = 'none';
-    if (focusedNodeId || isDragging) return;
-    nodeEls.attr('opacity', d => d.type === 'item' ? 0.6 : 0.9);
-    linkEls.attr('stroke-opacity', 0.18);
-    if (labelEls) labelEls.attr('fill-opacity', 0.9);
-  }
-
-  function onClick(e, d) { e.stopPropagation(); focusOnNode(d); }
-
   function showDetail(d) {
-    const panel = document.getElementById('detail-panel');
-    panel.classList.add('visible');
-
-    let html = '<button class="close-btn">&times;</button>';
-    html += '<div class="node-type-badge" style="background:' + colorMap[d.type] + '18;color:' + colorMap[d.type] + '">' + typeNames[d.type] + '</div>';
-    html += '<h2>' + (d.fullTitle || d.label) + '</h2>';
-
-    if (d.type === 'item') {
-      if (d.publisher) html += '<div class="meta-row"><strong>Editor:</strong> ' + d.publisher + '</div>';
-      if (d.issued) html += '<div class="meta-row"><strong>Fecha:</strong> ' + formatDate(d.issued) + '</div>';
-      if (d.educationLevel && d.educationLevel.length)
-        html += '<div class="meta-row"><strong>Nivel:</strong> ' + d.educationLevel.join(', ') + '</div>';
-      if (d.abstract) html += '<div class="abstract">' + d.abstract + '</div>';
-      if (d.url) html += '<a class="link-btn" href="' + d.url + '" target="_blank" rel="noopener">Ver en MAMPA ↗</a>';
-    } else {
-      html += '<div class="meta-row"><strong>Conexiones:</strong> ' + d.degree + ' fichas</div>';
-    }
-
-    const connections = [];
-    currentEdges.forEach(edge => {
-      const sid = typeof edge.source === 'string' ? edge.source : edge.source.id;
-      const tid = typeof edge.target === 'string' ? edge.target : edge.target.id;
-      if (sid === d.id) connections.push({ node: nodeMap.get(tid), rel: edge.relation });
-      if (tid === d.id) connections.push({ node: nodeMap.get(sid), rel: edge.relation });
-    });
-
-    if (connections.length > 0) {
-      html += '<div class="connections"><h3>Conexiones (' + connections.length + ')</h3>';
-      connections.sort((a, b) => (a.node.type > b.node.type ? 1 : -1));
-      connections.slice(0, 40).forEach(c => {
-        html += '<div class="conn-item" data-id="' + c.node.id + '"><span class="conn-dot" style="background:' + c.node.color + '"></span>' + c.node.label + '</div>';
-      });
-      if (connections.length > 40) html += '<div class="meta-row">... y ' + (connections.length - 40) + ' más</div>';
-      html += '</div>';
-    }
-
-    panel.innerHTML = html;
-    panel.querySelector('.close-btn').addEventListener('click', () => panel.classList.remove('visible'));
-    panel.querySelectorAll('.conn-item').forEach(el => {
-      el.addEventListener('click', () => {
-        const n = nodeMap.get(el.dataset.id);
-        if (n) focusOnNode(n);
-      });
-    });
+    // Deshabilitado en splash
   }
 
-  function dragStart(e, d) {
-    if (!e.active) simulation.alphaTarget(0.1).restart();
-    d.fx = d.x; d.fy = d.y;
-    // Bloquear hover de otros nodos mientras se arrastra
-    isDragging = true;
-    // Resaltar conexiones del nodo arrastrado
-    const connSet = new Set();
-    currentEdges.forEach(edge => {
-      const sid = typeof edge.source === 'string' ? edge.source : edge.source.id;
-      const tid = typeof edge.target === 'string' ? edge.target : edge.target.id;
-      if (sid === d.id) connSet.add(tid);
-      if (tid === d.id) connSet.add(sid);
-    });
-    connSet.add(d.id);
-    nodeEls.attr('opacity', n => connSet.has(n.id) ? 1 : 0.06);
-    linkEls.attr('stroke-opacity', edge => {
-      const sid = typeof edge.source === 'string' ? edge.source : edge.source.id;
-      const tid = typeof edge.target === 'string' ? edge.target : edge.target.id;
-      return (sid === d.id || tid === d.id) ? 0.5 : 0.02;
-    });
-    if (labelEls) labelEls.attr('fill-opacity', n => connSet.has(n.id) ? 1 : 0.05);
-  }
-  function dragging(e, d) { d.fx = e.x; d.fy = e.y; }
-  function dragEnd(e, d) {
-    if (!e.active) simulation.alphaTarget(0);
-    d.fx = null; d.fy = null;
-    isDragging = false;
-    // Restaurar opacidades normales
-    if (!focusedNodeId) {
-      nodeEls.attr('opacity', d => d.type === 'item' ? 0.6 : 0.9);
-      linkEls.attr('stroke-opacity', 0.18);
-      if (labelEls) labelEls.attr('fill-opacity', 0.9);
-    }
-  }
-
-  // Búsqueda
-  const searchBox = document.getElementById('search-box');
-  const searchResults = document.getElementById('search-results');
-
-  searchBox.addEventListener('input', () => {
-    const q = searchBox.value.toLowerCase().trim();
-    if (q.length < 2) { searchResults.classList.remove('visible'); return; }
-    const matches = allNodes.filter(n => n.label.toLowerCase().includes(q)).slice(0, 12);
-    if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
-    searchResults.innerHTML = matches.map(n => {
-      return '<div class="search-item" data-id="' + n.id + '">' + n.label + '<span class="si-type" style="color:' + n.color + '">' + typeNames[n.type] + '</span></div>';
-    }).join('');
-    searchResults.classList.add('visible');
-    searchResults.querySelectorAll('.search-item').forEach(el => {
-      el.addEventListener('click', () => {
-        const n = nodeMap.get(el.dataset.id);
-        if (n) focusOnNode(n);
-        searchResults.classList.remove('visible');
-        searchBox.value = '';
-      });
-    });
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('#search-results') && !e.target.closest('#search-box'))
-      searchResults.classList.remove('visible');
-  });
-
-  svg.on('click', () => {
-    document.getElementById('detail-panel').classList.remove('visible');
-  });
+  // Sin interacción: no hay hover, clic ni drag en splash mode
 
   // ── INICIO ──
   updateGraph();
@@ -1100,14 +856,14 @@ function initGraph(GRAPH_DATA) {
   // el grafo centrado desde el primer frame.
   svg.call(
     zoom.transform,
-    d3.zoomIdentity.translate(width/2, height/2).scale(0.55).translate(-width/2, -height/2)
+    d3.zoomIdentity.translate(width/2, height/2).scale(0.75).translate(-width/2, -height/2)
   );
 
 
   /* ═══════════════ MODO AUTO-PLAY: grafo vivo ═══════════════ */
 
   // alphaTarget moderado → la simulación respira sin sobresaltos
-  simulation.alphaTarget(0.15).alphaDecay(0.01);
+  simulation.alphaTarget(0.08).alphaDecay(0.01);
 
   // Rotación lenta del grafo completo (sobre rotG, dentro del zoom)
   // Da sensación de vida sin perturbar la simulación de fuerzas.
@@ -1115,14 +871,12 @@ function initGraph(GRAPH_DATA) {
   // que la rotación arranque antes de que el grafo esté estable.
   let rotAngle = 0;
   let rotRaf = null;
-  const ROT_SPEED = 0.008; // grados por frame (~0.5°/s a 60fps → 1 vuelta cada ~12 min)
+  const ROT_SPEED = 0.035; // grados por frame (~2.1°/s a 60fps → 1 vuelta cada ~3 min)
   const ROTATION_START_DELAY = 10000; // ms — esperar a que el grafo esté completamente frío
   const initTime = Date.now();
 
   function rotateGraph() {
-    if (interactiveMode) return;
     if (Date.now() - initTime < ROTATION_START_DELAY) {
-      // Todavía en fase de espera: seguir loop sin rotar
       rotRaf = requestAnimationFrame(rotateGraph);
       return;
     }
@@ -1131,18 +885,6 @@ function initGraph(GRAPH_DATA) {
     rotRaf = requestAnimationFrame(rotateGraph);
   }
   rotRaf = requestAnimationFrame(rotateGraph);
-
-  // Activar modo interactivo al primer movimiento del mouse o toque
-  // Usamos setTimeout para evitar que eventos de inicialización del navegador
-  // consuman el listener { once: true } antes de que el usuario interactúe.
-  function wakeUp() {
-    if (interactiveMode) return;
-    activateInteractiveMode();
-  }
-  setTimeout(() => {
-    container.addEventListener('mousemove', wakeUp, { once: true });
-    container.addEventListener('touchstart', wakeUp, { once: true });
-  }, 500);
 
 } // fin initGraph
 
