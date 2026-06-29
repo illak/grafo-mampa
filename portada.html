@@ -589,13 +589,16 @@ function initGraph(GRAPH_DATA) {
   glow.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'blur');
   glow.append('feComposite').attr('in', 'SourceGraphic').attr('in2', 'blur').attr('operator', 'over');
 
-  // Zoom centrado: siempre escala desde el centro, sin arrastre
+  // Zoom centrado, sin arrastre, más corrimiento visual a la izquierda
   let currentScale = 1;
+  const VX = width / 2;
+  const VY = height / 2;
+  const GRAPH_SHIFT = -width * 0.10; // 10% del ancho hacia la izquierda
   const zoom = d3.zoom()
     .scaleExtent([0.05, 8])
     .filter(event => false) // desactivamos el zoom por defecto
     .on('zoom', (e) => {
-      g.attr('transform', e.transform);
+      g.attr('transform', 'translate(' + GRAPH_SHIFT + ',0) ' + e.transform);
       updateLabelsForScale(e.transform.k);
     });
   svg.call(zoom);
@@ -610,9 +613,9 @@ function initGraph(GRAPH_DATA) {
     const realFactor = currentScale / prev;
     // Aplicar transform centrado
     const t = d3.zoomIdentity
-      .translate(width/2, height/2)
+      .translate(VX, VY)
       .scale(currentScale)
-      .translate(-width/2, -height/2);
+      .translate(-VX, -VY);
     zoom.transform(svg, t);
   });
 
@@ -885,10 +888,9 @@ function initGraph(GRAPH_DATA) {
 
   // Zoom inicial centrado (scale 0.75)
   currentScale = 0.75;
-  svg.call(
-    zoom.transform,
-    d3.zoomIdentity.translate(width/2, height/2).scale(currentScale).translate(-width/2, -height/2)
-  );
+  const initT = d3.zoomIdentity.translate(VX, VY).scale(currentScale).translate(-VX, -VY);
+  svg.call(zoom.transform, initT);
+  g.attr('transform', 'translate(' + GRAPH_SHIFT + ',0) ' + initT);
 
   // Ajustar visibilidad inicial de etiquetas
   updateLabelsForScale(currentScale);
