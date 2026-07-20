@@ -94,16 +94,12 @@
   }
   #graph-header > * { pointer-events: auto; }
   #graph-header .logo {
-    font-family: var(--font);
-    font-size: 20px; font-weight: 600; letter-spacing: 0.3px;
-    color: var(--text);
+    width: 140px;
   }
-  #graph-header .logo span { color: var(--accent-dark); }
-  #graph-header .logo .subtitle {
-    font-family: var(--font);
-    font-size: 11px; font-weight: 400; color: var(--text-dim);
-    display: block; margin-top: -2px; letter-spacing: 1.5px;
-    text-transform: uppercase;
+  #graph-header .logo img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
   /* Controles — ocultos en auto-play */
@@ -327,9 +323,9 @@
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 16px;
-    padding: 32px 36px;
+    padding: 36px 32px;
     position: relative; z-index: 1;
-    max-width: 100%;
+    max-width: 88%;
     box-shadow: 0 2px 20px rgba(58,52,40,0.06);
   }
 
@@ -361,9 +357,14 @@
     font-family: var(--font);
     font-size: 17px; line-height: 1.6;
     color: var(--hero-dim);
-    margin-bottom: 40px;
+    margin: 0 auto 40px auto;
     position: relative; z-index: 1;
     max-width: 380px;
+    text-align: center;
+  }
+  #hero-panel .hero-text strong {
+    color: var(--accent-dark);
+    font-weight: 700;
   }
 
   #hero-panel .hero-cta {
@@ -473,8 +474,7 @@
     <!-- Logo/identidad en esquina superior izquierda -->
     <div id="graph-header">
       <div class="logo">
-        <span>MAMPA</span>
-        <span class="subtitle">Red de Contenidos</span>
+        <img src="./imgs/logo_mampa_2.png" alt="MAMPA">
       </div>
     </div>
 
@@ -490,17 +490,13 @@
   <div id="hero-panel">
     <div class="hero-content">
       <div class="hero-logo"><img src="./imgs/logo_mampa_2.png" alt="MAMPA"></div>
-      <h1 class="hero-title">
-        El repositorio<br>
-        <em>cobró vida</em>
-      </h1>
+      <h1 class="hero-title">Mucho más que una <em>biblioteca</em></h1>
       <p class="hero-text">
-        Más de 600 recursos educativos conectados en una red de contenidos interactiva.
-        Explorá, descubrí y navegá el conocimiento como nunca antes.
+        En Mampa, cada material forma parte de una red de conexiones que vincula temas, contenidos, niveles y formatos.<br><br>No es sólo un espacio donde explorar y encontrar materiales. Es, sobre todo, una <strong>arquitectura pedagógica para descubrir nuevas relaciones</strong>.
       </p>
       <p id="wake-hint">La red te espera. Navegala en el portal.</p>
       <a href="https://mampa.isep-cba.edu.ar/" class="hero-cta">
-        Ingresar al portal
+        Ingresar
       </a>
     </div>
     <div class="hero-stats">
