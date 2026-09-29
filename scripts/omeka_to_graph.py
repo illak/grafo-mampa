@@ -15,13 +15,17 @@ import os
 from collections import Counter
 
 # --- Configuración ---
+# NOTA: los colores de los nodos ya NO se generan acá.
+# Ahora se definen como variables editables en cada HTML del grafo:
+#   - narrativa:  var COLOR  = { item:..., creator:..., ... }   (narrativa_v3*.html)
+#   - splash:     var colorMap = { item:..., creator:..., ... }
+# graph.json se genera SIN colores; el HTML es la fuente de verdad.
 SUBJECT_MIN_FREQ = 3
-ITEM_COLOR = '#7a8b6e'
 GRAPH_DIMENSIONS = {
-    'creator':  {'col': 'dcterms:creator',  'rel': 'authored_by',     'color': '#7b68ae'},
-    'subject':  {'col': 'dcterms:subject',  'rel': 'tagged_with',     'color': '#c4973b'},
-    'coverage': {'col': 'dcterms:coverage', 'rel': 'belongs_to_area', 'color': '#b5634b'},
-    'type':     {'col': 'dcterms:type',     'rel': 'is_type',         'color': '#c27a8e'},
+    'creator':  {'col': 'dcterms:creator',  'rel': 'authored_by'},
+    'subject':  {'col': 'dcterms:subject',  'rel': 'tagged_with'},
+    'coverage': {'col': 'dcterms:coverage', 'rel': 'belongs_to_area'},
+    'type':     {'col': 'dcterms:type',     'rel': 'is_type'},
 }
 
 def parse_multival(val):
@@ -61,7 +65,6 @@ def main(input_file):
             'l':  title if len(title) <= 80 else title[:77] + '...',   # label
             'ft': title,                                                  # full_title
             't':  'item',                                                 # type
-            'c':  ITEM_COLOR,                                             # color
             'url': str(row.get('url', '')),
             'abs': abstract,
             'pub': str(row.get('dcterms:publisher', '')).replace('nan', ''),
@@ -83,7 +86,6 @@ def main(input_file):
                         'id': attr_id,
                         'l':  val,           # label
                         't':  dim_type,      # type
-                        'c':  cfg['color'],  # color
                         'd':  0,             # degree
                     }
                 nodes[attr_id]['d'] += 1
@@ -96,7 +98,7 @@ def main(input_file):
             'items_count': len(df),
             'subject_min_freq': SUBJECT_MIN_FREQ,
             'dimensions': {
-                k: {'relation': v['rel'], 'color': v['color']}
+                k: {'relation': v['rel']}
                 for k, v in GRAPH_DIMENSIONS.items()
             },
         },
