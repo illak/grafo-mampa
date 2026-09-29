@@ -20,11 +20,11 @@
     --accent:      #7aaf60;
     --accent-dim:  #5c7a4a;
     --canvas-bg:   #0f0e0b;
-    --item:        #7a8b6e;
-    --creator:     #7b68ae;
-    --subject:     #c4973b;
-    --coverage:    #b5634b;
-    --type:        #c27a8e;
+    --item:        #0080b1;
+    --creator:     #00b2e3;
+    --subject:     #87c6a1;
+    --coverage:    #0080b1;
+    --type:        #009e96;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -426,14 +426,14 @@
         Cada círculo en la visualización es un <strong>nodo</strong>, y representa una entidad. En nuestro grafo conviven cinco tipos, cada uno con su color:
       </p>
       <ul>
-        <li class="c-item"><strong>Fichas:</strong> los 657 recursos del repositorio MAMPA. Son el corazón del grafo.</li>
+        <li class="c-item"><strong>Fichas:</strong> los <span data-stat="items">657</span> recursos del repositorio MAMPA. Son el corazón del grafo.</li>
         <li class="c-creator"><strong>Autores:</strong> las personas o colectivos que produjeron esos recursos.</li>
         <li class="c-subject"><strong>Palabras clave:</strong> los descriptores temáticos asignados a cada ficha.</li>
-        <li class="c-coverage"><strong>Áreas temáticas:</strong> las 15 grandes áreas de cobertura disciplinar.</li>
+        <li class="c-coverage"><strong>Áreas temáticas:</strong> las <span data-stat="areas">15</span> grandes áreas de cobertura disciplinar.</li>
         <li class="c-type"><strong>Tipos de contenido:</strong> la clasificación formal del recurso.</li>
       </ul>
       <p>
-        El <strong>tamaño de cada nodo no es arbitrario</strong>: es proporcional a su cantidad de conexiones. Un autor con 46 fichas se ve más grande que uno con 2. Esto se llama <strong>grado del nodo</strong>.
+        El <strong>tamaño de cada nodo no es arbitrario</strong>: es proporcional a su cantidad de conexiones. Un autor con <span data-stat="creatorDeg">46</span> fichas se ve más grande que uno con 2. Esto se llama <strong>grado del nodo</strong>.
       </p>
     </section>
 
@@ -515,12 +515,12 @@
       <div class="section-num">07 — Filtros</div>
       <h2>Descomponer la complejidad</h2>
       <p>
-        El grafo completo tiene más de <strong>1200 nodos y 5200 aristas</strong>. Eso es mucho para absorber de una sola vez. Los filtros por tipo de relación permiten descomponer esa complejidad:
+        El grafo completo tiene <strong><span data-stat="nodes">1200</span> nodos y <span data-stat="edges">5200</span> aristas</strong>. Eso es mucho para absorber de una sola vez. Los filtros por tipo de relación permiten descomponer esa complejidad:
       </p>
       <ul>
         <li><strong>Solo autores:</strong> se revelan las redes de colaboración y los autores más prolíficos.</li>
         <li><strong>Solo palabras clave:</strong> se ve la estructura temática y los clusters por afinidad de contenido.</li>
-        <li><strong>Solo áreas temáticas:</strong> las 15 áreas funcionan como polos de atracción.</li>
+        <li><strong>Solo áreas temáticas:</strong> las <span data-stat="areas">15</span> áreas funcionan como polos de atracción.</li>
         <li><strong>Combinando filtros:</strong> cada combinación cuenta una historia diferente sobre el mismo conjunto de datos.</li>
       </ul>
       <p>
@@ -609,9 +609,9 @@ const SCENE_LABELS = {
   neighborhood:'06 / Vecindario', filters:'07 / Filtros', glossary:'08 / Glosario',
 };
 
-const COLOR = { item:'#7a8b6e', creator:'#7b68ae', subject:'#c4973b', coverage:'#b5634b', type:'#c27a8e' };
+const COLOR = { item:'#0080b1', creator:'#00b2e3', subject:'#87c6a1', coverage:'#0080b1', type:'#009e96' };
 const TYPE_LABEL = { item:'Ficha', creator:'Autor/a', subject:'Palabra clave', coverage:'Área temática', type:'Tipo' };
-const REL_COLOR  = { authored_by:'#7b68ae', tagged_with:'#c4973b', belongs_to_area:'#b5634b', is_type:'#c27a8e' };
+const REL_COLOR  = { authored_by:'#00b2e3', tagged_with:'#0080b1', belongs_to_area:'#87c6a1', is_type:'#009e96' };
 const REL_LABEL  = { authored_by:'autoría', tagged_with:'etiquetado', belongs_to_area:'pertenencia', is_type:'clasificación' };
 
 // Nodos protagonistas para escenas educativas
@@ -623,6 +623,7 @@ const TYPE_ID     = 'type_6829c5ba';    // Libro
 
 // ─── Estado global ────────────────────────────────────────────
 let allNodes, allEdges, nodeMap, adjMap;
+let STATS = {};
 let SUBSETS = {};
 let svg, g, edgeG, nodeG, labelG, annotG;
 let zoom, tip;
@@ -791,7 +792,7 @@ function onTick() {
 //         charge, linkDist, alpha, stagger }
 function render(nodes, edges, opts={}) {
   const big         = opts.big || false;
-  const edgeStroke  = opts.edgeStroke  || ((e)=>REL_COLOR[e.relation]||'#4a5c3a');
+  const edgeStroke  = opts.edgeStroke  || ((e)=>REL_COLOR[e.relation]||COLOR.item);
   const edgeOpacity = opts.edgeOpacity || 0.18;
   const edgeWidth   = opts.edgeWidth   || 0.6;
   const fillFn      = opts.fillFn      || (d=>d.color);
@@ -918,7 +919,7 @@ function sceneIntro() {
     }));
 
   render(allNodes, allEdges, {
-    edgeStroke: ()=>'#4a5c3a', edgeOpacity:0.1, edgeWidth:0.4,
+    edgeStroke: ()=>COLOR.item, edgeOpacity:0.1, edgeWidth:0.4,
     stagger:true, alpha:0.9,
     opacityFn: d=>d.type==='item'?0.45:0.88,
   });
@@ -952,10 +953,13 @@ function sceneNodes() {
   const tok = sceneToken;
   setTimeout(()=>{
     if(sceneToken!==tok) return;
+    const nd = id => nodeMap.get(id) || {label:'', degree:0};
     const descs = {
-      item:'657 recursos', creator:'Daveloza, Valeria — 46 fichas',
-      subject:'pedagogía — 22 conexiones', coverage:'Lenguas Extranjeras — 121 items',
-      type:'Libro'
+      item: STATS.items + ' recursos',
+      creator: nd(CREATOR_ID).label + ' — ' + nd(CREATOR_ID).degree + ' fichas',
+      subject: nd(SUBJECT_ID).label + ' — ' + nd(SUBJECT_ID).degree + ' conexiones',
+      coverage: nd(COVERAGE_ID).label + ' — ' + nd(COVERAGE_ID).degree + ' items',
+      type: nd(TYPE_ID).label
     };
     nodes.forEach((n,i)=>{
       const a = (i/nodes.length)*Math.PI*2-Math.PI/2;
@@ -1068,7 +1072,7 @@ function sceneProximity() {
   const nodeSet = new Set(nodes.map(n=>n.id));
 
   render(nodes, edges, {
-    edgeStroke:()=>'#4a5c3a', edgeOpacity:0.2, edgeWidth:0.6,
+    edgeStroke:()=>COLOR.item, edgeOpacity:0.2, edgeWidth:0.6,
     stagger:true, alpha:1.0,
     opacityFn: d=>d.type==='item'?0.5:0.9,
     charge: d=>d.type==='item'?-25:-100,
@@ -1112,13 +1116,13 @@ function sceneProximity() {
 
     const pairs = [
       [central, 'CENTRAL',    '#7aaf60', 'top'],
-      [periph,  'PERIFÉRICO', '#c27a8e', 'top'],
+      [periph,  'PERIFÉRICO', COLOR.type, 'top'],
     ];
     if (near1 && near2) {
-      pairs.push([near1, 'CERCANOS', '#c4973b', 'top']);
+      pairs.push([near1, 'CERCANOS', COLOR.subject, 'top']);
     }
     if (far1 && far2) {
-      pairs.push([far1, 'LEJANOS', '#7b68ae', 'top']);
+      pairs.push([far1, 'LEJANOS', COLOR.creator, 'top']);
     }
 
     const annotTexts = pairs.map(([n,lbl,col])=>{
@@ -1134,17 +1138,17 @@ function sceneProximity() {
     // Línea punteada entre pares (cercanos y lejanos) para remarcar la relación
     const lineRefs = [];
     if (near1 && near2) {
-      lineRefs.push({a:near1, b:near2, color:'#c4973b', dash:'2,3',
+      lineRefs.push({a:near1, b:near2, color:COLOR.subject, dash:'2,3',
         line: annotG.insert('line',':first-child')
           .attr('x1',near1.x).attr('y1',near1.y).attr('x2',near2.x).attr('y2',near2.y)
-          .attr('stroke','#c4973b').attr('stroke-width',1).attr('stroke-dasharray','2,3').attr('stroke-opacity',0)
+          .attr('stroke',COLOR.subject).attr('stroke-width',1).attr('stroke-dasharray','2,3').attr('stroke-opacity',0)
           .call(s=>s.transition().duration(500).attr('stroke-opacity',0.6))});
     }
     if (far1 && far2) {
-      lineRefs.push({a:far1, b:far2, color:'#7b68ae', dash:'1,5',
+      lineRefs.push({a:far1, b:far2, color:COLOR.creator, dash:'1,5',
         line: annotG.insert('line',':first-child')
           .attr('x1',far1.x).attr('y1',far1.y).attr('x2',far2.x).attr('y2',far2.y)
-          .attr('stroke','#7b68ae').attr('stroke-width',1).attr('stroke-dasharray','1,5').attr('stroke-opacity',0)
+          .attr('stroke',COLOR.creator).attr('stroke-width',1).attr('stroke-dasharray','1,5').attr('stroke-opacity',0)
           .call(s=>s.transition().duration(500).attr('stroke-opacity',0.5))});
     }
 
@@ -1191,7 +1195,7 @@ function sceneCommunities() {
   setTimeout(()=>{
     if(sceneToken!==tok) return;
     linkEls.transition().duration(500)
-      .attr('stroke',   e=>(leIds.has(srcId(e))&&leIds.has(tgtId(e)))?'#b5634b':'#2e2a22')
+      .attr('stroke',   e=>(leIds.has(srcId(e))&&leIds.has(tgtId(e)))?COLOR.coverage:'#2e2a22')
       .attr('stroke-opacity', e=>(leIds.has(srcId(e))&&leIds.has(tgtId(e)))?0.35:0.04);
 
     // Centrar en la comunidad LE cuando los nodos tengan posición
@@ -1237,7 +1241,7 @@ function sceneNeighborhood(hop) {
   render(nodes, edges, {
     big: hop <= 1,
     alpha,
-    edgeStroke: e=>REL_COLOR[e.relation]||'#5a6a4a',
+    edgeStroke: e=>REL_COLOR[e.relation]||COLOR.item,
     edgeOpacity: 0.6, edgeWidth: hop<=1 ? 1.6 : 0.8,
     stagger: true,
     opacityFn: d=>{
@@ -1455,11 +1459,23 @@ fetch(DATA_URL)
   .then(r=>r.json())
   .then(data=>{
     allNodes = data.nodes.map(n=>({
-      id:n.id, label:n.l, type:n.t, color:n.c,
+      id:n.id, label:n.l, type:n.t, color:(COLOR[n.t] || n.c || '#999999'),
       degree:n.d||0, url:n.url||'', abstract:n.abs||'', fullTitle:n.ft||n.l,
     }));
     allEdges = data.edges.map(e=>({source:e.s, target:e.t, relation:e.r}));
     nodeMap  = new Map(allNodes.map(n=>[n.id,n]));
+
+    STATS = {
+      items: allNodes.filter(n=>n.type==='item').length,
+      areas: allNodes.filter(n=>n.type==='coverage').length,
+      nodes: allNodes.length,
+      edges: allEdges.length,
+      creatorDeg: nodeMap.get(CREATOR_ID) ? nodeMap.get(CREATOR_ID).degree : ''
+    };
+    document.querySelectorAll('[data-stat]').forEach(el=>{
+      const v = STATS[el.dataset.stat];
+      if (v !== undefined && v !== '') el.textContent = v;
+    });
 
     buildSubsets();
     initD3();

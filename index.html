@@ -20,11 +20,11 @@
     --text-light: #9e9480;
     --accent: #5c7a4a;
     --accent-dark: #4a6340;
-    --item: #7a8b6e;
-    --creator: #7b68ae;
-    --subject: #c4973b;
-    --coverage: #b5634b;
-    --type: #c27a8e;
+    --item: #0080b1;
+    --creator: #00b2e3;
+    --subject: #87c6a1;
+    --coverage: #0080b1;
+    --type: #009e96;
     --edge-color: #8a9e78;
   }
 
@@ -316,16 +316,16 @@ function initGraph(GRAPH_DATA) {
     is_type: 'Tipo de contenido'
   };
   const typeColors = {
-    authored_by: '#7b68ae',
-    tagged_with: '#c4973b',
-    belongs_to_area: '#b5634b',
-    is_type: '#c27a8e'
+    authored_by: '#00b2e3',
+    tagged_with: '#0080b1',
+    belongs_to_area: '#87c6a1',
+    is_type: '#009e96'
   };
-  const colorMap = { item: '#7a8b6e', creator: '#7b68ae', subject: '#c4973b', coverage: '#b5634b', type: '#c27a8e' };
+  const colorMap = { item: '#0080b1', creator: '#00b2e3', subject: '#87c6a1', coverage: '#0080b1', type: '#009e96' };
   const typeNames = { item: 'Ficha', creator: 'Autor/a', subject: 'Palabra clave', coverage: 'Área', type: 'Tipo' };
 
   const allNodes = GRAPH_DATA.nodes.map(n => ({
-    id: n.id, label: n.l, type: n.t, color: n.c,
+    id: n.id, label: n.l, type: n.t, color: colorMap[n.t] || n.c || '#999999',
     url: n.url || '', abstract: n.abs || '', fullTitle: n.ft || n.l,
     publisher: n.pub || '', issued: n.dt || '',
     educationLevel: n.el || [], degree: n.d || 0
