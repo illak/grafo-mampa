@@ -9,16 +9,16 @@
   @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Instrument+Sans:wght@400;500;600&display=swap');
 
   :root {
-    --bg: #e8e4d4;
-    --bg-warm: #f0ece0;
-    --surface: #f5f2e8;
-    --surface2: #ebe7da;
-    --border: #c8c1ab;
-    --border-light: #d8d2be;
-    --text: #3a3428;
-    --text-dim: #7a7260;
-    --text-light: #9e9480;
-    --accent: #5c7a4a;
+    --bg: #1a1814;
+    --bg-warm: #141210;
+    --surface: #242018;
+    --surface2: #2e2a22;
+    --border: #3a342a;
+    --border-light: #3a342a;
+    --text: #e8e4d4;
+    --text-dim: #9e9480;
+    --text-light: #5a5248;
+    --accent: #7aaf60;
     --accent-dark: #4a6340;
     --item: #0080b1;
     --creator: #00b2e3;
@@ -300,7 +300,7 @@
 <div id="detail-panel"></div>
 <div class="tooltip" id="tooltip"></div>
 
-<div id="loading" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'EB Garamond',serif;font-size:1.2rem;color:#6b5d4f;pointer-events:none;">Cargando jardín...</div>
+<div id="loading" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'EB Garamond',serif;font-size:1.2rem;color:#9e9480;pointer-events:none;">Cargando jardín...</div>
 <svg id="graph"></svg>
 
 <script>
@@ -577,7 +577,7 @@ function initGraph(GRAPH_DATA) {
     labelEls.exit().transition().duration(200).attr('fill-opacity', 0).remove();
     labelEls = labelEls.enter().append('text')
       .attr('font-size', d => focusedNodeId ? 11 : (d.type === 'coverage' ? 11 : 9))
-      .attr('fill', d => d.id === focusedNodeId ? '#3a3428' : d.color)
+      .attr('fill', d => d.id === focusedNodeId ? '#e8e4d4' : d.color)
       .attr('fill-opacity', 0)
       .attr('text-anchor', 'middle')
       .attr('dy', d => -getRadius(d) - 5)
@@ -591,7 +591,7 @@ function initGraph(GRAPH_DATA) {
       })
       .merge(labelEls);
     labelEls.transition().duration(400)
-      .attr('fill', d => d.id === focusedNodeId ? '#3a3428' : d.color)
+      .attr('fill', d => d.id === focusedNodeId ? '#e8e4d4' : d.color)
       .attr('font-weight', d => d.id === focusedNodeId ? 700 : 400)
       .attr('fill-opacity', d => {
         if (d.id === focusedNodeId) return 1;
