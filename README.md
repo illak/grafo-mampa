@@ -1,4 +1,4 @@
-# MAMPA — Jardín Digital de Contenidos
+# MAMPA — Jardín Digital de Contenidos 
 
 Visualización interactiva de fichas del repositorio MAMPA (Ministerio de Educación de la Provincia de Córdoba) como grafo multipartito. Desarrollado con D3.js v7.
 
