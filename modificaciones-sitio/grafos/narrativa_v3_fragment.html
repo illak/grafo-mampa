@@ -14,12 +14,12 @@
     --accent:      #00b2e3;
     --accent-dark: #0080b1;
     --canvas-bg:   #f4f4f4;
-    --item:        #7a8b6e;
-    --creator:     #5896d1;
-    --subject:     #5b9d98;
-    --coverage:    #994578;
-    --type:        #d07e32;
-    --edge-color:  #8a9e78;
+    --item:        #0080b1;
+    --creator:     #00b2e3;
+    --subject:     #87c6a1;
+    --coverage:    #0080b1;
+    --type:        #009e96;
+    --edge-color:  #0080b1;
     position: relative;
     background: var(--bg);
     color: var(--text);
@@ -400,41 +400,41 @@
 
 <h1>Una forma de visualizar datos</h1>
 
-<p>Imagin&aacute; por un momento que cada ficha del repositorio MAMPA &mdash;cada material educativo, cada art&iacute;culo, cada libro&mdash; es una persona en una sala.</p>
+<p>La imagen que ves a la derecha es un <strong>grafo</strong>. Te contamos qué es y cómo puede aportar a tu búsqueda.</p>
 
-<p>Cada vez que dos de esas personas <strong>comparten algo en com&uacute;n</strong> &mdash;un autor, una palabra clave, un &aacute;rea disciplinar&mdash;, se toman de la mano. Al cabo de un rato, la sala se reorganiza sola: los grupos m&aacute;s conectados quedan cerca, los que tienen poco en com&uacute;n se alejan.</p>
+<p>Un <strong>grafo</strong> es una forma de mostrar datos a partir de sus relaciones. Imaginá por un momento que cada uno de los materiales de la mediateca es una persona en una sala; cada vez que algunas de esas personas <strong>comparten algo en común</strong> (un autor, una palabra clave, un área disciplinar), se toman de la mano. Después de un rato, la sala se reorganiza: los grupos más conectados entre sí <strong>quedan cerca</strong>, los que tienen poco en común <strong>se alejan</strong> y los que funcionan como puente entre “mundos” distintos quedan en posiciones intermedias.</p>
 
-<p>Eso es exactamente lo que hace la Red de Contenidos MAMPA. No es una lista, no es una tabla. Es un <strong>grafo</strong>: una trama viva donde los datos dejan de estar quietos y empiezan a vincularse.</p>
+<p>Eso es exactamente lo que hace la <strong>Red de Contenidos de MAMPA</strong>, nos muestra cómo se relacionan los recursos de la mediateca. En este tipo de visualizaciones, empiezan a emerger patrones que no eran visibles antes: afinidades, recurrencias y anomalías que solo se revelan cuando los datos se muestran en relación.</p>
 
-<p>Las fichas de MAMPA dejan de ser piezas aisladas. Cada una se vuelve una puerta. La navegaci&oacute;n ya no responde a un orden predefinido, sino a la <strong>curiosidad de quien explora</strong>.</p>
+<p>En este sentido, las fichas de MAMPA dejan de ser piezas aisladas. Cada una se vuelve una puerta. La navegaci&oacute;n ya no responde a un orden predefinido, sino a la <strong>curiosidad de quien explora</strong>.</p>
 </section>
 <!-- 02 NODOS -->
 
 <section class="story-section" data-scene="nodes">
 <div class="section-num">02 &mdash; Anatom&iacute;a del grafo</div>
 
-<h2>Nodos: las entidades</h2>
+<h2>Nodos</h2>
 
-<p>Cada c&iacute;rculo en la visualizaci&oacute;n es un <strong>nodo</strong>, y representa una entidad. En nuestro grafo conviven cinco tipos, cada uno con su color:</p>
+<p>Cada uno de los círculos que ves en el grafo es un <strong>nodo</strong>; cada nodo representa una entidad. En nuestro grafo conviven cinco tipos, diferenciados por color:</p>
 
 <ul>
-	<li class="c-item"><strong>Fichas:</strong> los 657 recursos del repositorio MAMPA. Son el coraz&oacute;n del grafo.</li>
+	<li class="c-item"><strong>Fichas:</strong> los <span data-stat="items">657</span> recursos del repositorio MAMPA. Constituyen el coraz&oacute;n del grafo.</li>
 	<li class="c-creator"><strong>Autores:</strong> las personas o colectivos que produjeron esos recursos.</li>
-	<li class="c-subject"><strong>Palabras clave:</strong> los descriptores tem&aacute;ticos asignados a cada ficha.</li>
-	<li class="c-coverage"><strong>&Aacute;reas tem&aacute;ticas:</strong> las 15 grandes &aacute;reas de cobertura disciplinar.</li>
+	<li class="c-subject"><strong>Palabras clave:</strong> los descriptores asignados a cada material.</li>
+	<li class="c-coverage"><strong>&Aacute;reas tem&aacute;ticas:</strong> las <span data-stat="areas">15</span> &aacute;reas de cobertura disciplinar.</li>
 	<li class="c-type"><strong>Tipos de contenido:</strong> la clasificaci&oacute;n formal del recurso.</li>
 </ul>
 
-<p>El <strong>tama&ntilde;o de cada nodo no es arbitrario</strong>: es proporcional a su cantidad de conexiones. Un autor con 46 fichas se ve m&aacute;s grande que uno con 2. Esto se llama <strong>grado del nodo</strong>.</p>
+<p>El <strong>tamaño de cada nodo es proporcional a su cantidad de conexiones</strong>. De esta manera, un autor que esté vinculado con 20 fichas se verá más grande que uno que solo esté vinculado con 2. Esto se <strong>llama grado del nodo</strong>.</p>
 </section>
 <!-- 03 ARISTAS -->
 
 <section class="story-section" data-scene="edges">
 <div class="section-num">03 &mdash; Anatom&iacute;a del grafo</div>
 
-<h2>Aristas: las relaciones</h2>
+<h2>Aristas</h2>
 
-<p>Las l&iacute;neas que conectan nodos son <strong>aristas</strong>, y cada una representa una relaci&oacute;n concreta:</p>
+<p>Las <strons>aristas</strong> son las líneas que conectan los nodos entre sí y representan las relaciones que se establecen entre ellos.</p>
 
 <ul>
 	<li>Una ficha &rarr; su/s autor/es: relaci&oacute;n de <strong>autor&iacute;a</strong></li>
@@ -443,7 +443,7 @@
 	<li>Una ficha &rarr; su tipo de contenido: relaci&oacute;n de <strong>clasificaci&oacute;n</strong></li>
 </ul>
 
-<p>Estas aristas no son inventadas ni inferidas: son el reflejo directo de los metadatos de cada ficha en el repositorio MAMPA. <strong>El grafo no agrega informaci&oacute;n nueva; la reorganiza para que se pueda ver.</strong></p>
+<p>Estas aristas son el reflejo directo de los metadatos de cada una de las fichas en la mediateca. El grafo no agrega información nueva, simplemente la reorganiza para que sus relaciones se vuelvan <strong>visibles</strong>.</p>
 </section>
 <!-- 04 CERCANÍA -->
 
@@ -452,29 +452,43 @@
 
 <h2>Cercan&iacute;a, distancia y espacio</h2>
 
-<p>Los nodos no est&aacute;n ubicados en posiciones fijas. Se distribuyen mediante un <strong>algoritmo de simulaci&oacute;n de fuerzas</strong>: los nodos conectados se atraen como si estuvieran unidos por resortes, y todos se repelen entre s&iacute; como part&iacute;culas con la misma carga el&eacute;ctrica.</p>
+<p>Los nodos no están ubicados en posiciones fijas; por el c
+<!-- 03 ARISTAS -->
+
+<section class="story-section" data-scene="edges">
+<div class="section-num">03 &mdash; Anatom&iacute;a del grafo</div>
+
+<h2>Aristas</h2>
+ontrario, se distribuyen mediante un <strong>algoritmo de simulación de fuerzas</strong>: los nodos conectados se atraen como si estuvieran unidos por resortes y todos se repelen entre sí como partículas con la misma carga eléctrica.</p>
 
 <ul>
-	<li><strong>Nodos cercanos</strong> comparten muchas conexiones. Dos fichas pr&oacute;ximas probablemente comparten autores o &aacute;rea tem&aacute;tica.</li>
-	<li><strong>Nodos lejanos</strong> tienen poco o nada en com&uacute;n.</li>
-	<li><strong>Nodos centrales</strong> son los m&aacute;s conectados: funcionan como articuladores de la red.</li>
-	<li><strong>Nodos perif&eacute;ricos</strong> tienden a ser m&aacute;s especializados o menos conectados.</li>
+	<li>Los <strong>Nodos cercanos</strong> comparten muchas conexiones. Dos fichas que se encuentran muy cerca probablemente comparten autores o área temática.</li>
+	<li>Los <strong>Nodos lejanos</strong> tienen poco o nada en com&uacute;n.</li>
+	<li>Los <strong>Nodos centrales</strong> son los m&aacute;s conectados: funcionan como articuladores de la red.</li>
+	<li>Los <strong>Nodos perif&eacute;ricos</strong> tienden a ser m&aacute;s especializados y en general responden a categorías poco frecuentes.</li>
 </ul>
 
-<p>La posici&oacute;n no es un dato en s&iacute; mismo, sino una <strong>consecuencia de las relaciones</strong>.</p>
+<p>En el grafo, la posición de un nodo no es un dato en sí mismo, sino una <strong>consecuencia de las relaciones que mantiene con los demás</strong>.</p>
 </section>
 <!-- 05 COMUNIDADES -->
 
 <section class="story-section" data-scene="communities">
 <div class="section-num">05 &mdash; Comunidades</div>
 
-<h2>Los clusters que emergen</h2>
+<!-- 03 ARISTAS -->
 
-<p>Cuando miramos el grafo completo, notamos <strong>agrupamientos naturales</strong>: zonas m&aacute;s densas donde muchos nodos est&aacute;n interconectados. Estos agrupamientos se llaman <strong>comunidades o clusters</strong>, y emergen sin que nadie los haya definido a priori.</p>
+<section class="story-section" data-scene="edges">
+<div class="section-num">03 &mdash; Anatom&iacute;a del grafo</div>
 
-<p>En MAMPA, las comunidades m&aacute;s evidentes se organizan alrededor de las <strong>&aacute;reas tem&aacute;ticas</strong>. Los recursos de <strong>Lenguas Extranjeras</strong> tienden a compartir autores, palabras clave y tipos de contenido entre s&iacute;, formando una regi&oacute;n densa que se distingue de la regi&oacute;n de Ciencias Naturales o Matem&aacute;tica.</p>
+<h2>Aristas</h2>
 
-<p>Pero lo m&aacute;s interesante no son las comunidades en s&iacute;, sino lo que ocurre <strong>entre ellas</strong>: palabras clave puente, autores transversales, fichas &quot;an&oacute;malas&quot; que por su combinaci&oacute;n inusual de metadatos quedan alejadas de cualquier cluster denso.</p>
+<h2>Los clusters</h2>
+
+<p>Cuando miramos el grafo completo, notamos agrupamientos “naturales”. Vemos zonas más densas, en donde muchos nodos están interconectados, y otras menos pobladas. Estos agrupamientos se llaman <strong>comunidades o clusters</strong>, y emergen sin que nadie los haya definido a priori.</p>
+
+<p>En MAMPA, las comunidades más evidentes se organizan alrededor de las áreas temáticas. Los recursos de Lengua Extranjera, por ejemplo, tienden a compartir autores, palabras clave y tipo de material, por lo que forman una región densa que se distingue de otras.</p>
+
+<p>Pero lo más interesante no son las comunidades en sí, sino lo que <strong>ocurre entre ellas</strong>: aquellas palabras que vinculan contenidos de áreas temáticas diversas, autores transversales a distintas disciplinas, fichas "anómalas" que por su combinación inusual de metadatos quedan alejadas de cualquier cluster denso.</p>
 </section>
 <!-- 06 VECINDARIO -->
 
@@ -483,7 +497,8 @@
 
 <h2>Explorar con foco</h2>
 
-<p>La visualizaci&oacute;n permite reducir el grafo al <strong>vecindario</strong> de un nodo: el conjunto de nodos directamente conectados a &eacute;l. Este concepto se puede extender a m&uacute;ltiples niveles de profundidad o &quot;saltos&quot;.</p>
+<p>Esta <strong>visualización</strong> permite hacer foco en el vecindario de un nodo (el conjunto de nodos directamente conectados con él) o ampliarlo para tener una perspectiva más general. Este concepto se puede extender a múltiples niveles de profundidad o "saltos".
+.</p>
 
 <div class="hop-indicator" id="hop-indicator">
 <div class="hop-pill active" id="hop-pill-0">Nodo solo</div>
@@ -496,9 +511,9 @@
 </div>
 
 <ul>
-	<li><strong>1 salto:</strong> veo el nodo seleccionado y todos los nodos directamente conectados. Si selecciono un autor, veo sus fichas.</li>
-	<li><strong>2 saltos:</strong> adem&aacute;s de los vecinos directos, veo los vecinos de los vecinos. Se revelan conexiones indirectas.</li>
-	<li><strong>3 saltos:</strong> el vecindario puede incluir una porci&oacute;n significativa del grafo. Lo que se vuelve visible es la <strong>regi&oacute;n de la red</strong> en la que habita ese nodo.</li>
+	<li><strong>1 salto:</strong> veo el nodo seleccionado y todos los nodos directamente conectados con él. Si selecciono un autor, veo solo las fichas en las que participó.</li>
+	<li><strong>2 saltos:</strong> además de los “vecinos” directos, veo también los vecinos de los vecinos; es decir, se revelan las conexiones indirectas que un nodo mantiene con los demás.</li>
+	<li><strong>3 saltos:</strong> el vecindario puede incluir una porción significativa del grafo; lo que se vuelve visible es la región de la red en la que habita ese nodo.</li>
 </ul>
 </section>
 <!-- 07 FILTROS -->
@@ -508,12 +523,12 @@
 
 <h2>Descomponer la complejidad</h2>
 
-<p>El grafo completo tiene m&aacute;s de <strong>1200 nodos y 5200 aristas</strong>. Eso es mucho para absorber de una sola vez. Los filtros por tipo de relaci&oacute;n permiten descomponer esa complejidad:</p>
+<p>El grafo completo tiene <strong><span data-stat="nodes">1200</span> nodos y <span data-stat="edges">5200</span> aristas</strong>. Esto es mucha información para absorber de una sola vez. Los filtros por tipo de relaci&oacute;n permiten descomponer esa complejidad:</p>
 
 <ul>
 	<li><strong>Solo autores:</strong> se revelan las redes de colaboraci&oacute;n y los autores m&aacute;s prol&iacute;ficos.</li>
 	<li><strong>Solo palabras clave:</strong> se ve la estructura tem&aacute;tica y los clusters por afinidad de contenido.</li>
-	<li><strong>Solo &aacute;reas tem&aacute;ticas:</strong> las 15 &aacute;reas funcionan como polos de atracci&oacute;n.</li>
+	<li><strong>Solo &aacute;reas tem&aacute;ticas:</strong> las <span data-stat="areas">15</span> &aacute;reas funcionan como polos de atracci&oacute;n.</li>
 	<li><strong>Combinando filtros:</strong> cada combinaci&oacute;n cuenta una historia diferente sobre el mismo conjunto de datos.</li>
 </ul>
 
@@ -526,11 +541,11 @@
 
 <h2>El grafo completo</h2>
 
-<p>Hasta aqu&iacute; llegamos. Lo que viste a lo largo de estas secciones no es solo una explicaci&oacute;n, sino una <strong>invitaci&oacute;n</strong>.</p>
+<p>Ahora que ya conocés cada una de las piezas, te invitamos a recorrer el <strong>recurso completo</strong>.</p>
 
-<p>Ahora ten&eacute;s el grafo completo frente a vos. Cada nodo, cada arista, cada conexi&oacute;n est&aacute; ah&iacute; para que explores. <strong>Hac&eacute; clic en cualquier ficha</strong> para ver su vecindario, <strong>us&aacute; los filtros</strong> para descomponer la complejidad, <strong>arrastr&aacute; los nodos</strong> para reorganizar el espacio.</p>
+<p>El grafo es interactivo y funciona también como una puerta de entrada a la mediateca: desde cada nodo podés llegar a las fichas y a sus materiales. Hacé clic en un autor, una palabra clave o un área para ver su vecindario; combiná filtros para quedarte con una sola capa de relaciones; arrastrá los nodos para reorganizar el espacio a tu manera. </p>
 
-<p>Este grafo vive, cambia y crece con cada nuevo recurso que se incorpora al repositorio MAMPA. No es un producto terminado: es una <strong>herramienta de descubrimiento</strong>.</p>
+<p>Este grafo <strong>no está terminado</strong>. Cada recurso que llega a la mediateca suma un nodo, tiende nuevos hilos y desplaza un poco a todos los demás. La forma que ves hoy es apenas <strong>un instante de algo que sigue creciendo</strong>.</p>
 
 <p><a href="./index_isep.html" style="color:var(--accent);font-family:'EB Garamond',serif;font-size:17px;">Abrir en pantalla completa &rarr; </a></p>
 </section>
@@ -583,12 +598,10 @@ function qs(sel) { return block.querySelector(sel); }
 function qsa(sel) { return block.querySelectorAll(sel); }
 
 // ══════════════════════════════════════════════════
-//  NARRATIVA MAMPA  Scrollytelling (embedded v2)
+//  NARRATIVA MAMPA — Scrollytelling (embedded v2)
 // ══════════════════════════════════════════════════
 
-// URL de los datos del grafo (graph.json).
-// En producción apuntá al graph.json servido por tu sitio (ej. https://tusitio/.../graph.json).
-var DATA_URL = 'http://localhost:9005/themes/freedomISEP/asset/js/data/graph.json';
+var DATA_URL = 'https://testmampa.isep-cba.edu.ar/themes/freedomISEP/asset/js/data/graph.json';
 
 var SCENE_LABELS = {
   intro:'01 / Introducción', nodes:'02 / Nodos', edges:'03 / Aristas',
@@ -596,24 +609,19 @@ var SCENE_LABELS = {
   neighborhood:'06 / Vecindario', filters:'07 / Filtros', glossary:'08 / Grafo completo',
 };
 
-/* ──────────────────────────────────────────────────────────────
-   PALETA DE COLORES DE NODOS — editá acá, en el HTML.
-   Antes estos colores venían hardcodeados en graph.json (campo "c"
-   de cada nodo). Ahora el HTML es la fuente de verdad; graph.json
-   ya no lleva colores. Tipos: item | creator | subject | coverage | type
-   ────────────────────────────────────────────────────────────── */
-var COLOR = { item:'#7a8b6e', creator:'#00b2e3', subject:'#0080b1', coverage:'#87c6a1', type:'#009e96' };
+var COLOR = { item:'#0080b1', creator:'#00b2e3', subject:'#87c6a1', coverage:'#0080b1', type:'#009e96' };
 var TYPE_LABEL = { item:'Ficha', creator:'Autor/a', subject:'Palabra clave', coverage:'Área temática', type:'Tipo' };
-var REL_COLOR  = { authored_by:'#00b2e3', tagged_with:'#87c6a1', belongs_to_area:'#acc7c7', is_type:'#008079' };
+var REL_COLOR  = { authored_by:'#00b2e3', tagged_with:'#87c6a1', belongs_to_area:'#0080b1', is_type:'#009e96' };
 var REL_LABEL  = { authored_by:'autoría', tagged_with:'etiquetado', belongs_to_area:'pertenencia', is_type:'clasificación' };
 
-var ITEM_ID     = 'item_734';
-var CREATOR_ID  = 'creator_dc6661a2';
-var SUBJECT_ID  = 'subject_f8e8cb67';
-var COVERAGE_ID = 'coverage_20aed093';
-var TYPE_ID     = 'type_6829c5ba';
+var ITEM_ID     = 'item_2056';
+var CREATOR_ID  = 'creator_fe375b0c';
+var SUBJECT_ID  = 'subject_46a81d12';
+var COVERAGE_ID = 'coverage_e605989e';
+var TYPE_ID     = 'type_8aa89499';
 
 var allNodes, allEdges, nodeMap, adjMap;
+var STATS = {};
 var SUBSETS = {};
 var svg, g, edgeG, nodeG, labelG, annotG;
 var zoom, tip;
@@ -745,9 +753,9 @@ function initD3() {
 
   tip = d3.select('body').append('div')
     .style('position','fixed').style('pointer-events','none').style('display','none')
-    .style('background','var(--surface)').style('border','1px solid var(--border)').style('border-radius','8px')
+    .style('background','#ffffff').style('border','1px solid #cccccc').style('border-radius','8px')
     .style('padding','8px 14px').style('font-family',"'Raleway',sans-serif")
-    .style('font-size','12px').style('color','var(--text)').style('z-index','500')
+    .style('font-size','12px').style('color','#1a1a1a').style('z-index','500')
     .style('max-width','240px').style('line-height','1.5')
     .style('box-shadow','0 4px 16px rgba(0,0,0,0.15)');
 
@@ -776,7 +784,7 @@ function onTick() {
 function render(nodes, edges, opts) {
   opts = opts || {};
   var big         = opts.big || false;
-  var edgeStroke  = opts.edgeStroke  || (function(e) { return REL_COLOR[e.relation]||'#8a9e78'; });
+  var edgeStroke  = opts.edgeStroke  || (function(e) { return REL_COLOR[e.relation]||COLOR.item; });
   var edgeOpacity = opts.edgeOpacity || 0.18;
   var edgeWidth   = opts.edgeWidth   || 0.6;
   var fillFn      = opts.fillFn      || (function(d) { return d.color; });
@@ -902,7 +910,7 @@ function sceneIntro() {
     }));
 
   render(allNodes, allEdges, {
-    edgeStroke: function() { return '#8a9e78'; }, edgeOpacity:0.1, edgeWidth:0.4,
+    edgeStroke: function() { return COLOR.item; }, edgeOpacity:0.1, edgeWidth:0.4,
     stagger:true, alpha:0.9,
     opacityFn: function(d) { return d.type==='item'?0.45:0.88; },
   });
@@ -933,10 +941,13 @@ function sceneNodes() {
   var tok = sceneToken;
   setTimeout(function(){
     if(sceneToken!==tok) return;
+    function nd(id) { return nodeMap.get(id) || {label:'', degree:0}; }
     var descs = {
-      item:'657 recursos', creator:'Daveloza, Valeria \u2014 46 fichas',
-      subject:'pedagog\u00EDa \u2014 22 conexiones', coverage:'Lenguas Extranjeras \u2014 121 items',
-      type:'Libro'
+      item: STATS.items + ' recursos',
+      creator: nd(CREATOR_ID).label + ' \u2014 ' + nd(CREATOR_ID).degree + ' fichas',
+      subject: nd(SUBJECT_ID).label + ' \u2014 ' + nd(SUBJECT_ID).degree + ' conexiones',
+      coverage: nd(COVERAGE_ID).label + ' \u2014 ' + nd(COVERAGE_ID).degree + ' items',
+      type: nd(TYPE_ID).label
     };
     nodes.forEach(function(n,i){
       var a = (i/nodes.length)*Math.PI*2-Math.PI/2;
@@ -1039,7 +1050,7 @@ function sceneProximity() {
   var nodeSet = new Set(nodes.map(function(n) { return n.id; }));
 
   render(nodes, edges, {
-    edgeStroke:function() { return '#8a9e78'; }, edgeOpacity:0.2, edgeWidth:0.6,
+    edgeStroke:function() { return COLOR.item; }, edgeOpacity:0.2, edgeWidth:0.6,
     stagger:true, alpha:1.0,
     opacityFn: function(d) { return d.type==='item'?0.5:0.9; },
     charge: function(d) { return d.type==='item'?-25:-100; },
@@ -1080,14 +1091,14 @@ function sceneProximity() {
     }
 
     var pairs = [
-      [central, 'CENTRAL',    '#5c7a4a', 'top'],
-      [periph,  'PERIFÉRICO', '#d07e32', 'top'],
+      [central, 'CENTRAL',    COLOR.coverage, 'top'],
+      [periph,  'PERIFÉRICO', COLOR.type, 'top'],
     ];
     if (near1 && near2) {
-      pairs.push([near1, 'CERCANOS', '#5b9d98', 'top']);
+      pairs.push([near1, 'CERCANOS', COLOR.subject, 'top']);
     }
     if (far1 && far2) {
-      pairs.push([far1, 'LEJANOS', '#5896d1', 'top']);
+      pairs.push([far1, 'LEJANOS', COLOR.creator, 'top']);
     }
 
     var annotTexts = pairs.map(function(pair) {
@@ -1103,17 +1114,17 @@ function sceneProximity() {
 
     var lineRefs = [];
     if (near1 && near2) {
-      lineRefs.push({a:near1, b:near2, color:'#5b9d98', dash:'2,3',
+      lineRefs.push({a:near1, b:near2, color:COLOR.subject, dash:'2,3',
         line: annotG.insert('line',':first-child')
           .attr('x1',near1.x).attr('y1',near1.y).attr('x2',near2.x).attr('y2',near2.y)
-          .attr('stroke','#5b9d98').attr('stroke-width',1).attr('stroke-dasharray','2,3').attr('stroke-opacity',0)
+          .attr('stroke',COLOR.subject).attr('stroke-width',1).attr('stroke-dasharray','2,3').attr('stroke-opacity',0)
           .call(function(s) { s.transition().duration(500).attr('stroke-opacity',0.6); })});
     }
     if (far1 && far2) {
-      lineRefs.push({a:far1, b:far2, color:'#5896d1', dash:'1,5',
+      lineRefs.push({a:far1, b:far2, color:COLOR.creator, dash:'1,5',
         line: annotG.insert('line',':first-child')
           .attr('x1',far1.x).attr('y1',far1.y).attr('x2',far2.x).attr('y2',far2.y)
-          .attr('stroke','#5896d1').attr('stroke-width',1).attr('stroke-dasharray','1,5').attr('stroke-opacity',0)
+          .attr('stroke',COLOR.creator).attr('stroke-width',1).attr('stroke-dasharray','1,5').attr('stroke-opacity',0)
           .call(function(s) { s.transition().duration(500).attr('stroke-opacity',0.5); })});
     }
 
@@ -1138,7 +1149,7 @@ function sceneCommunities() {
   render(allNodes, allEdges, {
     edgeStroke: function() { return 'var(--border)'; }, edgeOpacity:0.04, edgeWidth:0.4,
     stagger:false, alpha:0.5,
-    fillFn:    function(d) { return leIds.has(d.id)?d.color:'#d4cfc6'; },
+    fillFn:    function(d) { return leIds.has(d.id)?d.color:'#d9d9d9'; },
     opacityFn: function(d) { return leIds.has(d.id)?0.95:0.15; },
     glowFn:    function(d) { return d.id===COVERAGE_ID?'url(#sglow2)':null; },
     labelNodes: leNodes.filter(function(n) { return n.type!=='item'; }),
@@ -1156,7 +1167,7 @@ function sceneCommunities() {
   setTimeout(function(){
     if(sceneToken!==tok) return;
     linkEls.transition().duration(500)
-      .attr('stroke',   function(e) { return (leIds.has(srcId(e))&&leIds.has(tgtId(e)))?'#994578':'var(--border-light)'; })
+      .attr('stroke',   function(e) { return (leIds.has(srcId(e))&&leIds.has(tgtId(e)))?COLOR.coverage:'var(--border-light)'; })
       .attr('stroke-opacity', function(e) { return (leIds.has(srcId(e))&&leIds.has(tgtId(e)))?0.35:0.04; });
 
     zoomToNodes(leNodes, 80, 1200);
@@ -1195,7 +1206,7 @@ function sceneNeighborhood(hop) {
   render(nodes, edges, {
     big: hop <= 1,
     alpha:alpha,
-    edgeStroke: function(e) { return REL_COLOR[e.relation]||'#8a9e78'; },
+    edgeStroke: function(e) { return REL_COLOR[e.relation]||COLOR.item; },
     edgeOpacity: 0.6, edgeWidth: hop<=1 ? 1.6 : 0.8,
     stagger: true,
     opacityFn: function(d){
@@ -1283,7 +1294,7 @@ function sceneGlossary() {
     }));
 
   render(allNodes, allEdges, {
-    edgeStroke: function(e) { return REL_COLOR[e.relation] || '#8a9e78'; },
+    edgeStroke: function(e) { return REL_COLOR[e.relation] || COLOR.item; },
     edgeOpacity: 0.12, edgeWidth: 0.4,
     stagger: true, alpha: 0.8,
     opacityFn: function(d) { return d.type==='item' ? 0.45 : 0.88; },
@@ -1407,11 +1418,23 @@ function init() {
     .then(function(r) { return r.json(); })
     .then(function(data){
       allNodes = data.nodes.map(function(n) { return {
-        id:n.id, label:n.l, type:n.t, color: COLOR[n.t] || n.c,
+        id:n.id, label:n.l, type:n.t, color:(COLOR[n.t] || n.c || '#999999'),
         degree:n.d||0, url:n.url||'', abstract:n.abs||'', fullTitle:n.ft||n.l,
       };});
       allEdges = data.edges.map(function(e) { return {source:e.s, target:e.t, relation:e.r}; });
       nodeMap  = new Map(allNodes.map(function(n) { return [n.id,n]; }));
+
+      STATS = {
+        items: allNodes.filter(function(n) { return n.type==='item'; }).length,
+        areas: allNodes.filter(function(n) { return n.type==='coverage'; }).length,
+        nodes: allNodes.length,
+        edges: allEdges.length,
+        creatorDeg: nodeMap.get(CREATOR_ID) ? nodeMap.get(CREATOR_ID).degree : ''
+      };
+      qsa('[data-stat]').forEach(function(el) {
+        var v = STATS[el.getAttribute('data-stat')];
+        if (v !== undefined && v !== '') el.textContent = v;
+      });
 
       buildSubsets();
       initD3();

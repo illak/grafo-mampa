@@ -193,7 +193,7 @@
   .story-section ul li.c-type::before   { background: var(--type); }
 
   .hop-indicator {
-    display: flex; gap: 10px; margin-bottom: 24px;
+    display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;
   }
   .hop-pill {
     font-family: 'Instrument Sans', sans-serif;
@@ -401,149 +401,145 @@
 
     <!-- 01 INTRO -->
     <section class="story-section" data-scene="intro">
-      <div class="section-num">01 — Introducción</div>
-      <h1>Una forma de visualizar datos</h1>
-      <p>
-        Imaginá por un momento que cada ficha del repositorio MAMPA —cada material educativo, cada artículo, cada libro— es una persona en una sala.
-      </p>
-      <p>
-        Cada vez que dos de esas personas <strong>comparten algo en común</strong> —un autor, una palabra clave, un área disciplinar—, se toman de la mano.
-        Al cabo de un rato, la sala se reorganiza sola: los grupos más conectados quedan cerca, los que tienen poco en común se alejan.
-      </p>
-      <p>
-        Eso es exactamente lo que hace la Red de Contenidos MAMPA. No es una lista, no es una tabla. Es un <strong>grafo</strong>: una trama viva donde los datos dejan de estar quietos y empiezan a vincularse.
-      </p>
-      <p>
-        Las fichas de Omeka S dejan de ser piezas aisladas. Cada una se vuelve una puerta. La navegación ya no responde a un orden predefinido, sino a la <strong>curiosidad de quien explora</strong>.
-      </p>
-    </section>
+<div class="section-num">01 &mdash; Introducci&oacute;n</div>
 
-    <!-- 02 NODOS -->
-    <section class="story-section" data-scene="nodes">
-      <div class="section-num">02 — Anatomía del grafo</div>
-      <h2>Nodos: las entidades</h2>
-      <p>
-        Cada círculo en la visualización es un <strong>nodo</strong>, y representa una entidad. En nuestro grafo conviven cinco tipos, cada uno con su color:
-      </p>
-      <ul>
-        <li class="c-item"><strong>Fichas:</strong> los <span data-stat="items">657</span> recursos del repositorio MAMPA. Son el corazón del grafo.</li>
-        <li class="c-creator"><strong>Autores:</strong> las personas o colectivos que produjeron esos recursos.</li>
-        <li class="c-subject"><strong>Palabras clave:</strong> los descriptores temáticos asignados a cada ficha.</li>
-        <li class="c-coverage"><strong>Áreas temáticas:</strong> las <span data-stat="areas">15</span> grandes áreas de cobertura disciplinar.</li>
-        <li class="c-type"><strong>Tipos de contenido:</strong> la clasificación formal del recurso.</li>
-      </ul>
-      <p>
-        El <strong>tamaño de cada nodo no es arbitrario</strong>: es proporcional a su cantidad de conexiones. Un autor con <span data-stat="creatorDeg">46</span> fichas se ve más grande que uno con 2. Esto se llama <strong>grado del nodo</strong>.
-      </p>
-    </section>
+<h1>Una forma de visualizar datos</h1>
 
-    <!-- 03 ARISTAS -->
-    <section class="story-section" data-scene="edges">
-      <div class="section-num">03 — Anatomía del grafo</div>
-      <h2>Aristas: las relaciones</h2>
-      <p>
-        Las líneas que conectan nodos son <strong>aristas</strong>, y cada una representa una relación concreta:
-      </p>
-      <ul>
-        <li>Una ficha → su/s autor/es: relación de <strong>autoría</strong></li>
-        <li>Una ficha → sus palabras clave: relación de <strong>etiquetado</strong></li>
-        <li>Una ficha → su área temática: relación de <strong>pertenencia</strong></li>
-        <li>Una ficha → su tipo de contenido: relación de <strong>clasificación</strong></li>
-      </ul>
-      <p>
-        Estas aristas no son inventadas ni inferidas: son el reflejo directo de los metadatos cargados en Omeka S. <strong>El grafo no agrega información nueva; la reorganiza para que se pueda ver.</strong>
-      </p>
-    </section>
+<p>La imagen que ves a la derecha es un <strong>grafo</strong>. Te contamos qué es y cómo puede aportar a tu búsqueda.</p>
 
-    <!-- 04 CERCANÍA -->
-    <section class="story-section" data-scene="proximity">
-      <div class="section-num">04 — Lógica del espacio</div>
-      <h2>Cercanía, distancia y espacio</h2>
-      <p>
-        Los nodos no están ubicados en posiciones fijas. Se distribuyen mediante un <strong>algoritmo de simulación de fuerzas</strong>: los nodos conectados se atraen como si estuvieran unidos por resortes, y todos se repelen entre sí como partículas con la misma carga eléctrica.
-      </p>
-      <ul>
-        <li><strong>Nodos cercanos</strong> comparten muchas conexiones. Dos fichas próximas probablemente comparten autores o área temática.</li>
-        <li><strong>Nodos lejanos</strong> tienen poco o nada en común.</li>
-        <li><strong>Nodos centrales</strong> son los más conectados: funcionan como articuladores de la red.</li>
-        <li><strong>Nodos periféricos</strong> tienden a ser más especializados o menos conectados.</li>
-      </ul>
-      <p>
-        La posición no es un dato en sí mismo, sino una <strong>consecuencia de las relaciones</strong>.
-      </p>
-    </section>
+<p>Un <strong>grafo</strong> es una forma de mostrar datos a partir de sus relaciones. Imaginá por un momento que cada uno de los materiales de la mediateca es una persona en una sala; cada vez que algunas de esas personas <strong>comparten algo en común</strong> (un autor, una palabra clave, un área disciplinar), se toman de la mano. Después de un rato, la sala se reorganiza: los grupos más conectados entre sí <strong>quedan cerca</strong>, los que tienen poco en común <strong>se alejan</strong> y los que funcionan como puente entre “mundos” distintos quedan en posiciones intermedias.</p>
 
-    <!-- 05 COMUNIDADES -->
-    <section class="story-section" data-scene="communities">
-      <div class="section-num">05 — Comunidades</div>
-      <h2>Los clusters que emergen</h2>
-      <p>
-        Cuando miramos el grafo completo, notamos <strong>agrupamientos naturales</strong>: zonas más densas donde muchos nodos están interconectados. Estos agrupamientos se llaman <strong>comunidades o clusters</strong>, y emergen sin que nadie los haya definido a priori.
-      </p>
-      <p>
-        En MAMPA, las comunidades más evidentes se organizan alrededor de las <strong>áreas temáticas</strong>. Los recursos de <strong>Lenguas Extranjeras</strong> tienden a compartir autores, palabras clave y tipos de contenido entre sí, formando una región densa que se distingue de la región de Ciencias Naturales o Matemática.
-      </p>
-      <p>
-        Pero lo más interesante no son las comunidades en sí, sino lo que ocurre <strong>entre ellas</strong>: palabras clave puente, autores transversales, fichas "anómalas" que por su combinación inusual de metadatos quedan alejadas de cualquier cluster denso.
-      </p>
-    </section>
+<p>Eso es exactamente lo que hace la <strong>Red de Contenidos de MAMPA</strong>, nos muestra cómo se relacionan los recursos de la mediateca. En este tipo de visualizaciones, empiezan a emerger patrones que no eran visibles antes: afinidades, recurrencias y anomalías que solo se revelan cuando los datos se muestran en relación.</p>
 
-    <!-- 06 VECINDARIO -->
-    <section class="story-section neighborhood-section" data-scene="neighborhood">
-      <div class="section-num">06 — El vecindario</div>
-      <h2>Explorar con foco</h2>
-      <p>
-        La visualización permite reducir el grafo al <strong>vecindario</strong> de un nodo: el conjunto de nodos directamente conectados a él. Este concepto se puede extender a múltiples niveles de profundidad o "saltos".
-      </p>
+<p>En este sentido, las fichas de MAMPA dejan de ser piezas aisladas. Cada una se vuelve una puerta. La navegaci&oacute;n ya no responde a un orden predefinido, sino a la <strong>curiosidad de quien explora</strong>.</p>
+</section>
+<!-- 02 NODOS -->
 
-      <div class="hop-indicator" id="hop-indicator">
-        <div class="hop-pill active" id="hop-pill-0">Nodo solo</div>
-        <div class="hop-pill" id="hop-pill-1">1 salto</div>
-        <div class="hop-pill" id="hop-pill-2">2 saltos</div>
-        <div class="hop-pill" id="hop-pill-3">3 saltos</div>
-      </div>
+<section class="story-section" data-scene="nodes">
+<div class="section-num">02 &mdash; Anatom&iacute;a del grafo</div>
 
-      <ul>
-        <li><strong>1 salto:</strong> veo el nodo seleccionado y todos los nodos directamente conectados. Si selecciono un autor, veo sus fichas.</li>
-        <li><strong>2 saltos:</strong> además de los vecinos directos, veo los vecinos de los vecinos. Se revelan conexiones indirectas.</li>
-        <li><strong>3 saltos:</strong> el vecindario puede incluir una porción significativa del grafo. Lo que se vuelve visible es la <strong>región de la red</strong> en la que habita ese nodo.</li>
-      </ul>
-    </section>
+<h2>Nodos</h2>
 
-    <!-- 07 FILTROS -->
-    <section class="story-section" data-scene="filters">
-      <div class="section-num">07 — Filtros</div>
-      <h2>Descomponer la complejidad</h2>
-      <p>
-        El grafo completo tiene <strong><span data-stat="nodes">1200</span> nodos y <span data-stat="edges">5200</span> aristas</strong>. Eso es mucho para absorber de una sola vez. Los filtros por tipo de relación permiten descomponer esa complejidad:
-      </p>
-      <ul>
-        <li><strong>Solo autores:</strong> se revelan las redes de colaboración y los autores más prolíficos.</li>
-        <li><strong>Solo palabras clave:</strong> se ve la estructura temática y los clusters por afinidad de contenido.</li>
-        <li><strong>Solo áreas temáticas:</strong> las <span data-stat="areas">15</span> áreas funcionan como polos de atracción.</li>
-        <li><strong>Combinando filtros:</strong> cada combinación cuenta una historia diferente sobre el mismo conjunto de datos.</li>
-      </ul>
-      <p>
-        Usá los botones del panel para explorar distintas capas del grafo.
-      </p>
-    </section>
+<p>Cada uno de los círculos que ves en el grafo es un <strong>nodo</strong>; cada nodo representa una entidad. En nuestro grafo conviven cinco tipos, diferenciados por color:</p>
 
-    <!-- 08 GLOSARIO -->
-    <section class="story-section" data-scene="glossary">
-      <div class="section-num">08 — Conceptos clave</div>
-      <h2>Glosario de la red</h2>
-      <p>
-        Estos son los conceptos fundamentales de la teoría de grafos aplicados a la Red de Contenidos MAMPA.
-      </p>
-      <p>
-        El grafo no es solo una visualización: es una forma distinta de pensar los datos. Cada concepto revela una dimensión del repositorio que el formato tabular no puede mostrar.
-      </p>
-      <p>
-        <a href="./index.html" style="color:var(--accent);font-family:'EB Garamond',serif;font-size:17px;">
-          Explorá el grafo interactivo →
-        </a>
-      </p>
-    </section>
+<ul>
+	<li class="c-item"><strong>Fichas:</strong> los <span data-stat="items">657</span> recursos del repositorio MAMPA. Constituyen el coraz&oacute;n del grafo.</li>
+	<li class="c-creator"><strong>Autores:</strong> las personas o colectivos que produjeron esos recursos.</li>
+	<li class="c-subject"><strong>Palabras clave:</strong> los descriptores asignados a cada material.</li>
+	<li class="c-coverage"><strong>&Aacute;reas tem&aacute;ticas:</strong> las <span data-stat="areas">15</span> &aacute;reas de cobertura disciplinar.</li>
+	<li class="c-type"><strong>Tipos de contenido:</strong> la clasificaci&oacute;n formal del recurso.</li>
+</ul>
+
+<p>El <strong>tamaño de cada nodo es proporcional a su cantidad de conexiones</strong>. De esta manera, un autor que esté vinculado con 20 fichas se verá más grande que uno que solo esté vinculado con 2. Esto se <strong>llama grado del nodo</strong>.</p>
+</section>
+<!-- 03 ARISTAS -->
+
+<section class="story-section" data-scene="edges">
+<div class="section-num">03 &mdash; Anatom&iacute;a del grafo</div>
+
+<h2>Aristas</h2>
+
+<p>Las <strong>aristas</strong> son las líneas que conectan los nodos entre sí y representan las relaciones que se establecen entre ellos.</p>
+
+<ul>
+	<li>Una ficha &rarr; su/s autor/es: relaci&oacute;n de <strong>autor&iacute;a</strong></li>
+	<li>Una ficha &rarr; sus palabras clave: relaci&oacute;n de <strong>etiquetado</strong></li>
+	<li>Una ficha &rarr; su &aacute;rea tem&aacute;tica: relaci&oacute;n de <strong>pertenencia</strong></li>
+	<li>Una ficha &rarr; su tipo de contenido: relaci&oacute;n de <strong>clasificaci&oacute;n</strong></li>
+</ul>
+
+<p>Estas aristas son el reflejo directo de los metadatos de cada una de las fichas en la mediateca. El grafo no agrega información nueva, simplemente la reorganiza para que sus relaciones se vuelvan <strong>visibles</strong>.</p>
+</section>
+<!-- 04 CERCANÍA -->
+
+<section class="story-section" data-scene="proximity">
+<div class="section-num">04 &mdash; L&oacute;gica del espacio</div>
+
+<h2>Cercan&iacute;a, distancia y espacio</h2>
+
+<p>Los nodos no están ubicados en posiciones fijas; por el contrario, se distribuyen mediante un <strong>algoritmo de simulación de fuerzas</strong>: los nodos conectados se atraen como si estuvieran unidos por resortes y todos se repelen entre sí como partículas con la misma carga eléctrica.</p>
+
+<ul>
+	<li>Los <strong>Nodos cercanos</strong> comparten muchas conexiones. Dos fichas que se encuentran muy cerca probablemente comparten autores o área temática.</li>
+	<li>Los <strong>Nodos lejanos</strong> tienen poco o nada en com&uacute;n.</li>
+	<li>Los <strong>Nodos centrales</strong> son los m&aacute;s conectados: funcionan como articuladores de la red.</li>
+	<li>Los <strong>Nodos perif&eacute;ricos</strong> tienden a ser m&aacute;s especializados y en general responden a categorías poco frecuentes.</li>
+</ul>
+
+<p>En el grafo, la posición de un nodo no es un dato en sí mismo, sino una <strong>consecuencia de las relaciones que mantiene con los demás</strong>.</p>
+</section>
+<!-- 05 COMUNIDADES -->
+
+<section class="story-section" data-scene="communities">
+<div class="section-num">05 &mdash; Comunidades</div>
+
+<h2>Los clusters</h2>
+
+<p>Cuando miramos el grafo completo, notamos agrupamientos “naturales”. Vemos zonas más densas, en donde muchos nodos están interconectados, y otras menos pobladas. Estos agrupamientos se llaman <strong>comunidades o clusters</strong>, y emergen sin que nadie los haya definido a priori.</p>
+
+<p>En MAMPA, las comunidades más evidentes se organizan alrededor de las áreas temáticas. Los recursos de Lengua Extranjera, por ejemplo, tienden a compartir autores, palabras clave y tipo de material, por lo que forman una región densa que se distingue de otras.</p>
+
+<p>Pero lo más interesante no son las comunidades en sí, sino lo que <strong>ocurre entre ellas</strong>: aquellas palabras que vinculan contenidos de áreas temáticas diversas, autores transversales a distintas disciplinas, fichas "anómalas" que por su combinación inusual de metadatos quedan alejadas de cualquier cluster denso.</p>
+</section>
+<!-- 06 VECINDARIO -->
+
+<section class="story-section" data-scene="neighborhood">
+<div class="section-num">06 &mdash; El vecindario</div>
+
+<h2>Explorar con foco</h2>
+
+<p>Esta <strong>visualización</strong> permite hacer foco en el vecindario de un nodo (el conjunto de nodos directamente conectados con él) o ampliarlo para tener una perspectiva más general. Este concepto se puede extender a múltiples niveles de profundidad o "saltos".
+.</p>
+
+<div class="hop-indicator" id="hop-indicator">
+<div class="hop-pill active" id="hop-pill-0">Nodo solo</div>
+
+<div class="hop-pill" id="hop-pill-1">1 salto</div>
+
+<div class="hop-pill" id="hop-pill-2">2 saltos</div>
+
+<div class="hop-pill" id="hop-pill-3">3 saltos</div>
+</div>
+
+<ul>
+	<li><strong>1 salto:</strong> veo el nodo seleccionado y todos los nodos directamente conectados con él. Si selecciono un autor, veo solo las fichas en las que participó.</li>
+	<li><strong>2 saltos:</strong> además de los “vecinos” directos, veo también los vecinos de los vecinos; es decir, se revelan las conexiones indirectas que un nodo mantiene con los demás.</li>
+	<li><strong>3 saltos:</strong> el vecindario puede incluir una porción significativa del grafo; lo que se vuelve visible es la región de la red en la que habita ese nodo.</li>
+</ul>
+</section>
+<!-- 07 FILTROS -->
+
+<section class="story-section" data-scene="filters">
+<div class="section-num">07 &mdash; Filtros</div>
+
+<h2>Descomponer la complejidad</h2>
+
+<p>El grafo completo tiene <strong><span data-stat="nodes">1200</span> nodos y <span data-stat="edges">5200</span> aristas</strong>. Esto es mucha información para absorber de una sola vez. Los filtros por tipo de relaci&oacute;n permiten descomponer esa complejidad:</p>
+
+<ul>
+	<li><strong>Solo autores:</strong> se revelan las redes de colaboraci&oacute;n y los autores m&aacute;s prol&iacute;ficos.</li>
+	<li><strong>Solo palabras clave:</strong> se ve la estructura tem&aacute;tica y los clusters por afinidad de contenido.</li>
+	<li><strong>Solo &aacute;reas tem&aacute;ticas:</strong> las <span data-stat="areas">15</span> &aacute;reas funcionan como polos de atracci&oacute;n.</li>
+	<li><strong>Combinando filtros:</strong> cada combinaci&oacute;n cuenta una historia diferente sobre el mismo conjunto de datos.</li>
+</ul>
+
+<p>Us&aacute; los botones del panel para explorar distintas capas del grafo.</p>
+</section>
+<!-- 08 FINAL: GRAFO COMPLETO -->
+
+<section class="story-section" data-scene="glossary">
+<div class="section-num">08 &mdash; Final</div>
+
+<h2>El grafo completo</h2>
+
+<p>Ahora que ya conocés cada una de las piezas, te invitamos a recorrer el <strong>recurso completo</strong>.</p>
+
+<p>El grafo es interactivo y funciona también como una puerta de entrada a la mediateca: desde cada nodo podés llegar a las fichas y a sus materiales. Hacé clic en un autor, una palabra clave o un área para ver su vecindario; combiná filtros para quedarte con una sola capa de relaciones; arrastrá los nodos para reorganizar el espacio a tu manera. </p>
+
+<p>Este grafo <strong>no está terminado</strong>. Cada recurso que llega a la mediateca suma un nodo, tiende nuevos hilos y desplaza un poco a todos los demás. La forma que ves hoy es apenas <strong>un instante de algo que sigue creciendo</strong>.</p>
+
+<p><a href="./index.html" style="color:var(--accent);font-family:'EB Garamond',serif;font-size:17px;">Abrir en pantalla completa &rarr; </a></p>
+</section>
 
   </div><!-- /scroll-col -->
 
@@ -551,19 +547,6 @@
   <div id="canvas-col">
     <div id="scene-label">01 / Introducción</div>
     <svg id="story-graph"></svg>
-
-    <!-- Glosario (reemplaza SVG en escena 8) -->
-    <div id="glossary-table">
-      <div class="gloss-title">Conceptos clave</div>
-      <div class="gloss-row"><div class="gloss-term"><span class="g-dot" style="background:var(--item)"></span>Nodo</div><div class="gloss-def">Cada entidad del grafo: ficha, autor, palabra clave, área o tipo de contenido.</div></div>
-      <div class="gloss-row"><div class="gloss-term"><span class="g-dot" style="background:var(--text-faint)"></span>Arista</div><div class="gloss-def">Cada relación entre dos nodos. Reflejo directo de los metadatos de Omeka S.</div></div>
-      <div class="gloss-row"><div class="gloss-term"><span class="g-dot" style="background:var(--accent)"></span>Grado</div><div class="gloss-def">Cantidad de conexiones de un nodo. Se refleja en el tamaño visual del círculo.</div></div>
-      <div class="gloss-row"><div class="gloss-term"><span class="g-dot" style="background:var(--subject)"></span>Vecindario</div><div class="gloss-def">El conjunto de nodos accesibles desde un nodo dado, a una cierta cantidad de saltos.</div></div>
-      <div class="gloss-row"><div class="gloss-term"><span class="g-dot" style="background:var(--coverage)"></span>Comunidad</div><div class="gloss-def">Grupo de nodos densamente interconectados entre sí, con más conexiones internas que externas.</div></div>
-      <div class="gloss-row"><div class="gloss-term"><span class="g-dot" style="background:var(--creator)"></span>Centralidad</div><div class="gloss-def">Medida de cuán "importante" es un nodo. El más central no es solo el más conectado, sino el que mejor articula regiones distintas.</div></div>
-      <div class="gloss-row"><div class="gloss-term"><span class="g-dot" style="background:var(--type)"></span>Nodo puente</div><div class="gloss-def">Un nodo que conecta dos comunidades que, de otro modo, estarían desconectadas. Su eliminación fragmentaría la red.</div></div>
-      <div class="gloss-row"><div class="gloss-term"><span class="g-dot" style="background:var(--text-dim)"></span>Multipartito</div><div class="gloss-def">Grafo donde las aristas solo conectan nodos de distinto tipo. En MAMPA, las fichas conectan con autores, pero los autores no se conectan directamente entre sí.</div></div>
-    </div>
 
     <!-- Filter pills para escena 7 -->
     <div id="filter-pills">
@@ -597,48 +580,56 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  NARRATIVA MAMPA — Scrollytelling  (reescritura limpia)
-// ═══════════════════════════════════════════════════════════════
+(function () {
+'use strict';
 
-const DATA_URL = './data/graph.json';
+var block = document;
 
-const SCENE_LABELS = {
+function qs(sel) { return block.querySelector(sel); }
+function qsa(sel) { return block.querySelectorAll(sel); }
+
+// ══════════════════════════════════════════════════
+//  NARRATIVA MAMPA — Scrollytelling (embedded v2)
+// ══════════════════════════════════════════════════
+
+var DATA_URL = './data/graph.json';
+
+var SCENE_LABELS = {
   intro:'01 / Introducción', nodes:'02 / Nodos', edges:'03 / Aristas',
   proximity:'04 / Espacio', communities:'05 / Comunidades',
-  neighborhood:'06 / Vecindario', filters:'07 / Filtros', glossary:'08 / Glosario',
+  neighborhood:'06 / Vecindario', filters:'07 / Filtros', glossary:'08 / Grafo completo',
 };
 
-const COLOR = { item:'#0080b1', creator:'#00b2e3', subject:'#87c6a1', coverage:'#0080b1', type:'#009e96' };
-const TYPE_LABEL = { item:'Ficha', creator:'Autor/a', subject:'Palabra clave', coverage:'Área temática', type:'Tipo' };
-const REL_COLOR  = { authored_by:'#00b2e3', tagged_with:'#0080b1', belongs_to_area:'#87c6a1', is_type:'#009e96' };
-const REL_LABEL  = { authored_by:'autoría', tagged_with:'etiquetado', belongs_to_area:'pertenencia', is_type:'clasificación' };
+var COLOR = { item:'#0080b1', creator:'#00b2e3', subject:'#87c6a1', coverage:'#0080b1', type:'#009e96' };
+var TYPE_LABEL = { item:'Ficha', creator:'Autor/a', subject:'Palabra clave', coverage:'Área temática', type:'Tipo' };
+var REL_COLOR  = { authored_by:'#00b2e3', tagged_with:'#87c6a1', belongs_to_area:'#0080b1', is_type:'#009e96' };
+var REL_LABEL  = { authored_by:'autoría', tagged_with:'etiquetado', belongs_to_area:'pertenencia', is_type:'clasificación' };
 
-// Nodos protagonistas para escenas educativas
-const ITEM_ID     = 'item_734';      // "El uso del cine en el aula…"
-const CREATOR_ID  = 'creator_dc6661a2'; // Daveloza Valeria  (46 fichas)
-const SUBJECT_ID  = 'subject_f8e8cb67'; // pedagogía (22 conn)
-const COVERAGE_ID = 'coverage_20aed093'; // Lenguas Extranjeras (121)
-const TYPE_ID     = 'type_6829c5ba';    // Libro
+var ITEM_ID     = 'item_2056';
+var CREATOR_ID  = 'creator_fe375b0c';
+var SUBJECT_ID  = 'subject_46a81d12';
+var COVERAGE_ID = 'coverage_e605989e';
+var TYPE_ID     = 'type_8aa89499';
 
-// ─── Estado global ────────────────────────────────────────────
-let allNodes, allEdges, nodeMap, adjMap;
-let STATS = {};
-let SUBSETS = {};
-let svg, g, edgeG, nodeG, labelG, annotG;
-let zoom, tip;
-let simulation;
-let linkEls, nodeEls, labelEls;
-let W, H;
-let currentScene = null;
-let sceneToken   = 0;
-let currentHop   = -1;
-let filterActive = { authored_by:true, tagged_with:true, belongs_to_area:true, is_type:true };
-let filterTimer  = null;
-let filterTouched = false;
+var allNodes, allEdges, nodeMap, adjMap;
+var STATS = {};
+var SUBSETS = {};
+var svg, g, edgeG, nodeG, labelG, annotG;
+var zoom, tip;
+var simulation;
+var linkEls, nodeEls, labelEls;
+var W, H;
+var currentScene = null;
+var sceneToken   = 0;
+var currentHop   = -1;
+var filterActive = { authored_by:true, tagged_with:true, belongs_to_area:true, is_type:true };
+var filterTimer  = null;
+var filterTouched = false;
+var transitionBusy = false;
 
-// ─── Utilidades ───────────────────────────────────────────────
-function nodeRadius(d, big = false) {
+// ─── Utilidades ──────────────────────────────────
+function nodeRadius(d, big) {
+  big = big || false;
   if (big) {
     if (d.type === 'item')     return 8;
     if (d.type === 'coverage') return Math.max(10, Math.sqrt(d.degree||1) * 3);
@@ -651,8 +642,8 @@ function nodeRadius(d, big = false) {
 }
 
 function edgeKey(e) {
-  const s = typeof e.source==='object' ? e.source.id : e.source;
-  const t = typeof e.target==='object' ? e.target.id : e.target;
+  var s = typeof e.source==='object' ? e.source.id : e.source;
+  var t = typeof e.target==='object' ? e.target.id : e.target;
   return s+'|'+t+'|'+e.relation;
 }
 
@@ -660,102 +651,97 @@ function srcId(e) { return typeof e.source==='object' ? e.source.id : e.source; 
 function tgtId(e) { return typeof e.target==='object' ? e.target.id : e.target; }
 
 function bfs(startId, edges, maxHops) {
-  const adj = new Map();
-  edges.forEach(e => {
-    const s = typeof e.source==='object' ? e.source.id : e.source;
-    const t = typeof e.target==='object' ? e.target.id : e.target;
+  var adj = new Map();
+  edges.forEach(function(e) {
+    var s = typeof e.source==='object' ? e.source.id : e.source;
+    var t = typeof e.target==='object' ? e.target.id : e.target;
     if (!adj.has(s)) adj.set(s,[]);
     if (!adj.has(t)) adj.set(t,[]);
     adj.get(s).push(t); adj.get(t).push(s);
   });
-  const depth = new Map([[startId,0]]);
-  let frontier = [startId];
-  for (let h=1; h<=maxHops; h++) {
-    const next = [];
-    frontier.forEach(id => (adj.get(id)||[]).forEach(nb => {
-      if (!depth.has(nb)) { depth.set(nb,h); next.push(nb); }
-    }));
+  var depth = new Map([[startId,0]]);
+  var frontier = [startId];
+  for (var h=1; h<=maxHops; h++) {
+    var next = [];
+    frontier.forEach(function(id) {
+      (adj.get(id)||[]).forEach(function(nb) {
+        if (!depth.has(nb)) { depth.set(nb,h); next.push(nb); }
+      });
+    });
     frontier = next;
   }
   return depth;
 }
 
-// ─── Pre-computar subsets ─────────────────────────────────────
+// ─── Pre-computar subsets ────────────────────────
 function buildSubsets() {
-  // 2 hops desde Lenguas Extranjeras: hop1=items LE, hop2=autores/keywords/tipos de esos items
-  const leDepth = bfs(COVERAGE_ID, allEdges, 2);
-  const leIds = new Set(leDepth.keys());
+  var leDepth = bfs(COVERAGE_ID, allEdges, 2);
+  var leIds = new Set(leDepth.keys());
 
-  // BFS hops 0-3 desde item_734
-  const hops = {};
-  for (let h=0; h<=3; h++) hops[h] = bfs(ITEM_ID, allEdges, h);
+  var hops = {};
+  for (var h=0; h<=3; h++) hops[h] = bfs(ITEM_ID, allEdges, h);
 
-  // Pre-computar aristas con source/target como strings puros para cada hop
-  // Esto evita que el data join de D3 reciba objetos resueltos de otras escenas
-  const rawEdges = allEdges.map(e=>({ source:srcId(e), target:tgtId(e), relation:e.relation }));
-  const hopEdges = {};
-  for (let h=0; h<=3; h++) {
-    const ids = hops[h];
-    hopEdges[h] = rawEdges.filter(e=>ids.has(e.source)&&ids.has(e.target));
+  var rawEdges = allEdges.map(function(e) {
+    return { source:srcId(e), target:tgtId(e), relation:e.relation };
+  });
+  var hopEdges = {};
+  for (h=0; h<=3; h++) {
+    var ids = hops[h];
+    hopEdges[h] = rawEdges.filter(function(e) { return ids.has(e.source) && ids.has(e.target); });
   }
 
-  // Aristas del item_734 (las 4 relaciones)
-  const itemEdges = allEdges.filter(e => e.source===ITEM_ID || e.target===ITEM_ID);
+  var itemEdges = allEdges.filter(function(e) { return e.source===ITEM_ID || e.target===ITEM_ID; });
 
-  // Subgrafo "cercanía": nodos no-item + sus vecinos directos (items)
-  const proxNonItem = allNodes.filter(n => n.type!=='item').slice(0,25);
-  const proxIds = new Set(proxNonItem.map(n=>n.id));
-  proxNonItem.forEach(n => {
-    allEdges.filter(e => e.source===n.id || e.target===n.id).slice(0,4).forEach(e=>{
+  var proxNonItem = allNodes.filter(function(n) { return n.type!=='item'; }).slice(0,25);
+  var proxIds = new Set(proxNonItem.map(function(n) { return n.id; }));
+  proxNonItem.forEach(function(n) {
+    allEdges.filter(function(e) { return e.source===n.id || e.target===n.id; }).slice(0,4).forEach(function(e){
       proxIds.add(e.source); proxIds.add(e.target);
     });
   });
-  const proxNodes = allNodes.filter(n => proxIds.has(n.id)).slice(0,90);
-  const proxSet   = new Set(proxNodes.map(n=>n.id));
-  const proxEdges = allEdges.filter(e => proxSet.has(e.source) && proxSet.has(e.target));
+  var proxNodes = allNodes.filter(function(n) { return proxIds.has(n.id); }).slice(0,90);
+  var proxSet   = new Set(proxNodes.map(function(n) { return n.id; }));
+  var proxEdges = allEdges.filter(function(e) { return proxSet.has(e.source) && proxSet.has(e.target); });
 
-  // Subgrafo filtros: todos los no-item + sus items directos (cap 160)
-  const filtIds = new Set(allNodes.filter(n=>n.type!=='item').map(n=>n.id));
-  allEdges.forEach(e=>{
+  var filtIds = new Set(allNodes.filter(function(n) { return n.type!=='item'; }).map(function(n) { return n.id; }));
+  allEdges.forEach(function(e){
     if (filtIds.has(e.source)||filtIds.has(e.target)) { filtIds.add(e.source); filtIds.add(e.target); }
   });
-  const filtNodes = allNodes.filter(n=>filtIds.has(n.id)).slice(0,180);
-  const filtSet   = new Set(filtNodes.map(n=>n.id));
-  const filtEdges = allEdges.filter(e => filtSet.has(e.source) && filtSet.has(e.target));
+  var filtNodes = allNodes.filter(function(n) { return filtIds.has(n.id); }).slice(0,180);
+  var filtSet   = new Set(filtNodes.map(function(n) { return n.id; }));
+  var filtEdges = allEdges.filter(function(e) { return filtSet.has(e.source) && filtSet.has(e.target); });
 
-  SUBSETS = { leIds, hops, hopEdges, rawEdges, itemEdges, proxNodes, proxEdges, filtNodes, filtEdges };
+  SUBSETS = { leIds:leIds, hops:hops, hopEdges:hopEdges, rawEdges:rawEdges, itemEdges:itemEdges,
+    proxNodes:proxNodes, proxEdges:proxEdges, filtNodes:filtNodes, filtEdges:filtEdges };
 }
 
-// ─── D3 init ──────────────────────────────────────────────────
+// ─── D3 init ─────────────────────────────────────
 function initD3() {
   svg = d3.select('#story-graph');
   W = svg.node().clientWidth;
   H = svg.node().clientHeight;
 
-  // Filtros SVG
-  const defs = svg.append('defs');
-  ['sglow','sglow2'].forEach((id,i) => {
-    const f = defs.append('filter').attr('id',id)
+  var defs = svg.append('defs');
+  ['sglow','sglow2'].forEach(function(id,i) {
+    var f = defs.append('filter').attr('id',id)
       .attr('x','-70%').attr('y','-70%').attr('width','240%').attr('height','240%');
     f.append('feGaussianBlur').attr('stdDeviation', i===0?5:10).attr('result','blur');
     f.append('feComposite').attr('in','SourceGraphic').attr('in2','blur').attr('operator','over');
   });
 
-  // Grupos
   g      = svg.append('g');
   edgeG  = g.append('g').attr('class','edges');
   nodeG  = g.append('g').attr('class','nodes');
   labelG = g.append('g').attr('class','labels');
-  // annotG DENTRO de g para que reciba el transform del zoom
   annotG = g.append('g').attr('class','annots').attr('pointer-events','none');
 
-  // Zoom
   zoom = d3.zoom().scaleExtent([0.04,10])
-    .on('zoom', e => g.attr('transform', e.transform));
+    .on('zoom', function(e) { g.attr('transform', e.transform); });
   svg.call(zoom);
-  svg.on('dblclick.zoom', () => svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity));
+  svg.on('dblclick.zoom', function() {
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+  });
 
-  // Tooltip
   tip = d3.select('body').append('div')
     .style('position','fixed').style('pointer-events','none').style('display','none')
     .style('background','#242018').style('border','1px solid #3a342a').style('border-radius','8px')
@@ -764,12 +750,11 @@ function initD3() {
     .style('max-width','240px').style('line-height','1.5')
     .style('box-shadow','0 4px 16px rgba(0,0,0,0.5)');
 
-  // Simulación
   simulation = d3.forceSimulation()
-    .force('link', d3.forceLink().id(d=>d.id).distance(70))
-    .force('charge', d3.forceManyBody().strength(d=>d.type==='item'?-15:-60))
+    .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(70))
+    .force('charge', d3.forceManyBody().strength(function(d) { return d.type==='item'?-15:-60; }))
     .force('center', d3.forceCenter(W/2, H/2))
-    .force('collision', d3.forceCollide().radius(d=>nodeRadius(d)+2))
+    .force('collision', d3.forceCollide().radius(function(d) { return nodeRadius(d)+2; }))
     .alphaDecay(0.022)
     .on('tick', onTick);
 
@@ -780,107 +765,104 @@ function initD3() {
 
 function onTick() {
   if (linkEls) linkEls
-    .attr('x1',d=>d.source.x).attr('y1',d=>d.source.y)
-    .attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-  if (nodeEls) nodeEls.attr('cx',d=>d.x).attr('cy',d=>d.y);
-  if (labelEls) labelEls.attr('x',d=>d.x).attr('y',d=>d.y);
+    .attr('x1',function(d) { return d.source.x; }).attr('y1',function(d) { return d.source.y; })
+    .attr('x2',function(d) { return d.target.x; }).attr('y2',function(d) { return d.target.y; });
+  if (nodeEls) nodeEls.attr('cx',function(d) { return d.x; }).attr('cy',function(d) { return d.y; });
+  if (labelEls) labelEls.attr('x',function(d) { return d.x; }).attr('y',function(d) { return d.y; });
 }
 
-// ─── Render central ───────────────────────────────────────────
-// opts: { big, fixedPos, edgeStroke, edgeOpacity, edgeWidth,
-//         fillFn, opacityFn, filterFn, labelNodes, labelSize,
-//         charge, linkDist, alpha, stagger }
-function render(nodes, edges, opts={}) {
-  const big         = opts.big || false;
-  const edgeStroke  = opts.edgeStroke  || ((e)=>REL_COLOR[e.relation]||COLOR.item);
-  const edgeOpacity = opts.edgeOpacity || 0.18;
-  const edgeWidth   = opts.edgeWidth   || 0.6;
-  const fillFn      = opts.fillFn      || (d=>d.color);
-  const opacityFn   = opts.opacityFn   || (d=>d.type==='item'?0.55:0.9);
-  const alpha       = opts.alpha       != null ? opts.alpha : 0.8;
+// ─── Render central ──────────────────────────────
+function render(nodes, edges, opts) {
+  opts = opts || {};
+  var big         = opts.big || false;
+  var edgeStroke  = opts.edgeStroke  || (function(e) { return REL_COLOR[e.relation]||COLOR.item; });
+  var edgeOpacity = opts.edgeOpacity || 0.18;
+  var edgeWidth   = opts.edgeWidth   || 0.6;
+  var fillFn      = opts.fillFn      || (function(d) { return d.color; });
+  var opacityFn   = opts.opacityFn   || (function(d) { return d.type==='item'?0.55:0.9; });
+  var alpha       = opts.alpha       != null ? opts.alpha : 0.8;
 
-  // fx/fy
-  nodes.forEach(n => { n.fx=null; n.fy=null; });
-  if (opts.fixedPos) opts.fixedPos.forEach((pos,id)=>{
-    const n=nodes.find(nd=>nd.id===id); if(n){n.fx=pos[0];n.fy=pos[1];}
+  nodes.forEach(function(n) { n.fx=null; n.fy=null; });
+  if (opts.fixedPos) opts.fixedPos.forEach(function(pos,id){
+    var n = nodes.find(function(nd) { return nd.id===id; });
+    if (n) { n.fx=pos[0]; n.fy=pos[1]; }
   });
 
   // ── EDGES ──
   linkEls = edgeG.selectAll('line').data(edges, edgeKey);
   linkEls.exit().transition().duration(300).attr('stroke-opacity',0).remove();
   linkEls = linkEls.enter().append('line')
-    .attr('stroke', d=>edgeStroke(d))
+    .attr('stroke', function(d) { return edgeStroke(d); })
     .attr('stroke-opacity',0).attr('stroke-width',edgeWidth)
     .merge(linkEls);
   linkEls.transition().duration(500)
-    .attr('stroke', d=>edgeStroke(d))
+    .attr('stroke', function(d) { return edgeStroke(d); })
     .attr('stroke-opacity', typeof edgeOpacity==='function' ? edgeOpacity : edgeOpacity)
     .attr('stroke-width', edgeWidth);
 
   // ── NODES ──
-  const savedOpacityFn = opacityFn; // captura para mouseout
-  nodeEls = nodeG.selectAll('circle').data(nodes, d=>d.id);
+  var savedOpacityFn = opacityFn;
+  nodeEls = nodeG.selectAll('circle').data(nodes, function(d) { return d.id; });
   nodeEls.exit().transition().duration(300).attr('r',0).remove();
-  const entered = nodeEls.enter().append('circle')
-    .attr('r',0).attr('fill',d=>fillFn(d)).attr('opacity',0)
+  var entered = nodeEls.enter().append('circle')
+    .attr('r',0).attr('fill',function(d) { return fillFn(d); }).attr('opacity',0)
     .attr('cursor', opts.fixedPos ? 'default' : 'pointer')
     .call(opts.fixedPos
-      ? d3.drag().filter(()=>false) // drag deshabilitado en escenas con posiciones fijas
+      ? d3.drag().filter(function() { return false; })
       : d3.drag()
-        .on('start',(e,d)=>{ if(!e.active) simulation.alphaTarget(0.1).restart(); d.fx=d.x; d.fy=d.y; })
-        .on('drag', (e,d)=>{ d.fx=e.x; d.fy=e.y; })
-        .on('end',  (e,d)=>{ if(!e.active) simulation.alphaTarget(0); d.fx=null; d.fy=null; }))
-    .on('mouseover', (e,d) => {
-      const extra = d.type!=='item' && d.degree ? ` · ${d.degree} fichas` : '';
+        .on('start',function(e,d){ if(!e.active) simulation.alphaTarget(0.1).restart(); d.fx=d.x; d.fy=d.y; })
+        .on('drag', function(e,d){ d.fx=e.x; d.fy=e.y; })
+        .on('end',  function(e,d){ if(!e.active) simulation.alphaTarget(0); d.fx=null; d.fy=null; }))
+    .on('mouseover', function(e,d) {
+      var extra = d.type!=='item' && d.degree ? ' \u00B7 ' + d.degree + ' fichas' : '';
       tip.style('display','block')
         .style('left',(e.clientX+14)+'px').style('top',(e.clientY-8)+'px')
-        .html(`<span style="color:${d.color};font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase">${TYPE_LABEL[d.type]||d.type}</span><br>${d.label}${extra}`);
-      // dim unconnected
-      const conn = new Set([d.id]);
-      if (linkEls) linkEls.each(dd=>{ if(srcId(dd)===d.id) conn.add(tgtId(dd)); if(tgtId(dd)===d.id) conn.add(srcId(dd)); });
-      nodeEls.attr('opacity',n=>conn.has(n.id)?1:0.05);
-      if (linkEls) linkEls.attr('stroke-opacity',dd=>(srcId(dd)===d.id||tgtId(dd)===d.id)?0.7:0.02);
+        .html('<span style="color:'+d.color+';font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase">'+(TYPE_LABEL[d.type]||d.type)+'</span><br>'+d.label+extra);
+      var conn = new Set([d.id]);
+      if (linkEls) linkEls.each(function(dd){ if(srcId(dd)===d.id) conn.add(tgtId(dd)); if(tgtId(dd)===d.id) conn.add(srcId(dd)); });
+      nodeEls.attr('opacity',function(n) { return conn.has(n.id)?1:0.05; });
+      if (linkEls) linkEls.attr('stroke-opacity',function(dd) { return (srcId(dd)===d.id||tgtId(dd)===d.id)?0.7:0.02; });
     })
-    .on('mousemove',e=>{ tip.style('left',(e.clientX+14)+'px').style('top',(e.clientY-8)+'px'); })
-    .on('mouseout', ()=>{
+    .on('mousemove',function(e){ tip.style('left',(e.clientX+14)+'px').style('top',(e.clientY-8)+'px'); })
+    .on('mouseout', function(){
       tip.style('display','none');
-      nodeEls.attr('opacity',n=>savedOpacityFn(n));
+      nodeEls.attr('opacity',function(n) { return savedOpacityFn(n); });
       if (linkEls) linkEls.attr('stroke-opacity', typeof edgeOpacity==='function'?edgeOpacity:edgeOpacity);
     });
 
   nodeEls = entered.merge(nodeEls);
   nodeEls.transition().duration(500)
-    .delay((d,i)=>opts.stagger?Math.min(i*20,600):0)
-    .attr('r', d=>nodeRadius(d,big))
-    .attr('fill', d=>fillFn(d))
-    .attr('opacity', d=>opacityFn(d))
-    .attr('filter', d=>opts.glowFn?opts.glowFn(d):null);
+    .delay(function(d,i) { return opts.stagger?Math.min(i*20,600):0; })
+    .attr('r', function(d) { return nodeRadius(d,big); })
+    .attr('fill', function(d) { return fillFn(d); })
+    .attr('opacity', function(d) { return opacityFn(d); })
+    .attr('filter', function(d) { return opts.glowFn?opts.glowFn(d):null; });
 
   // ── LABELS ──
-  const labelNodes = opts.labelNodes !== undefined
+  var labelNodes = opts.labelNodes !== undefined
     ? opts.labelNodes
-    : nodes.filter(n=>n.type!=='item' && (n.degree||0)>=(big?0:8));
-  const labelSize  = opts.labelSize || (d=>d.type==='coverage'?12:10);
+    : nodes.filter(function(n) { return n.type!=='item' && (n.degree||0)>=(big?0:8); });
+  var labelSize  = opts.labelSize || (function(d) { return d.type==='coverage'?12:10; });
 
-  labelEls = labelG.selectAll('text').data(labelNodes, d=>d.id);
+  labelEls = labelG.selectAll('text').data(labelNodes, function(d) { return d.id; });
   labelEls.exit().transition().duration(200).attr('fill-opacity',0).remove();
   labelEls = labelEls.enter().append('text')
     .attr('pointer-events','none').attr('text-anchor','middle')
     .attr('font-family',"'EB Garamond',serif").attr('font-style','italic')
-    .attr('fill',d=>d.color).attr('fill-opacity',0)
-    .attr('font-size',d=>labelSize(d))
-    .attr('dy',d=>-(nodeRadius(d,big)+6))
-    .text(d=>d.label.length>30?d.label.slice(0,28)+'…':d.label)
+    .attr('fill',function(d) { return d.color; }).attr('fill-opacity',0)
+    .attr('font-size',function(d) { return labelSize(d); })
+    .attr('dy',function(d) { return -(nodeRadius(d,big)+6); })
+    .text(function(d) { return d.label.length>30?d.label.slice(0,28)+'\u2026':d.label; })
     .merge(labelEls);
   labelEls.transition().duration(500)
-    .attr('fill',d=>d.color).attr('fill-opacity',0.88)
-    .attr('font-size',d=>labelSize(d))
-    .attr('dy',d=>-(nodeRadius(d,big)+6));
+    .attr('fill',function(d) { return d.color; }).attr('fill-opacity',0.88)
+    .attr('font-size',function(d) { return labelSize(d); })
+    .attr('dy',function(d) { return -(nodeRadius(d,big)+6); });
 
   // ── SIM ──
   if (opts.charge)    simulation.force('charge', d3.forceManyBody().strength(opts.charge));
-  if (opts.linkDist)  simulation.force('link', d3.forceLink().id(d=>d.id).distance(opts.linkDist));
-  simulation.force('collision', d3.forceCollide().radius(d=>nodeRadius(d,big)+(big?8:2)));
+  if (opts.linkDist)  simulation.force('link', d3.forceLink().id(function(d) { return d.id; }).distance(opts.linkDist));
+  simulation.force('collision', d3.forceCollide().radius(function(d) { return nodeRadius(d,big)+(big?8:2); }));
   simulation.force('center', d3.forceCenter(W/2,H/2));
   simulation.nodes(nodes);
   simulation.force('link').links(edges);
@@ -889,87 +871,83 @@ function render(nodes, edges, opts={}) {
   annotG.selectAll('*').remove();
 }
 
-// Centrar la vista en un conjunto de nodos tras estabilización
-function zoomToNodes(nodes, padPx=60, delay=800) {
-  setTimeout(()=>{
-    const xs = nodes.map(n=>n.x).filter(Boolean);
-    const ys = nodes.map(n=>n.y).filter(Boolean);
+function zoomToNodes(nodes, padPx, delay) {
+  padPx = padPx || 60;
+  delay = delay || 800;
+  setTimeout(function(){
+    var xs = nodes.map(function(n) { return n.x; }).filter(Boolean);
+    var ys = nodes.map(function(n) { return n.y; }).filter(Boolean);
     if (!xs.length) return;
-    const x0=Math.min(...xs)-padPx, x1=Math.max(...xs)+padPx;
-    const y0=Math.min(...ys)-padPx, y1=Math.max(...ys)+padPx;
-    const sc = Math.min(0.9, Math.min(W/(x1-x0), H/(y1-y0)));
-    const tx = W/2 - sc*(x0+x1)/2;
-    const ty = H/2 - sc*(y0+y1)/2;
+    var x0=Math.min.apply(null,xs)-padPx, x1=Math.max.apply(null,xs)+padPx;
+    var y0=Math.min.apply(null,ys)-padPx, y1=Math.max.apply(null,ys)+padPx;
+    var sc = Math.min(0.9, Math.min(W/(x1-x0), H/(y1-y0)));
+    var tx = W/2 - sc*(x0+x1)/2;
+    var ty = H/2 - sc*(y0+y1)/2;
     svg.transition().duration(700).call(zoom.transform,
       d3.zoomIdentity.translate(tx,ty).scale(sc));
   }, delay);
 }
 
-// ─── ESCENAS ──────────────────────────────────────────────────
+// ─── ESCENAS ─────────────────────────────────────
 
 function sceneIntro() {
-  // Grafo completo, zoom animado de entrada
   simulation
-    .force('charge', d3.forceManyBody().strength(d=>d.type==='item'?-12:-55))
-    .force('link', d3.forceLink().id(d=>d.id).distance(d=>{
-      const st=nodeMap.get(srcId(d)), tt=nodeMap.get(tgtId(d));
-      if(st?.type==='coverage'||tt?.type==='coverage') return 120;
-      if(st?.type==='type'||tt?.type==='type') return 150;
+    .force('charge', d3.forceManyBody().strength(function(d) { return d.type==='item'?-12:-55; }))
+    .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(function(d){
+      var st=nodeMap.get(srcId(d)), tt=nodeMap.get(tgtId(d));
+      if(st&&st.type==='coverage'||tt&&tt.type==='coverage') return 120;
+      if(st&&st.type==='type'||tt&&tt.type==='type') return 150;
       return 60;
     }));
 
   render(allNodes, allEdges, {
-    edgeStroke: ()=>COLOR.item, edgeOpacity:0.1, edgeWidth:0.4,
+    edgeStroke: function() { return COLOR.item; }, edgeOpacity:0.1, edgeWidth:0.4,
     stagger:true, alpha:0.9,
-    opacityFn: d=>d.type==='item'?0.45:0.88,
+    opacityFn: function(d) { return d.type==='item'?0.45:0.88; },
   });
 
-  // Zoom out para ver todo el grafo una vez que la sim converge
   zoomToNodes(allNodes, 40, 1800);
 }
 
 function sceneNodes() {
-  // 5 nodos representativos en círculo, sin aristas, con etiquetas largas
-  const ids = [ITEM_ID, CREATOR_ID, SUBJECT_ID, COVERAGE_ID, TYPE_ID];
-  const nodes = ids.map(id=>({...nodeMap.get(id)})).filter(Boolean);
+  var ids = [ITEM_ID, CREATOR_ID, SUBJECT_ID, COVERAGE_ID, TYPE_ID];
+  var nodes = ids.map(function(id) { var n = nodeMap.get(id); return n ? Object.assign({}, n) : null; }).filter(Boolean);
 
-  const cx=W/2, cy=H/2, rr=Math.min(W,H)*0.30;
-  const fixedPos = new Map();
-  nodes.forEach((n,i)=>{
-    const a=(i/nodes.length)*Math.PI*2-Math.PI/2;
+  var cx=W/2, cy=H/2, rr=Math.min(W,H)*0.30;
+  var fixedPos = new Map();
+  nodes.forEach(function(n,i){
+    var a=(i/nodes.length)*Math.PI*2-Math.PI/2;
     fixedPos.set(n.id,[cx+Math.cos(a)*rr, cy+Math.sin(a)*rr]);
     n.fx=fixedPos.get(n.id)[0]; n.fy=fixedPos.get(n.id)[1];
   });
 
   render(nodes, [], {
-    big:true, fixedPos, alpha:0.1,
-    opacityFn:()=>0.95,
+    big:true, fixedPos:fixedPos, alpha:0.1,
+    opacityFn:function() { return 0.95; },
     labelNodes: nodes,
-    labelSize: ()=>13,
-    charge: ()=>-50,
+    labelSize: function() { return 13; },
+    charge: function() { return -50; },
   });
 
-  // Esperar a que los nodos tengan posición y dibujar badges
-  const tok = sceneToken;
-  setTimeout(()=>{
+  var tok = sceneToken;
+  setTimeout(function(){
     if(sceneToken!==tok) return;
-    const nd = id => nodeMap.get(id) || {label:'', degree:0};
-    const descs = {
+    function nd(id) { return nodeMap.get(id) || {label:'', degree:0}; }
+    var descs = {
       item: STATS.items + ' recursos',
-      creator: nd(CREATOR_ID).label + ' — ' + nd(CREATOR_ID).degree + ' fichas',
-      subject: nd(SUBJECT_ID).label + ' — ' + nd(SUBJECT_ID).degree + ' conexiones',
-      coverage: nd(COVERAGE_ID).label + ' — ' + nd(COVERAGE_ID).degree + ' items',
+      creator: nd(CREATOR_ID).label + ' \u2014 ' + nd(CREATOR_ID).degree + ' fichas',
+      subject: nd(SUBJECT_ID).label + ' \u2014 ' + nd(SUBJECT_ID).degree + ' conexiones',
+      coverage: nd(COVERAGE_ID).label + ' \u2014 ' + nd(COVERAGE_ID).degree + ' items',
       type: nd(TYPE_ID).label
     };
-    nodes.forEach((n,i)=>{
-      const a = (i/nodes.length)*Math.PI*2-Math.PI/2;
-      const nx = fixedPos.get(n.id)[0], ny = fixedPos.get(n.id)[1];
-      const r  = nodeRadius(n,true);
-      // badge offset hacia afuera del círculo
-      const lx = cx+Math.cos(a)*(rr+r+52);
-      const ly = cy+Math.sin(a)*(rr+r+52);
+    nodes.forEach(function(n,i){
+      var a = (i/nodes.length)*Math.PI*2-Math.PI/2;
+      var nx = fixedPos.get(n.id)[0], ny = fixedPos.get(n.id)[1];
+      var r  = nodeRadius(n,true);
+      var lx = cx+Math.cos(a)*(rr+r+52);
+      var ly = cy+Math.sin(a)*(rr+r+52);
 
-      const badge = annotG.append('g').attr('opacity',0);
+      var badge = annotG.append('g').attr('opacity',0);
       badge.append('text').attr('x',lx).attr('y',ly-7)
         .attr('text-anchor','middle')
         .attr('font-family',"'Instrument Sans',sans-serif")
@@ -982,7 +960,6 @@ function sceneNodes() {
         .text(descs[n.type]);
       badge.transition().delay(i*150+300).duration(400).attr('opacity',1);
 
-      // línea nodo → badge
       annotG.append('line')
         .attr('x1',nx).attr('y1',ny).attr('x2',lx).attr('y2',ly-18)
         .attr('stroke',n.color).attr('stroke-opacity',0)
@@ -995,29 +972,25 @@ function sceneNodes() {
 }
 
 function sceneEdges() {
-  // item_734 al centro; 4 vecinos reales en posiciones cardinales
-  // Las aristas son datos reales del grafo → la simulación las posiciona correctamente
-  const center   = {...nodeMap.get(ITEM_ID)};
-  const tgt1     = {...nodeMap.get(CREATOR_ID)};
-  const tgt2     = {...nodeMap.get(SUBJECT_ID)};
-  const tgt3     = {...nodeMap.get(COVERAGE_ID)};
-  const tgt4     = {...nodeMap.get(TYPE_ID)};
-  const nodes    = [center,tgt1,tgt2,tgt3,tgt4].filter(Boolean);
+  var center   = Object.assign({}, nodeMap.get(ITEM_ID));
+  var tgt1     = Object.assign({}, nodeMap.get(CREATOR_ID));
+  var tgt2     = Object.assign({}, nodeMap.get(SUBJECT_ID));
+  var tgt3     = Object.assign({}, nodeMap.get(COVERAGE_ID));
+  var tgt4     = Object.assign({}, nodeMap.get(TYPE_ID));
+  var nodes    = [center,tgt1,tgt2,tgt3,tgt4].filter(Boolean);
 
-  // Radio compacto para que las aristas no queden exageradamente largas
-  const r = Math.min(W, H) * 0.22;
-  const cx = W/2, cy = H/2;
-  const fixedPos = new Map([
+  var r = Math.min(W, H) * 0.22;
+  var cx = W/2, cy = H/2;
+  var fixedPos = new Map([
     [center.id, [cx,      cy]],
     [tgt1.id,   [cx,      cy - r]],
     [tgt2.id,   [cx + r,  cy]],
     [tgt3.id,   [cx,      cy + r]],
     [tgt4.id,   [cx - r,  cy]],
   ]);
-  nodes.forEach(n=>{ n.fx=fixedPos.get(n.id)[0]; n.fy=fixedPos.get(n.id)[1]; });
+  nodes.forEach(function(n){ n.fx=fixedPos.get(n.id)[0]; n.fy=fixedPos.get(n.id)[1]; });
 
-  // Aristas reales entre item_734 y sus vecinos
-  const edges = [
+  var edges = [
     {source:ITEM_ID, target:CREATOR_ID,  relation:'authored_by'},
     {source:ITEM_ID, target:SUBJECT_ID,  relation:'tagged_with'},
     {source:ITEM_ID, target:COVERAGE_ID, relation:'belongs_to_area'},
@@ -1025,23 +998,22 @@ function sceneEdges() {
   ];
 
   render(nodes, edges, {
-    big:true, fixedPos, alpha:0.05,
-    edgeStroke: e=>REL_COLOR[e.relation],
+    big:true, fixedPos:fixedPos, alpha:0.05,
+    edgeStroke: function(e) { return REL_COLOR[e.relation]; },
     edgeOpacity: 0.8, edgeWidth: 2,
-    opacityFn:()=>0.95,
+    opacityFn:function() { return 0.95; },
     labelNodes: nodes,
-    labelSize: d=>d.id===ITEM_ID?13:11,
-    charge:()=>-60,
+    labelSize: function(d) { return d.id===ITEM_ID?13:11; },
+    charge:function() { return -60; },
   });
 
-  // Etiquetas de relación sobre cada arista
-  const tok = sceneToken;
-  setTimeout(()=>{
+  var tok = sceneToken;
+  setTimeout(function(){
     if(sceneToken!==tok) return;
-    edges.forEach((e,i)=>{
-      const sp=fixedPos.get(e.source), tp=fixedPos.get(e.target);
-      const mx=(sp[0]+tp[0])/2, my=(sp[1]+tp[1])/2;
-      const bg=annotG.append('g').attr('opacity',0);
+    edges.forEach(function(e,i){
+      var sp=fixedPos.get(e.source), tp=fixedPos.get(e.target);
+      var mx=(sp[0]+tp[0])/2, my=(sp[1]+tp[1])/2;
+      var bg=annotG.append('g').attr('opacity',0);
       bg.append('rect')
         .attr('x',mx-42).attr('y',my-11).attr('width',84).attr('height',20)
         .attr('rx',10).attr('fill','#0f0e0b').attr('fill-opacity',0.85);
@@ -1058,64 +1030,59 @@ function sceneEdges() {
 }
 
 function sceneProximity() {
-  // Subgrafo de cercanía: sólo nodos que efectivamente tienen aristas dentro del subset
-  // Normalizar source/target (pueden haber sido mutados a objetos por D3 en escenas previas)
-  const rawNodes = SUBSETS.proxNodes;
-  const rawSet = new Set(rawNodes.map(n=>n.id));
-  const edges = SUBSETS.proxEdges
-    .map(e=>({source:srcId(e), target:tgtId(e), relation:e.relation}))
-    .filter(e=>rawSet.has(e.source)&&rawSet.has(e.target));
-  // Filtrar nodos aislados (sin aristas) para que no queden flotando
-  const connected = new Set();
-  edges.forEach(e=>{ connected.add(e.source); connected.add(e.target); });
-  const nodes = rawNodes.filter(n=>connected.has(n.id)).map(n=>({...n, x:W/2, y:H/2, vx:0, vy:0, fx:null, fy:null}));
-  const nodeSet = new Set(nodes.map(n=>n.id));
+  var rawNodes = SUBSETS.proxNodes;
+  var rawSet = new Set(rawNodes.map(function(n) { return n.id; }));
+  var edges = SUBSETS.proxEdges
+    .map(function(e) { return {source:srcId(e), target:tgtId(e), relation:e.relation}; })
+    .filter(function(e) { return rawSet.has(e.source)&&rawSet.has(e.target); });
+  var connected = new Set();
+  edges.forEach(function(e){ connected.add(e.source); connected.add(e.target); });
+  var nodes = rawNodes.filter(function(n) { return connected.has(n.id); }).map(function(n) { return Object.assign({}, n, {x:W/2, y:H/2, vx:0, vy:0, fx:null, fy:null}); });
+  var nodeSet = new Set(nodes.map(function(n) { return n.id; }));
 
   render(nodes, edges, {
-    edgeStroke:()=>COLOR.item, edgeOpacity:0.2, edgeWidth:0.6,
+    edgeStroke:function() { return COLOR.item; }, edgeOpacity:0.2, edgeWidth:0.6,
     stagger:true, alpha:1.0,
-    opacityFn: d=>d.type==='item'?0.5:0.9,
-    charge: d=>d.type==='item'?-25:-100,
-    linkDist: d=>{
-      const sn=nodeMap.get(srcId(d)), tn=nodeMap.get(tgtId(d));
-      return (sn?.type==='coverage'||tn?.type==='coverage')?110:55;
+    opacityFn: function(d) { return d.type==='item'?0.5:0.9; },
+    charge: function(d) { return d.type==='item'?-25:-100; },
+    linkDist: function(d){
+      var sn=nodeMap.get(srcId(d)), tn=nodeMap.get(tgtId(d));
+      return (sn&&sn.type==='coverage'||tn&&tn.type==='coverage')?110:55;
     },
   });
 
-  // 4 anotaciones conceptuales: CENTRAL, PERIFÉRICO, CERCANOS (par de vecinos), LEJANOS (par distante)
-  const tok = sceneToken;
-  setTimeout(()=>{
+  var tok = sceneToken;
+  setTimeout(function(){
     if(sceneToken!==tok) return;
-    const placed = [...nodes].filter(n=>n.x&&n.y);
+    var placed = nodes.slice().filter(function(n) { return n.x&&n.y; });
     if (placed.length < 4) return;
 
-    const byDegree = [...placed].sort((a,b)=>(b.degree||0)-(a.degree||0));
-    const central = byDegree[0];
-    const periph  = byDegree[byDegree.length-1];
+    var byDegree = placed.slice().sort(function(a,b) { return (b.degree||0)-(a.degree||0); });
+    var central = byDegree[0];
+    var periph  = byDegree[byDegree.length-1];
 
-    // Par de cercanos: dos nodos conectados por arista
-    let near1=null, near2=null;
-    for (const e of edges) {
-      const s=nodes.find(n=>n.id===srcId(e)), t=nodes.find(n=>n.id===tgtId(e));
+    var near1=null, near2=null;
+    for (var i=0; i<edges.length; i++) {
+      var e=edges[i];
+      var s=nodes.find(function(n) { return n.id===srcId(e); }), t=nodes.find(function(n) { return n.id===tgtId(e); });
       if (s&&t&&s.id!==central.id&&t.id!==central.id) { near1=s; near2=t; break; }
     }
-    // Par de lejanos: dos nodos sin aristas que los conecten, con distancia máxima
-    let far1=null, far2=null, maxD=0;
-    const adj = new Map();
-    edges.forEach(e=>{
+    var far1=null, far2=null, maxD=0;
+    var adj = new Map();
+    edges.forEach(function(e){
       if(!adj.has(e.source)) adj.set(e.source,new Set());
       if(!adj.has(e.target)) adj.set(e.target,new Set());
       adj.get(e.source).add(e.target); adj.get(e.target).add(e.source);
     });
-    for (let i=0;i<placed.length;i++) for (let j=i+1;j<placed.length;j++) {
-      const a=placed[i], b=placed[j];
-      if (adj.get(a.id)?.has(b.id)) continue;
-      const d = Math.hypot(a.x-b.x, a.y-b.y);
+    for (i=0;i<placed.length;i++) for (var j=i+1;j<placed.length;j++) {
+      var a=placed[i], b=placed[j];
+      if (adj.get(a.id)&&adj.get(a.id).has(b.id)) continue;
+      var d = Math.hypot(a.x-b.x, a.y-b.y);
       if (d>maxD) { maxD=d; far1=a; far2=b; }
     }
 
-    const pairs = [
-      [central, 'CENTRAL',    '#7aaf60', 'top'],
+    var pairs = [
+      [central, 'CENTRAL',    COLOR.coverage, 'top'],
       [periph,  'PERIFÉRICO', COLOR.type, 'top'],
     ];
     if (near1 && near2) {
@@ -1125,40 +1092,39 @@ function sceneProximity() {
       pairs.push([far1, 'LEJANOS', COLOR.creator, 'top']);
     }
 
-    const annotTexts = pairs.map(([n,lbl,col])=>{
+    var annotTexts = pairs.map(function(pair) {
+      var n=pair[0], lbl=pair[1], col=pair[2];
       return annotG.append('text')
         .attr('x', n.x).attr('y', n.y - nodeRadius(n) - 14)
         .attr('text-anchor','middle')
         .attr('font-family',"'Instrument Sans',sans-serif")
         .attr('font-size',9).attr('font-weight',600).attr('letter-spacing',1.5)
         .attr('fill',col).attr('fill-opacity',0).text(lbl)
-        .call(sel => sel.transition().duration(500).attr('fill-opacity',1));
+        .call(function(sel) { sel.transition().duration(500).attr('fill-opacity',1); });
     });
 
-    // Línea punteada entre pares (cercanos y lejanos) para remarcar la relación
-    const lineRefs = [];
+    var lineRefs = [];
     if (near1 && near2) {
       lineRefs.push({a:near1, b:near2, color:COLOR.subject, dash:'2,3',
         line: annotG.insert('line',':first-child')
           .attr('x1',near1.x).attr('y1',near1.y).attr('x2',near2.x).attr('y2',near2.y)
           .attr('stroke',COLOR.subject).attr('stroke-width',1).attr('stroke-dasharray','2,3').attr('stroke-opacity',0)
-          .call(s=>s.transition().duration(500).attr('stroke-opacity',0.6))});
+          .call(function(s) { s.transition().duration(500).attr('stroke-opacity',0.6); })});
     }
     if (far1 && far2) {
       lineRefs.push({a:far1, b:far2, color:COLOR.creator, dash:'1,5',
         line: annotG.insert('line',':first-child')
           .attr('x1',far1.x).attr('y1',far1.y).attr('x2',far2.x).attr('y2',far2.y)
           .attr('stroke',COLOR.creator).attr('stroke-width',1).attr('stroke-dasharray','1,5').attr('stroke-opacity',0)
-          .call(s=>s.transition().duration(500).attr('stroke-opacity',0.5))});
+          .call(function(s) { s.transition().duration(500).attr('stroke-opacity',0.5); })});
     }
 
-    // Actualizar posición de textos y líneas en cada tick
-    simulation.on('tick.annot04', ()=>{
+    simulation.on('tick.annot04', function(){
       if(sceneToken!==tok){ simulation.on('tick.annot04', null); return; }
-      pairs.forEach(([n,,],i)=>{
-        annotTexts[i].attr('x', n.x).attr('y', n.y - nodeRadius(n) - 14);
+      pairs.forEach(function(pair,i){
+        annotTexts[i].attr('x', pair[0].x).attr('y', pair[0].y - nodeRadius(pair[0]) - 14);
       });
-      lineRefs.forEach(ref=>{
+      lineRefs.forEach(function(ref){
         ref.line.attr('x1',ref.a.x).attr('y1',ref.a.y).attr('x2',ref.b.x).attr('y2',ref.b.y);
       });
     });
@@ -1168,109 +1134,96 @@ function sceneProximity() {
 }
 
 function sceneCommunities() {
-  // Grafo completo; comunidad LE iluminada, resto oscurecido
-  const leIds = SUBSETS.leIds;
-  const leNodes = allNodes.filter(n=>leIds.has(n.id));
+  var leIds = SUBSETS.leIds;
+  var leNodes = allNodes.filter(function(n) { return leIds.has(n.id); });
 
   render(allNodes, allEdges, {
-    edgeStroke: ()=>'#2e2a22', edgeOpacity:0.04, edgeWidth:0.4,
+    edgeStroke: function() { return 'var(--border)'; }, edgeOpacity:0.04, edgeWidth:0.4,
     stagger:false, alpha:0.5,
-    fillFn:    d=>leIds.has(d.id)?d.color:'#2e2a22',
-    opacityFn: d=>leIds.has(d.id)?0.95:0.07,
-    glowFn:    d=>d.id===COVERAGE_ID?'url(#sglow2)':null,
-    // Mostrar labels solo de los nodos de la comunidad no-item
-    labelNodes: leNodes.filter(n=>n.type!=='item'),
-    labelSize: d=>d.id===COVERAGE_ID?14:10,
-    charge: d=>d.type==='item'?-12:-55,
-    linkDist: d=>{
-      const sn=nodeMap.get(srcId(d)),tn=nodeMap.get(tgtId(d));
-      if(sn?.type==='coverage'||tn?.type==='coverage') return 120;
-      if(sn?.type==='type'||tn?.type==='type') return 150;
+    fillFn:    function(d) { return leIds.has(d.id)?d.color:'#2e2a22'; },
+    opacityFn: function(d) { return leIds.has(d.id)?0.95:0.15; },
+    glowFn:    function(d) { return d.id===COVERAGE_ID?'url(#sglow2)':null; },
+    labelNodes: leNodes.filter(function(n) { return n.type!=='item'; }),
+    labelSize: function(d) { return d.id===COVERAGE_ID?14:10; },
+    charge: function(d) { return d.type==='item'?-12:-55; },
+    linkDist: function(d){
+      var sn=nodeMap.get(srcId(d)),tn=nodeMap.get(tgtId(d));
+      if(sn&&sn.type==='coverage'||tn&&tn.type==='coverage') return 120;
+      if(sn&&sn.type==='type'||tn&&tn.type==='type') return 150;
       return 60;
     },
   });
 
-  // Aristas internas de la comunidad LE con más opacidad (post-bind)
-  const tok = sceneToken;
-  setTimeout(()=>{
+  var tok = sceneToken;
+  setTimeout(function(){
     if(sceneToken!==tok) return;
     linkEls.transition().duration(500)
-      .attr('stroke',   e=>(leIds.has(srcId(e))&&leIds.has(tgtId(e)))?COLOR.coverage:'#2e2a22')
-      .attr('stroke-opacity', e=>(leIds.has(srcId(e))&&leIds.has(tgtId(e)))?0.35:0.04);
+      .attr('stroke',   function(e) { return (leIds.has(srcId(e))&&leIds.has(tgtId(e)))?COLOR.coverage:'var(--border-light)'; })
+      .attr('stroke-opacity', function(e) { return (leIds.has(srcId(e))&&leIds.has(tgtId(e)))?0.35:0.04; });
 
-    // Centrar en la comunidad LE cuando los nodos tengan posición
     zoomToNodes(leNodes, 80, 1200);
   }, 200);
 }
 
 function sceneNeighborhood(hop) {
   currentHop = hop;
-  document.querySelectorAll('.hop-pill').forEach((p,i)=>p.classList.toggle('active',i===hop));
+  qsa('.hop-pill').forEach(function(p,i) { p.classList.toggle('active',i===hop); });
 
-  const depth = SUBSETS.hops[hop];
+  var depth = SUBSETS.hops[hop];
 
-  // Capear el subgrafo: priorizamos nodos cercanos y con mayor grado para legibilidad
-  // hop 0: 1 nodo / hop 1: todos / hop 2: tope 60 / hop 3: tope 120
-  const CAP = hop===0 ? 1 : hop===1 ? 999 : hop===2 ? 60 : 120;
-  const allInHop = allNodes.filter(n=>depth.has(n.id));
-  // Ordenar por (hop asc, degree desc) y cortar
-  allInHop.sort((a,b)=>{
-    const dA=depth.get(a.id), dB=depth.get(b.id);
+  var CAP = hop===0 ? 1 : hop===1 ? 999 : hop===2 ? 60 : 120;
+  var allInHop = allNodes.filter(function(n) { return depth.has(n.id); });
+  allInHop.sort(function(a,b){
+    var dA=depth.get(a.id), dB=depth.get(b.id);
     if (dA!==dB) return dA-dB;
     return (b.degree||0)-(a.degree||0);
   });
-  const picked = allInHop.slice(0, CAP);
-  // Asegurar que el nodo raíz esté siempre
-  if (!picked.find(n=>n.id===ITEM_ID)) picked.unshift(nodeMap.get(ITEM_ID));
+  var picked = allInHop.slice(0, CAP);
+  if (!picked.find(function(n) { return n.id===ITEM_ID; })) picked.unshift(nodeMap.get(ITEM_ID));
 
-  const nodes = picked.map(n=>({...n, x: W/2, y: H/2, vx: 0, vy: 0, fx: null, fy: null}));
-  const nSet = new Set(nodes.map(n=>n.id));
+  var nodes = picked.map(function(n) { return Object.assign({}, n, {x: W/2, y: H/2, vx: 0, vy: 0, fx: null, fy: null}); });
+  var nSet = new Set(nodes.map(function(n) { return n.id; }));
 
-  // Copias frescas de las aristas (D3 muta source/target in-place al linkarlas a la sim)
-  const edges = hop===0 ? [] : SUBSETS.hopEdges[hop]
-    .filter(e=>nSet.has(e.source)&&nSet.has(e.target))
-    .map(e=>({source:e.source, target:e.target, relation:e.relation}));
+  var edges = hop===0 ? [] : SUBSETS.hopEdges[hop]
+    .filter(function(e) { return nSet.has(e.source)&&nSet.has(e.target); })
+    .map(function(e) { return {source:e.source, target:e.target, relation:e.relation}; });
 
-  const n = nodes.length;
-  // Fuerzas calibradas por tamaño — distancias cortas y repulsión moderada para que queden compactos
-  const chg   = n<=1 ? -300 : n<8 ? -260 : n<30 ? -140 : -80;
-  const lDist = n<=1 ? 0    : n<8 ? 80   : n<30 ? 55   : 40;
-  const alpha  = n<=1 ? 0.1 : 0.9;
-  const zDelay = n<=1 ? 200 : n<8 ? 700  : n<30 ? 1300 : 2000;
+  var n = nodes.length;
+  var chg   = n<=1 ? -300 : n<8 ? -260 : n<30 ? -140 : -80;
+  var lDist = n<=1 ? 0    : n<8 ? 80   : n<30 ? 55   : 40;
+  var alpha  = n<=1 ? 0.1 : 0.9;
+  var zDelay = n<=1 ? 200 : n<8 ? 700  : n<30 ? 1300 : 2000;
 
   render(nodes, edges, {
     big: hop <= 1,
-    alpha,
-    edgeStroke: e=>REL_COLOR[e.relation]||COLOR.item,
+    alpha:alpha,
+    edgeStroke: function(e) { return REL_COLOR[e.relation]||COLOR.item; },
     edgeOpacity: 0.6, edgeWidth: hop<=1 ? 1.6 : 0.8,
     stagger: true,
-    opacityFn: d=>{
-      const d2=depth.get(d.id)||0;
+    opacityFn: function(d){
+      var d2=depth.get(d.id)||0;
       return d.id===ITEM_ID ? 1 : Math.max(0.4, 1-d2*0.18);
     },
-    glowFn: d=>d.id===ITEM_ID?'url(#sglow)':null,
+    glowFn: function(d) { return d.id===ITEM_ID?'url(#sglow)':null; },
     labelNodes: hop<=2
-      ? nodes.filter(n2=>n2.type!=='item'||n2.id===ITEM_ID)
-      : nodes.filter(n2=>n2.id===ITEM_ID||(n2.type!=='item'&&(n2.degree||0)>=8)),
-    labelSize: d=>d.id===ITEM_ID?14:10,
+      ? nodes.filter(function(n2) { return n2.type!=='item'||n2.id===ITEM_ID; })
+      : nodes.filter(function(n2) { return n2.id===ITEM_ID||(n2.type!=='item'&&(n2.degree||0)>=8); }),
+    labelSize: function(d) { return d.id===ITEM_ID?14:10; },
     charge: chg,
-    linkDist: ()=>lDist,
+    linkDist: function() { return lDist; },
   });
 
   zoomToNodes(nodes, 50, zDelay);
 }
 
 function sceneFilters() {
-  // Resetear al estado completo al entrar
-  Object.keys(filterActive).forEach(k => filterActive[k] = true);
-  document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('off'));
+  Object.keys(filterActive).forEach(function(k) { filterActive[k] = true; });
+  qsa('.f-pill').forEach(function(p) { p.classList.remove('off'); });
   applyFilter(true);
-  document.getElementById('filter-pills').classList.add('visible');
+  qs('#filter-pills').classList.add('visible');
 
   if (!filterTouched) {
-    // Ciclo: completo (3s) → solo autores (3s) → completo → solo keywords → completo → solo áreas → completo → solo tipos → …
-    const all  = { authored_by:true,  tagged_with:true,  belongs_to_area:true,  is_type:true  };
-    const steps = [
+    var steps = [
       { authored_by:true,  tagged_with:true,  belongs_to_area:true,  is_type:true  },
       { authored_by:true,  tagged_with:false, belongs_to_area:false, is_type:false },
       { authored_by:true,  tagged_with:true,  belongs_to_area:true,  is_type:true  },
@@ -1280,42 +1233,40 @@ function sceneFilters() {
       { authored_by:true,  tagged_with:true,  belongs_to_area:true,  is_type:true  },
       { authored_by:false, tagged_with:false, belongs_to_area:false, is_type:true  },
     ];
-    let step = 0;
-    filterTimer = setInterval(() => {
-      // Guard: la escena puede haber cambiado mientras el timer estaba en la cola
+    var step = 0;
+    filterTimer = setInterval(function() {
       if (currentScene !== 'filters' || filterTouched) { clearInterval(filterTimer); return; }
       step = (step + 1) % steps.length;
       Object.assign(filterActive, steps[step]);
-      document.querySelectorAll('.f-pill').forEach(p =>
-        p.classList.toggle('off', !filterActive[p.dataset.rel])
-      );
+      qsa('.f-pill').forEach(function(p) {
+        p.classList.toggle('off', !filterActive[p.dataset.rel]);
+      });
       applyFilter(false);
     }, 3000);
   }
 }
 
 function applyFilter(withAlpha) {
-  // Grafo completo filtrado por relaciones activas
-  const edges = allEdges
-    .filter(e => filterActive[e.relation])
-    .map(e=>({source:srcId(e), target:tgtId(e), relation:e.relation}));
-  const conn = new Set();
-  edges.forEach(e => { conn.add(srcId(e)); conn.add(tgtId(e)); });
-  const nodes = allNodes.filter(n => conn.has(n.id));
+  var edges = allEdges
+    .filter(function(e) { return filterActive[e.relation]; })
+    .map(function(e) { return {source:srcId(e), target:tgtId(e), relation:e.relation}; });
+  var conn = new Set();
+  edges.forEach(function(e) { conn.add(srcId(e)); conn.add(tgtId(e)); });
+  var nodes = allNodes.filter(function(n) { return conn.has(n.id); });
 
   render(nodes, edges, {
-    edgeStroke: e => REL_COLOR[e.relation],
+    edgeStroke: function(e) { return REL_COLOR[e.relation]; },
     edgeOpacity: 0.15, edgeWidth: 0.5,
     alpha: withAlpha ? 0.8 : 0.25,
     stagger: withAlpha,
-    opacityFn: d => d.type==='item' ? 0.5 : 0.9,
-    labelNodes: nodes.filter(n => n.type!=='item' && (n.degree||0)>=8),
-    labelSize: d => d.type==='coverage' ? 11 : 9,
-    charge: d => d.type==='item' ? -12 : -55,
-    linkDist: d => {
-      const sn=nodeMap.get(srcId(d)), tn=nodeMap.get(tgtId(d));
-      if(sn?.type==='coverage'||tn?.type==='coverage') return 120;
-      if(sn?.type==='type'||tn?.type==='type') return 150;
+    opacityFn: function(d) { return d.type==='item' ? 0.5 : 0.9; },
+    labelNodes: nodes.filter(function(n) { return n.type!=='item' && (n.degree||0)>=8; }),
+    labelSize: function(d) { return d.type==='coverage' ? 11 : 9; },
+    charge: function(d) { return d.type==='item' ? -12 : -55; },
+    linkDist: function(d) {
+      var sn=nodeMap.get(srcId(d)), tn=nodeMap.get(tgtId(d));
+      if(sn&&sn.type==='coverage'||tn&&tn.type==='coverage') return 120;
+      if(sn&&sn.type==='type'||tn&&tn.type==='type') return 150;
       return 60;
     },
   });
@@ -1324,30 +1275,36 @@ function applyFilter(withAlpha) {
 }
 
 function sceneGlossary() {
-  simulation.stop();
-  svg.style('display','none');
-  document.getElementById('filter-pills').classList.remove('visible');
+  simulation
+    .force('charge', d3.forceManyBody().strength(function(d) { return d.type==='item'?-12:-55; }))
+    .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(function(d){
+      var st=nodeMap.get(srcId(d)), tt=nodeMap.get(tgtId(d));
+      if(st&&st.type==='coverage'||tt&&tt.type==='coverage') return 120;
+      if(st&&st.type==='type'||tt&&tt.type==='type') return 150;
+      return 60;
+    }));
 
-  const table = document.getElementById('glossary-table');
-  table.classList.add('visible');
-  const rows = table.querySelectorAll('.gloss-row');
-  rows.forEach(r=>r.classList.remove('visible'));
+  render(allNodes, allEdges, {
+    edgeStroke: function(e) { return REL_COLOR[e.relation] || COLOR.item; },
+    edgeOpacity: 0.12, edgeWidth: 0.4,
+    stagger: true, alpha: 0.8,
+    opacityFn: function(d) { return d.type==='item' ? 0.45 : 0.88; },
+    labelNodes: allNodes.filter(function(n) { return n.type!=='item' && (n.degree||0) >= 6; }),
+    labelSize: function(d) { return d.type==='coverage' ? 11 : 9; },
+  });
 
-  const tok = sceneToken;
-  rows.forEach((r,i)=>setTimeout(()=>{ if(sceneToken===tok) r.classList.add('visible'); }, i*90));
+  qs('#filter-pills').classList.add('visible');
+
+  zoomToNodes(allNodes, 40, 1800);
 }
 
-// ─── Despachador ──────────────────────────────────────────────
-const SCENES = {
-  intro, nodes:sceneNodes, edges:sceneEdges, proximity:sceneProximity,
+// ─── Despachador ─────────────────────────────────
+var SCENES = {
+  intro:sceneIntro, nodes:sceneNodes, edges:sceneEdges, proximity:sceneProximity,
   communities:sceneCommunities,
-  neighborhood: () => sceneNeighborhood(0),
+  neighborhood: function() { sceneNeighborhood(0); },
   filters:sceneFilters, glossary:sceneGlossary,
 };
-// Alias para evitar conflicto con función global "intro" (no existe, pero por claridad)
-function intro() { sceneIntro(); }
-
-let transitionBusy = false;
 
 function transitionToScene(name) {
   if (transitionBusy && name === currentScene) return;
@@ -1359,38 +1316,29 @@ function transitionToScene(name) {
   filterTouched = false;
   currentHop = -1;
 
-  // Actualizar UI
-  document.getElementById('scene-label').textContent = SCENE_LABELS[name]||name;
-  document.querySelectorAll('.p-dot').forEach(d=>d.classList.toggle('active',d.dataset.scene===name));
+  qs('#scene-label').textContent = SCENE_LABELS[name]||name;
+  qsa('.p-dot').forEach(function(d) { d.classList.toggle('active',d.dataset.scene===name); });
 
-  const canvasCol = document.getElementById('canvas-col');
+  var canvasCol = qs('#canvas-col');
   canvasCol.style.transition='opacity 0.2s';
   canvasCol.style.opacity=0;
 
-  setTimeout(()=>{
-    // ─── RESET UNIVERSAL: borra toda lógica de la escena anterior ───
-    // 1) UI flotante (glosario y filtros) — ocultar + resetear estado visual
+  setTimeout(function(){
     svg.style('display',null);
-    document.getElementById('glossary-table').classList.remove('visible');
-    document.getElementById('filter-pills').classList.remove('visible');
-    // Resetear filterActive a todo en true y limpiar el estado visual de los pills
-    Object.keys(filterActive).forEach(k => filterActive[k] = true);
-    document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('off'));
+    qs('#filter-pills').classList.remove('visible');
+    Object.keys(filterActive).forEach(function(k) { filterActive[k] = true; });
+    qsa('.f-pill').forEach(function(p) { p.classList.remove('off'); });
 
-    // 2) Cancelar cualquier timer de animación de filtros pendiente
     clearInterval(filterTimer);
     filterTimer = null;
 
-    // 3) Parar simulación y limpiar enlaces/tick handlers de escenas previas
     simulation.on('tick.annot04', null);
     simulation.stop();
     simulation.force('link').links([]);
     simulation.nodes([]);
 
-    // 3) Reset visual del zoom
     svg.call(zoom.transform, d3.zoomIdentity);
 
-    // 4) Limpiar DOM completamente — la próxima escena hace sus renders desde cero
     edgeG.selectAll('line').remove();
     nodeG.selectAll('circle').remove();
     labelG.selectAll('text').remove();
@@ -1403,50 +1351,46 @@ function transitionToScene(name) {
 
     canvasCol.style.transition='opacity 0.45s';
     canvasCol.style.opacity=1;
-    setTimeout(()=>{ transitionBusy=false; }, 460);
+    setTimeout(function(){ transitionBusy=false; }, 460);
   }, 220);
 }
 
-// ─── IntersectionObserver ────────────────────────────────────
+// ─── IntersectionObserver (scroll-col as root) ────
 function setupObserver() {
-  const scrollCol = document.getElementById('scroll-col');
+  var scrollCol = qs('#scroll-col');
+  if (!scrollCol) return;
 
-  // El ratio mínimo depende del alto de la sección: secciones altas (como neighborhood con 200vh)
-  // nunca alcanzan 0.38 porque sólo 100vh entran en viewport a la vez. Usamos el alto del viewport
-  // como disparador: si más de un 25% del viewport está cubierto por la sección, se activa.
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      const name = entry.target.dataset.scene;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var name = entry.target.dataset.scene;
       if (!name) return;
-      const rect = entry.boundingClientRect;
-      const root = entry.rootBounds;
-      if (!root) return;
-      // Proporción del viewport cubierta por la sección
-      const visible = Math.max(0, Math.min(rect.bottom, root.bottom) - Math.max(rect.top, root.top));
-      const viewportCoverage = visible / root.height;
-      if (entry.isIntersecting && viewportCoverage >= 0.35) {
-        if (name!==currentScene) transitionToScene(name);
-      } else if (!entry.isIntersecting && currentScene===name) {
-        currentScene = null; // permite re-trigger al volver
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
+        if (name !== currentScene) transitionToScene(name);
+      } else if (!entry.isIntersecting && currentScene === name) {
+        currentScene = null;
       }
     });
-  },{root:scrollCol, threshold:[0,0.1,0.25,0.5,0.75,1], rootMargin:'0px'});
+  },{
+    root: scrollCol,
+    threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+    rootMargin: '0px 0px -10% 0px'
+  });
 
-  document.querySelectorAll('.story-section').forEach(s=>io.observe(s));
+  qsa('.story-section').forEach(function(s) { io.observe(s); });
 }
 
-// ─── Filtros pills ────────────────────────────────────────────
+// ─── Filtros pills ───────────────────────────────
 function setupNeighborhoodPills() {
-  document.querySelectorAll('.hop-pill').forEach((pill, i) => {
-    pill.addEventListener('click', () => sceneNeighborhood(i));
+  qsa('.hop-pill').forEach(function(pill, i) {
+    pill.addEventListener('click', function() { sceneNeighborhood(i); });
   });
 }
 
 function setupFilterPills() {
-  document.querySelectorAll('.f-pill').forEach(pill=>{
-    pill.addEventListener('click',()=>{
+  qsa('.f-pill').forEach(function(pill){
+    pill.addEventListener('click', function(){
       filterTouched=true; clearInterval(filterTimer);
-      const rel=pill.dataset.rel;
+      var rel=pill.dataset.rel;
       filterActive[rel]=!filterActive[rel];
       pill.classList.toggle('off',!filterActive[rel]);
       if (currentScene==='filters') applyFilter(false);
@@ -1454,44 +1398,64 @@ function setupFilterPills() {
   });
 }
 
-// ─── Bootstrap ───────────────────────────────────────────────
-fetch(DATA_URL)
-  .then(r=>r.json())
-  .then(data=>{
-    allNodes = data.nodes.map(n=>({
-      id:n.id, label:n.l, type:n.t, color:(COLOR[n.t] || n.c || '#999999'),
-      degree:n.d||0, url:n.url||'', abstract:n.abs||'', fullTitle:n.ft||n.l,
-    }));
-    allEdges = data.edges.map(e=>({source:e.s, target:e.t, relation:e.r}));
-    nodeMap  = new Map(allNodes.map(n=>[n.id,n]));
+// ─── Bootstrap ────────────────────────────────────
+function init() {
+  if (typeof d3 === 'undefined') {
+    qs('.loading-text').textContent = 'Error: D3.js no est\u00E1 cargado';
+    return;
+  }
 
-    STATS = {
-      items: allNodes.filter(n=>n.type==='item').length,
-      areas: allNodes.filter(n=>n.type==='coverage').length,
-      nodes: allNodes.length,
-      edges: allEdges.length,
-      creatorDeg: nodeMap.get(CREATOR_ID) ? nodeMap.get(CREATOR_ID).degree : ''
-    };
-    document.querySelectorAll('[data-stat]').forEach(el=>{
-      const v = STATS[el.dataset.stat];
-      if (v !== undefined && v !== '') el.textContent = v;
+  fetch(DATA_URL)
+    .then(function(r) { return r.json(); })
+    .then(function(data){
+      allNodes = data.nodes.map(function(n) { return {
+        id:n.id, label:n.l, type:n.t, color:(COLOR[n.t] || n.c || '#999999'),
+        degree:n.d||0, url:n.url||'', abstract:n.abs||'', fullTitle:n.ft||n.l,
+      };});
+      allEdges = data.edges.map(function(e) { return {source:e.s, target:e.t, relation:e.r}; });
+      nodeMap  = new Map(allNodes.map(function(n) { return [n.id,n]; }));
+
+      STATS = {
+        items: allNodes.filter(function(n) { return n.type==='item'; }).length,
+        areas: allNodes.filter(function(n) { return n.type==='coverage'; }).length,
+        nodes: allNodes.length,
+        edges: allEdges.length,
+        creatorDeg: nodeMap.get(CREATOR_ID) ? nodeMap.get(CREATOR_ID).degree : ''
+      };
+      qsa('[data-stat]').forEach(function(el) {
+        var v = STATS[el.getAttribute('data-stat')];
+        if (v !== undefined && v !== '') el.textContent = v;
+      });
+
+      buildSubsets();
+      initD3();
+      setupObserver();
+      setupNeighborhoodPills();
+      setupFilterPills();
+
+      var ls = qs('#loading-screen');
+      if (ls) {
+        ls.classList.add('fade');
+        setTimeout(function() {
+          if (ls.parentNode) ls.parentNode.removeChild(ls);
+        }, 700);
+      }
+
+      setTimeout(function() { transitionToScene('intro'); }, 150);
+    })
+    .catch(function(err){
+      var lt = qs('.loading-text');
+      if (lt) lt.textContent = 'Error: ' + err.message;
     });
+}
 
-    buildSubsets();
-    initD3();
-    setupObserver();
-    setupNeighborhoodPills();
-    setupFilterPills();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 
-    const ls = document.getElementById('loading-screen');
-    ls.classList.add('fade');
-    setTimeout(()=>ls.remove(), 700);
-
-    setTimeout(()=>transitionToScene('intro'), 150);
-  })
-  .catch(err=>{
-    document.querySelector('.loading-text').textContent='Error: '+err.message;
-  });
+})();
 </script>
 </body>
 </html>
