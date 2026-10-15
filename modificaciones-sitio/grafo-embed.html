@@ -37,6 +37,8 @@
     min-height: 600px;
     isolation: isolate;
     overflow: hidden;
+    visibility: hidden;   /* nace oculto; el JS lo revela ya posicionado (evita el parpadeo) */
+    animation: mh-reveal 0s linear .8s forwards;
     font-family: 'Raleway', sans-serif;
     background: var(--bg);
     color: var(--text);
@@ -44,17 +46,20 @@
   }
   #mampa-grafo *, #mampa-grafo *::before, #mampa-grafo *::after { box-sizing: border-box; }
 
+  /* Seguro CSS: si el JS no revelara el bloque, se muestra solo a los 0.8s */
+  @keyframes mh-reveal { to { visibility: visible; } }
+
   /* =========================================================
      HEADER / NAV BAR: réplica del header del tema freedomISEP
      (valores tomados de style.css del tema)
      ========================================================= */
-  #mampa-grafo { --primary: #394f68; }   /* <-- ajustar si el color primario del sitio es otro */
+  #mampa-grafo { --primary: #155180; }   /* color primario real del sitio (var(--primary)) */
 
   #mampa-grafo .main-header {
     position: absolute; top: 0; left: 0; width: 100%; z-index: 300;
     background: #fff;
     box-shadow: 0px 4px 6px 2px rgba(0,0,0,.11);
-    font-family: "Open Sans", sans-serif; font-size: 1rem; line-height: 1.5; color: #666;
+    font-family: 'Raleway', system-ui, sans-serif; font-size: 1rem; line-height: 1.5; color: #666;
   }
   #mampa-grafo .mh-container {
     width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 15px;
@@ -78,7 +83,7 @@
   #mampa-grafo .mh-nav ul li > a {
     display: block; position: relative; color: var(--primary); text-decoration: none;
     text-transform: uppercase; padding-top: .3rem; padding-bottom: .3rem; margin: 30px 15px;
-    font-family: "Open Sans", sans-serif; font-size: 1rem; line-height: 1.5;
+    font-family: 'Raleway', system-ui, sans-serif; font-size: 1rem; font-weight: 700; line-height: 1.5;
   }
   #mampa-grafo .mh-nav ul li > a::after {
     content: ""; position: absolute; height: 1px; width: 100%; background: var(--primary);
@@ -120,7 +125,7 @@
   #mampa-grafo .mh-drawer li.active > a { font-weight: bold; }
   #mampa-grafo .mh-drawer a {
     display: block; border-bottom: 1px solid #999; color: #eef7fa; padding: 1rem;
-    text-align: left; text-decoration: none; font-family: "Open Sans", sans-serif; font-size: 1rem;
+    text-align: left; text-decoration: none; font-family: 'Raleway', system-ui, sans-serif; font-size: 1rem;
   }
 
   /* =========================================================
@@ -301,13 +306,23 @@
     font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; margin-left: 6px; font-weight: 500;
   }
 
-  #mampa-grafo .tooltip {
+  /* Clase propia (mh-tooltip): evita heredar el `content:"\uf059"` (ícono "?") del .tooltip del tema */
+  #mampa-grafo .mh-tooltip {
     position: absolute; padding: 7px 12px; background: var(--surface);
     border: 1px solid var(--border-light); border-radius: 8px;
     font-size: 11px; color: var(--text); pointer-events: none;
     z-index: 200; display: none; max-width: 260px;
     box-shadow: 0 3px 12px rgba(58,52,40,0.12); font-family: 'Raleway', sans-serif;
   }
+
+  /* Íconos por tipo de nodo (emoji) */
+  #mampa-grafo .mh-emoji {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "EmojiOne Color", sans-serif;
+    font-style: normal; font-weight: 400; line-height: 1;
+  }
+  #mampa-grafo #legend .mh-emoji { font-size: 12px; }
+  #mampa-grafo .filter-btn .mh-emoji { font-size: 11px; }
+  #mampa-grafo #detail-panel .mh-emoji { font-size: 11px; }
 
   #mampa-grafo #loading {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -415,16 +430,16 @@
   </div>
 
   <div id="legend">
-    <div class="leg-item"><div class="leg-dot" style="background:var(--item)"></div>Fichas</div>
-    <div class="leg-item"><div class="leg-dot" style="background:var(--creator)"></div>Autores</div>
-    <div class="leg-item"><div class="leg-dot" style="background:var(--subject)"></div>Palabras clave</div>
-    <div class="leg-item"><div class="leg-dot" style="background:var(--coverage)"></div>&Aacute;reas</div>
-    <div class="leg-item"><div class="leg-dot" style="background:var(--type)"></div>Tipos</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--item)"></div><span class="mh-emoji">📘</span> Fichas</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--creator)"></div><span class="mh-emoji">👤</span> Autores</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--subject)"></div><span class="mh-emoji">🏷️</span> Palabras clave</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--coverage)"></div><span class="mh-emoji">🗂️</span> &Aacute;reas</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--type)"></div><span class="mh-emoji">🧩</span> Tipos</div>
   </div>
 
   <div id="stats"></div>
   <div id="detail-panel"></div>
-  <div class="tooltip" id="tooltip"></div>
+  <div class="mh-tooltip" id="tooltip"></div>
   <div id="loading">Cargando jard&iacute;n...</div>
   <svg id="graph"></svg>
 </div>
@@ -453,16 +468,23 @@ const DATA_URL = 'https://mampa.isep-cba.edu.ar/themes/freedomISEP/asset/js/data
     });
   }
 
-  // El tema reserva espacio arriba (padding-top del body / márgenes del contenedor) para su
-  // propio header fijo. Se mide cuánto es y se compensa para que el bloque arranque en el borde
-  // superior de la ventana. Se omite dentro del editor de Omeka S / panel de administración.
+  // El tema reserva espacio arriba (padding-top del body) para su header. Se mide y se compensa
+  // con margen negativo ANTES de revelar el bloque (nace con visibility:hidden), así no se ve el
+  // salto. Se omite dentro del editor de Omeka S / panel de administración.
   const inEditor = !!root.closest('[contenteditable="true"]') || /\/admin\//.test(location.pathname);
+
+  let recenter = null;
+  window.__mampaRecenter = function(fn) { recenter = fn; };
+
   function fitTop() {
-    if (inEditor) return;
-    root.style.marginTop = '0px';
-    const top = root.getBoundingClientRect().top + (window.pageYOffset || 0);
-    if (top > 0) root.style.marginTop = (-top) + 'px';
+    if (inEditor) { root.style.visibility = 'visible'; return; }
+    // Idempotente: descuenta el margen ya aplicado en vez de volver a 0 (evita un reflow visible).
+    const applied = parseFloat(root.style.marginTop) || 0;
+    const naturalTop = root.getBoundingClientRect().top + (window.pageYOffset || 0) - applied;
+    const want = Math.round(-naturalTop);
+    if (want) root.style.marginTop = want + 'px';
     root.style.zIndex = '1100';
+    root.style.visibility = 'visible';
   }
 
   // El header se mide para que el grafo y los paneles queden justo debajo
@@ -473,7 +495,7 @@ const DATA_URL = 'https://mampa.isep-cba.edu.ar/themes/freedomISEP/asset/js/data
     if (h && h !== last) {
       last = h;
       root.style.setProperty('--nav-h', h + 'px');
-      window.dispatchEvent(new Event('resize')); // re-centra el grafo
+      if (typeof recenter === 'function') recenter(); // re-centra el grafo
     }
   }
   setH();
@@ -482,6 +504,12 @@ const DATA_URL = 'https://mampa.isep-cba.edu.ar/themes/freedomISEP/asset/js/data
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(setH);
   const logo = hdr.querySelector('img');
   if (logo && !logo.complete) logo.addEventListener('load', setH);
+  // El tema reescribe body{padding-top} en runtime: re-medimos cuando cambie.
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(setH);
+    try { ro.observe(document.body, { box: 'border-box' }); } catch (e) { ro.observe(document.body); }
+  }
+  setTimeout(setH, 400); // seguro: corrige si algo se movió tarde
 })();
 
 function initGraph(GRAPH_DATA) {
@@ -499,6 +527,8 @@ function initGraph(GRAPH_DATA) {
   };
   const colorMap = { item: '#0080b1', creator: '#00b2e3', subject: '#87c6a1', coverage: '#0080b1', type: '#b7d181' };
   const typeNames = { item: 'Ficha', creator: 'Autor/a', subject: 'Palabra clave', coverage: 'Área', type: 'Tipo' };
+  const typeEmoji = { item: '📘', creator: '👤', subject: '🏷️', coverage: '🗂️', type: '🧩' };
+  const relEmoji  = { authored_by: '👤', tagged_with: '🏷️', belongs_to_area: '🗂️', is_type: '🧩' };
 
   const allNodes = GRAPH_DATA.nodes.map(n => ({
     id: n.id, label: n.l, type: n.t, color: colorMap[n.t] || n.c,
@@ -534,7 +564,9 @@ function initGraph(GRAPH_DATA) {
     const btn = document.createElement('div');
     btn.className = 'filter-btn';
     btn.dataset.rel = rel;
-    btn.innerHTML = '<div class="dot" style="background:' + typeColors[rel] + '"></div>' + label + '<span class="count">' + (relCounts[rel] || 0) + '</span>';
+    btn.innerHTML = '<div class="dot" style="background:' + typeColors[rel] + '"></div>' +
+      (relEmoji[rel] ? '<span class="mh-emoji">' + relEmoji[rel] + '</span> ' : '') +
+      label + '<span class="count">' + (relCounts[rel] || 0) + '</span>';
     btn.addEventListener('click', () => {
       if (activeRelations.has(rel)) { activeRelations.delete(rel); btn.classList.add('off'); }
       else { activeRelations.add(rel); btn.classList.remove('off'); }
@@ -764,7 +796,8 @@ function initGraph(GRAPH_DATA) {
       .attr('pointer-events', 'none')
       .text(d => {
         const max = d.id === focusedNodeId ? 50 : 30;
-        return d.label.length > max ? d.label.slice(0, max - 3) + '...' : d.label;
+        const t = d.label.length > max ? d.label.slice(0, max - 3) + '...' : d.label;
+        return (typeEmoji[d.type] ? typeEmoji[d.type] + ' ' : '') + t;
       })
       .merge(labelEls);
     labelEls.transition().duration(400)
@@ -848,7 +881,7 @@ function initGraph(GRAPH_DATA) {
     tooltip.style.left = (e.clientX - rect.left + 12) + 'px';
     tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
     const extra = d.type === 'item' ? '' : ' (' + d.degree + ' fichas)';
-    tooltip.textContent = d.label + extra;
+    tooltip.textContent = (typeEmoji[d.type] ? typeEmoji[d.type] + ' ' : '') + d.label + extra;
 
     if (focusedNodeId) return;
 
@@ -884,7 +917,9 @@ function initGraph(GRAPH_DATA) {
     panel.classList.add('visible');
 
     let html = '<button class="close-btn">&times;</button>';
-    html += '<div class="node-type-badge" style="background:' + colorMap[d.type] + '18;color:' + colorMap[d.type] + '">' + typeNames[d.type] + '</div>';
+    html += '<div class="node-type-badge" style="background:' + colorMap[d.type] + '18;color:' + colorMap[d.type] + '">' +
+      (typeEmoji[d.type] ? '<span class="mh-emoji">' + typeEmoji[d.type] + '</span> ' : '') +
+      typeNames[d.type] + '</div>';
     html += '<h2>' + (d.fullTitle || d.label) + '</h2>';
 
     if (d.type === 'item') {
@@ -939,7 +974,7 @@ function initGraph(GRAPH_DATA) {
     const matches = allNodes.filter(n => n.label.toLowerCase().includes(q)).slice(0, 12);
     if (matches.length === 0) { searchResults.classList.remove('visible'); return; }
     searchResults.innerHTML = matches.map(n => {
-      return '<div class="search-item" data-id="' + n.id + '">' + n.label + '<span class="si-type" style="color:' + n.color + '">' + typeNames[n.type] + '</span></div>';
+      return '<div class="search-item" data-id="' + n.id + '">' + n.label + '<span class="si-type" style="color:' + n.color + '">' + (typeEmoji[n.type] ? typeEmoji[n.type] + ' ' : '') + typeNames[n.type] + '</span></div>';
     }).join('');
     searchResults.classList.add('visible');
     searchResults.querySelectorAll('.search-item').forEach(el => {
@@ -971,6 +1006,14 @@ function initGraph(GRAPH_DATA) {
       simulation.force('center', d3.forceCenter(width / 2, height / 2));
       simulation.alpha(0.3).restart();
     }, 150);
+  });
+
+  // Hook para re-centrar cuando el ajuste del header cambia la altura útil (sin emitir resize global)
+  if (window.__mampaRecenter) window.__mampaRecenter(function() {
+    width = svg.node().clientWidth;
+    height = svg.node().clientHeight;
+    simulation.force('center', d3.forceCenter(width / 2, height / 2));
+    simulation.alpha(0.3).restart();
   });
 
   updateGraph();

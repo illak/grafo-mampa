@@ -1,0 +1,730 @@
+<script>
+/* =========================================================
+   0) META VIEWPORT (corrección de raíz)
+   La página Omeka S (tema PortadafreedomISEP) NO emite
+   <meta name="viewport">. Sin él, los navegadores móviles
+   maquetan a ~980px y escalan la página (~42% en un 412px):
+   todo se ve chico "proporcionado" y el responsive CSS no basta.
+   Este script lo inyecta si falta (Chrome/Android y Safari/iOS
+   lo respetan aunque se agregue por JS).
+   Solución definitiva: agregar en layout.phtml del tema
+     <?php $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover'); ?>
+   Con el meta en el tema este script no hace nada (queda como respaldo).
+   ========================================================= */
+(function() {
+  var CONTENT = 'width=device-width, initial-scale=1, viewport-fit=cover';
+  var m = document.querySelector('meta[name="viewport"]');
+  if (!m) {
+    m = document.createElement('meta');
+    m.name = 'viewport';
+    m.content = CONTENT;
+    var h = document.head || document.documentElement;
+    h.insertBefore(m, h.firstChild);
+  } else if (!/width\s*=\s*device-width/i.test(m.content)) {
+    m.content = CONTENT;
+  }
+})();
+</script>
+
+<style type="text/css">
+/* =========================================================
+   SPLASH MAMPA — responsive mobile (fragmento Omeka S)
+   Paleta de nodos: #96b158 #1B3A6B #1E9AD7 #B5407A #20A39E
+   ========================================================= */
+.mampa-portada {
+  --bg: #f4f4f4;
+  --bg-warm: #f0ece0;
+  --surface: #f5f2e8;
+  --surface2: #ebe7da;
+  --border: #c8c1ab;
+  --border-light: #d8d2be;
+  --text: #3a3428;
+  --text-dim: #7a7260;
+  --text-light: #9e9480;
+  --accent: #1E9AD7;
+  --accent-dark: #155180;
+  --item: #96b158;
+  --creator: #1B3A6B;
+  --subject: #1E9AD7;
+  --coverage: #B5407A;
+  --type: #20A39E;
+  --edge: #8A97A6;
+  --font: 'Raleway', sans-serif;
+  --mmp-bg-blur: 0px;      /* blur del grafo de fondo (0 en desktop) */
+  --mmp-bg-veil: 0;        /* veladura de contraste sobre el grafo */
+
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 560px;
+  overflow: hidden;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  isolation: isolate;
+  container-type: inline-size;   /* unidades cqi + detección por contenedor */
+  container-name: mampa;
+}
+.mampa-portada * { margin: 0; padding: 0; box-sizing: border-box; }
+
+@keyframes mampa-cta-pulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(30,154,215,0.3); }
+  50%      { box-shadow: 0 4px 30px rgba(30,154,215,0.6); }
+}
+
+/* ---------- Panel del grafo (pantalla completa, fondo) ---------- */
+.mampa-portada #mampa-graph-panel {
+  position: absolute; inset: 0; z-index: 1;
+  overflow: hidden;
+  background: var(--bg);
+  filter: blur(var(--mmp-bg-blur));
+  -webkit-filter: blur(var(--mmp-bg-blur));
+}
+.mampa-portada #mampa-graph-panel svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 2;
+  touch-action: none;      /* pinch-zoom sin scroll de página */
+}
+.mampa-portada #mampa-graph-panel::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 3;
+  pointer-events: none;
+  background: rgba(244,244,244,var(--mmp-bg-veil));
+}
+
+/* ---------- Header con logo (gradiente para que no se mezcle) ---------- */
+.mampa-portada #mampa-graph-header {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+  background: linear-gradient(180deg, var(--bg) 55%, rgba(244,244,244,0) 100%);
+  pointer-events: none;
+}
+.mampa-portada #mampa-graph-header > * { pointer-events: auto; }
+.mampa-portada #mampa-graph-header .logo { width: clamp(150px, 25cqi, 200px); }
+.mampa-portada #mampa-graph-header .logo img { width: 100%; height: auto; display: block; }
+
+/* ---------- Stats (solo para el JS) ---------- */
+.mampa-portada #mampa-stats {
+  position: absolute; bottom: 16px; right: 16px; z-index: 100;
+  font-size: 11px; color: var(--text-light);
+  opacity: 0; pointer-events: none;
+}
+.mampa-portada .mampa-tooltip,
+.mampa-portada #mampa-detail-panel { display: none; }
+
+.mampa-portada #mampa-loading {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-family: var(--font); font-size: 1.1rem;
+  color: var(--text-dim); pointer-events: none; z-index: 300;
+}
+
+/* =========================================================
+   HERO (maqueta): tarjeta flotante a la derecha en desktop
+   ========================================================= */
+.mampa-portada .hero-splash {
+  position: absolute; top: 0; right: 0; bottom: 0; z-index: 10;
+  width: 38%;
+  min-width: 340px;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px 24px 8px;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(244,244,244,0) 0%, rgba(244,244,244,0.55) 100%);
+}
+.mampa-portada .hero-panel-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 350px;
+  pointer-events: auto;
+}
+.mampa-portada .hero-panel {
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 34px 36px;
+  border-radius: 32px;
+  box-shadow: 0 12px 36px rgba(27,58,107,0.10);
+}
+.mampa-portada .hero-title {
+  font-family: var(--font);
+  font-size: clamp(1.5rem, 2.2vw + 0.8rem, 2.2rem);
+  line-height: 1.12;
+  font-weight: 500;
+  color: #155180;
+  margin-bottom: 1.4rem;
+}
+.mampa-portada .hero-title span { color: #00b2e3; }
+.mampa-portada .hero-description {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+  margin-bottom: 1.1rem;
+}
+.mampa-portada .hero-description strong { font-weight: 600; color: #155180; }
+.mampa-portada .btn-ingresar {
+  display: block;
+  margin: 1.2rem auto 0;
+  width: 160px;
+  text-align: center;
+  background-color: #00b2e3;
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: var(--font);
+  padding: 13px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 18px rgba(0,178,227,0.35);
+}
+.mampa-portada .btn-ingresar:hover { background-color: #155180; transform: translateY(-2px); }
+.mampa-portada .btn-ingresar:focus-visible {
+  outline: 3px solid #00b2e3;
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   MODO COMPACT (mobile) — clase toggleada por JS según el
+   ancho real del bloque. Unidades cqi contra #mampa-portada.
+   ========================================================= */
+.mampa-portada.mmp-compact {
+  --mmp-bg-blur: 1.5px;    /* blur leve: el grafo sigue presente */
+  --mmp-bg-veil: 0.12;     /* veladura leve */
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+/* el grafo es fondo: no captura toques */
+.mampa-portada.mmp-compact #mampa-graph-panel { pointer-events: none; }
+
+.mampa-portada.mmp-compact #mampa-graph-header {
+  justify-content: center;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+}
+.mampa-portada.mmp-compact #mampa-graph-header .logo { width: clamp(150px, 46cqi, 180px); }
+
+.mampa-portada.mmp-compact .hero-splash {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+  width: auto; min-width: 0; max-width: none;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 16px 16px;   /* 80px arriba: no se encima con el logo centrado */
+  background: none;
+  pointer-events: none;
+}
+.mampa-portada.mmp-compact .hero-panel-container {
+  max-width: 400px;
+  width: 100%;
+  pointer-events: auto;
+  border-radius: 26px;
+  padding: 0;
+  overflow-y: auto;
+  max-height: calc(100dvh - 120px);
+}
+.mampa-portada.mmp-compact .hero-panel {
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 14px 40px rgba(27,58,107,0.18);
+  border-radius: 26px;
+  padding:
+    calc(24px + env(safe-area-inset-top))
+    calc(20px + env(safe-area-inset-right))
+    calc(24px + env(safe-area-inset-bottom))
+    calc(20px + env(safe-area-inset-left));
+}
+.mampa-portada.mmp-compact .hero-title {
+  font-size: clamp(1.6rem, 8cqi, 2.1rem);
+  margin-bottom: 1.1rem;
+}
+.mampa-portada.mmp-compact .hero-description {
+  font-size: clamp(0.95rem, 4cqi, 1.05rem);
+  line-height: 1.5;
+  margin-bottom: 0.9rem;
+}
+.mampa-portada.mmp-compact .btn-ingresar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 58px;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  padding: 14px 24px;
+  animation: mampa-cta-pulse 2.5s ease-in-out infinite;  /* solo box-shadow */
+}
+
+/* Celular apaisado: compactar más */
+@media (max-height: 520px) {
+  .mampa-portada.mmp-compact .hero-splash { padding: 88px 12px 8px; }
+  .mampa-portada.mmp-compact .hero-panel { padding: 16px 20px; }
+  .mampa-portada.mmp-compact .hero-title { font-size: clamp(1.1rem, 6cqi, 1.4rem); margin-bottom: 0.6rem; }
+  .mampa-portada.mmp-compact .hero-title br { display: none; }
+  .mampa-portada.mmp-compact .hero-description { font-size: clamp(0.8rem, 3cqi, 0.9rem); margin-bottom: 0.5rem; }
+  .mampa-portada.mmp-compact .btn-ingresar { min-height: 50px; font-size: 1rem; margin-top: 0.6rem; }
+  .mampa-portada.mmp-compact #mampa-graph-header .logo { width: 140px; }
+}
+
+/* Pantallas muy chicas */
+.mampa-portada.mmp-compact.mmp-tiny .hero-title { font-size: 1.6rem; }
+.mampa-portada.mmp-compact.mmp-tiny .hero-description { font-size: 0.9rem; }
+
+/* Accesibilidad: respetar prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .mampa-portada .btn-ingresar { animation: none; }
+  .mampa-portada * { transition: none !important; }
+}
+</style>
+
+<div class="mampa-portada">
+
+  <!-- Header fuera del panel del grafo: no hereda el blur del fondo -->
+  <div id="mampa-graph-header">
+    <div class="logo"><img alt="MAMPA" src="https://mampa.isep-cba.edu.ar/themes/PortadafreedomISEP/asset/img/mampa-splash.png" /></div>
+  </div>
+
+  <!-- Grafo: fondo decorativo, invisible para lectores de pantalla -->
+  <div id="mampa-graph-panel" aria-hidden="true">
+    <div id="mampa-stats">&nbsp;</div>
+    <div id="mampa-detail-panel">&nbsp;</div>
+    <div class="mampa-tooltip" id="mampa-tooltip">&nbsp;</div>
+    <div id="mampa-loading">Cargando red...</div>
+    <svg id="mampa-graph"></svg>
+  </div>
+
+  <section class="hero-splash">
+    <div class="hero-panel-container">
+      <div class="hero-panel">
+        <h1 class="hero-title">Mucho m&aacute;s<br />que una<br /><span>biblioteca.</span></h1>
+        <p class="hero-description">En <strong>MAMPA</strong>, cada material forma parte de una red de conexiones que vincula temas, contenidos, autores, niveles y formatos.</p>
+        <p class="hero-description">No es s&oacute;lo un espacio donde explorar y encontrar materiales. Es, sobre todo, <strong>una arquitectura pedag&oacute;gica para descubrir nuevas relaciones</strong>.</p>
+        <a class="btn-ingresar" href="https://mampa.isep-cba.edu.ar/s/EspacioMAMPA">Ingresar <span>&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =========================================================
+   RESPONSIVE por ancho del BLOQUE (no del viewport / user-agent)
+   - .mmp-compact: bloque < 900px, o página escalada (sin viewport)
+   - .mmp-tiny:    bloque < 360px
+   ========================================================= */
+(function() {
+  var el = document.querySelector('.mampa-portada');
+  if (!el) return;
+  function apply() {
+    var w = el.offsetWidth;
+    // Red de seguridad: si el layout está escalado (sin meta viewport,
+    // innerWidth ≈ 980 mientras la pantalla real es < 900), compactamos.
+    var scaled = window.innerWidth > (window.screen.width * 1.25) && window.screen.width < 900;
+    el.classList.toggle('mmp-compact', (w > 0 && w < 900) || scaled);
+    el.classList.toggle('mmp-tiny', w > 0 && w < 360);
+  }
+  apply();
+  if (window.ResizeObserver) {
+    new ResizeObserver(apply).observe(el);
+  } else {
+    window.addEventListener('resize', apply);
+    window.addEventListener('orientationchange', apply);
+  }
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(function() {
+
+var root = document.querySelector('.mampa-portada');
+if (!root) return;
+
+var container = root.querySelector('#mampa-graph-panel');
+var svgEl = root.querySelector('#mampa-graph');
+var statsEl = root.querySelector('#mampa-stats');
+var loading = root.querySelector('#mampa-loading');
+
+var DATA_URL = 'https://mampa.isep-cba.edu.ar/themes/PortadafreedomISEP/asset/js/data/graph.json';
+
+/* ---------- Layout del grafo: recalculable (mobile / resize / rotación) ---------- */
+var L = { W: 1, H: 1, VX: 0.5, VY: 0.5, SHIFT: 0, CX: 0.5, baseScale: 0.75 };
+
+function computeLayout() {
+  L.W = container.offsetWidth || 1;
+  L.H = container.offsetHeight || 1;
+  var compact = root.classList.contains('mmp-compact');
+  if (compact) {
+    // Grafo centrado, sin corrimiento lateral
+    L.SHIFT = 0;
+    L.VX = L.W / 2;
+    L.CX = L.W / 2;
+  } else {
+    // Desktop: grafo corrido a la izquierda para dejar lugar a la tarjeta
+    L.SHIFT = -L.W * 0.10;
+    L.VX = L.W / 2;
+    L.CX = L.W / 2;
+  }
+  L.VY = L.H / 2;
+  L.baseScale = 0.75 * Math.max(0.45, Math.min(1, Math.min(L.W, L.H) / 800));
+}
+
+function initGraph(GRAPH_DATA) {
+  var typeLabels = {
+    authored_by: 'Autores',
+    tagged_with: 'Palabras clave',
+    belongs_to_area: 'Áreas temáticas',
+    is_type: 'Tipo de contenido'
+  };
+  var typeColors = {
+    authored_by: '#1B3A6B',
+    tagged_with: '#1E9AD7',
+    belongs_to_area: '#B5407A',
+    is_type: '#20A39E'
+  };
+  var colorMap = {
+    item: '#96b158',
+    creator: '#1B3A6B',
+    subject: '#1E9AD7',
+    coverage: '#B5407A',
+    type: '#20A39E'
+  };
+  var EDGE_COLOR = '#8A97A6';
+
+  var allNodes = GRAPH_DATA.nodes.map(function(n) {
+    return {
+      id: n.id, label: n.l, type: n.t, color: colorMap[n.t] || n.c,
+      url: n.url || '', abstract: n.abs || '', fullTitle: n.ft || n.l,
+      publisher: n.pub || '', issued: n.dt || '',
+      educationLevel: n.el || [], degree: n.d || 0
+    };
+  });
+  var allEdges = GRAPH_DATA.edges.map(function(e) {
+    return { source: e.s, target: e.t, relation: e.r };
+  });
+  var nodeMap = new Map(allNodes.map(function(n) { return [n.id, n]; }));
+
+  var activeRelations = new Set(Object.keys(typeLabels));
+  var focusedNodeId = null;
+  var maxHops = 2;
+
+  computeLayout();
+
+  var svg = d3.select(svgEl);
+  var g = svg.append('g');
+  var rotG = g.append('g').attr('class', 'rotation');
+  var edgeG = rotG.append('g').attr('class', 'edges');
+  var nodeG = rotG.append('g').attr('class', 'nodes');
+  var labelG = rotG.append('g').attr('class', 'labels');
+  var highlightG = rotG.append('g').attr('class', 'highlight');
+
+  /* Zoom: rueda centrada + pinch táctil; sin arrastre con mouse */
+  var zoom = d3.zoom()
+    .scaleExtent([0.05, 8])
+    .filter(function(event) {
+      if (event.type === 'wheel') return true;
+      if (event.type.indexOf('touch') === 0) return true;   // pinch en mobile
+      return false;                                          // sin drag
+    })
+    .on('zoom', function(e) {
+      g.attr('transform', 'translate(' + L.SHIFT + ',0) ' + e.transform);
+      updateLabelsForScale(e.transform.k);
+    });
+  svg.call(zoom);
+
+  svg.on('wheel', function(event) {
+    event.preventDefault();
+    var dir = event.deltaY > 0 ? -1 : 1;
+    var cur = d3.zoomTransform(svgEl).k || L.baseScale;
+    var next = Math.max(0.05, Math.min(8, cur * (1 + dir * 0.08)));
+    var t = d3.zoomIdentity.translate(L.VX, L.VY).scale(next).translate(-L.VX, -L.VY);
+    zoom.transform(svg, t);
+  });
+
+  function updateLabelsForScale(scale) {
+    var threshold;
+    if (scale < 0.3)      threshold = 50;
+    else if (scale < 0.6) threshold = 20;
+    else if (scale < 1)   threshold = 10;
+    else if (scale < 2)   threshold = 5;
+    else                  threshold = 0;
+    if (labelEls) {
+      labelEls.each(function(d) {
+        var show = d.type !== 'item' && d.degree >= threshold;
+        d3.select(this).transition().duration(150)
+          .attr('fill-opacity', show ? 0.9 : 0);
+      });
+    }
+  }
+
+  var simulation = d3.forceSimulation()
+    .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(function(d) {
+      var st = nodeMap.get(typeof d.source === 'string' ? d.source : d.source.id);
+      var tt = nodeMap.get(typeof d.target === 'string' ? d.target : d.target.id);
+      if (st && st.type === 'coverage' || tt && tt.type === 'coverage') return 120;
+      if (st && st.type === 'type' || tt && tt.type === 'type') return 150;
+      return 60;
+    }))
+    .force('charge', d3.forceManyBody().strength(function(d) { return d.type === 'item' ? -15 : -60; }))
+    .force('center', d3.forceCenter(L.CX, L.VY))
+    .force('collision', d3.forceCollide().radius(function(d) { return getRadius(d) + 2; }))
+    .alphaDecay(0.015);
+
+  function getRadius(d) {
+    if (d.type === 'item') return 3;
+    if (d.type === 'coverage') return Math.max(8, Math.sqrt(d.degree) * 2);
+    if (d.type === 'type') return Math.max(9, Math.sqrt(d.degree) * 1.8);
+    return Math.max(4, Math.sqrt(d.degree) * 1.4);
+  }
+  function getNodeOpacity(d) {
+    return d.type === 'item' ? 0.85 : 0.9;
+  }
+  function getNodeStrokeWidth(d) {
+    return d.type === 'item' ? 0.4 : 1;
+  }
+
+  var linkEls, nodeEls, labelEls;
+  var currentNodes = [], currentEdges = [];
+  var nodeDepth = null;
+
+  function getEdgeId(e) {
+    var sid = typeof e.source === 'string' ? e.source : e.source.id;
+    var tid = typeof e.target === 'string' ? e.target : e.target.id;
+    return sid + '|' + tid + '|' + e.relation;
+  }
+
+  function updateGraph() {
+    var filteredEdges = allEdges.filter(function(e) { return activeRelations.has(e.relation); });
+
+    if (focusedNodeId) {
+      var adj = new Map();
+      filteredEdges.forEach(function(e) {
+        var sid = typeof e.source === 'string' ? e.source : e.source.id;
+        var tid = typeof e.target === 'string' ? e.target : e.target.id;
+        if (!adj.has(sid)) adj.set(sid, new Set());
+        if (!adj.has(tid)) adj.set(tid, new Set());
+        adj.get(sid).add(tid);
+        adj.get(tid).add(sid);
+      });
+      nodeDepth = new Map();
+      nodeDepth.set(focusedNodeId, 0);
+      var frontier = new Set([focusedNodeId]);
+      for (var hop = 1; hop <= maxHops; hop++) {
+        var nextFrontier = new Set();
+        frontier.forEach(function(id) {
+          (adj.get(id) || new Set()).forEach(function(nbr) {
+            if (!nodeDepth.has(nbr)) {
+              nodeDepth.set(nbr, hop);
+              nextFrontier.add(nbr);
+            }
+          });
+        });
+        frontier = nextFrontier;
+      }
+      var neighborIds = new Set(nodeDepth.keys());
+      currentEdges = filteredEdges.filter(function(e) {
+        var sid = typeof e.source === 'string' ? e.source : e.source.id;
+        var tid = typeof e.target === 'string' ? e.target : e.target.id;
+        return neighborIds.has(sid) && neighborIds.has(tid);
+      });
+      currentNodes = allNodes.filter(function(n) { return neighborIds.has(n.id); });
+    } else {
+      nodeDepth = null;
+      currentEdges = filteredEdges;
+      var connectedIds = new Set();
+      currentEdges.forEach(function(e) {
+        connectedIds.add(typeof e.source === 'string' ? e.source : e.source.id);
+        connectedIds.add(typeof e.target === 'string' ? e.target : e.target.id);
+      });
+      currentNodes = allNodes.filter(function(n) { return connectedIds.has(n.id); });
+    }
+
+    if (focusedNodeId) {
+      var n = currentNodes.length;
+      var chargeStr = n < 30 ? -300 : n < 80 ? -200 : -140;
+      simulation
+        .force('charge', d3.forceManyBody().strength(chargeStr))
+        .force('collision', d3.forceCollide().radius(function(d) { return getRadius(d) + 8; }))
+        .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(function(d) {
+          var sid = typeof d.source === 'string' ? d.source : d.source.id;
+          var tid = typeof d.target === 'string' ? d.target : d.target.id;
+          var minD = Math.min(nodeDepth.get(sid) || maxHops, nodeDepth.get(tid) || maxHops);
+          return 100 + (minD / maxHops) * 60;
+        }));
+    } else {
+      simulation
+        .force('charge', d3.forceManyBody().strength(function(d) { return d.type === 'item' ? -15 : -60; }))
+        .force('collision', d3.forceCollide().radius(function(d) { return getRadius(d) + 2; }))
+        .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(function(d) {
+          var st = nodeMap.get(typeof d.source === 'string' ? d.source : d.source.id);
+          var tt = nodeMap.get(typeof d.target === 'string' ? d.target : d.target.id);
+          if (st && st.type === 'coverage' || tt && tt.type === 'coverage') return 120;
+          if (st && st.type === 'type' || tt && tt.type === 'type') return 150;
+          return 60;
+        }));
+    }
+
+    linkEls = edgeG.selectAll('line').data(currentEdges, getEdgeId);
+    linkEls.exit().transition().duration(300).attr('stroke-opacity', 0).remove();
+    linkEls = linkEls.enter().append('line')
+      .attr('stroke', EDGE_COLOR)
+      .attr('stroke-opacity', 0)
+      .attr('stroke-width', 0.5)
+      .merge(linkEls);
+    linkEls.transition().duration(400)
+      .attr('stroke', EDGE_COLOR)
+      .attr('stroke-opacity', function(d) {
+        if (!focusedNodeId || !nodeDepth) return 0.18;
+        var sid = typeof d.source === 'string' ? d.source : d.source.id;
+        var tid = typeof d.target === 'string' ? d.target : d.target.id;
+        var minDepth = Math.min(nodeDepth.get(sid) || maxHops, nodeDepth.get(tid) || maxHops);
+        return 0.4 - (minDepth / maxHops) * 0.25;
+      })
+      .attr('stroke-width', function(d) {
+        if (!focusedNodeId || !nodeDepth) return 0.5;
+        var sid = typeof d.source === 'string' ? d.source : d.source.id;
+        var tid = typeof d.target === 'string' ? d.target : d.target.id;
+        var minDepth = Math.min(nodeDepth.get(sid) || maxHops, nodeDepth.get(tid) || maxHops);
+        return 1.2 - (minDepth / maxHops) * 0.6;
+      });
+
+    nodeEls = nodeG.selectAll('circle').data(currentNodes, function(d) { return d.id; });
+    nodeEls.exit().transition().duration(300).attr('r', 0).remove();
+    var entered = nodeEls.enter().append('circle')
+      .attr('r', 0)
+      .attr('fill', function(d) { return d.color; })
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', function(d) { return getNodeStrokeWidth(d); })
+      .attr('cursor', 'default');
+    nodeEls = entered.merge(nodeEls);
+    nodeEls.transition().duration(400)
+      .attr('r', function(d) { return getRadius(d); })
+      .attr('fill', function(d) { return d.color; })
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', function(d) { return getNodeStrokeWidth(d); })
+      .attr('opacity', function(d) { return getNodeOpacity(d); });
+
+    var labelNodes = currentNodes.filter(function(n) { return n.type !== 'item'; });
+    labelEls = labelG.selectAll('text').data(labelNodes, function(d) { return d.id; });
+    labelEls.exit().transition().duration(200).attr('fill-opacity', 0).remove();
+    labelEls = labelEls.enter().append('text')
+      .attr('font-size', function(d) { return d.type === 'coverage' ? 11 : 9; })
+      .attr('fill', function(d) { return d.color; })
+      .attr('fill-opacity', 0)
+      .attr('text-anchor', 'middle')
+      .attr('dy', function(d) { return -getRadius(d) - 6; })
+      .attr('font-family', "Raleway, sans-serif")
+      .attr('font-weight', 400)
+      .attr('font-style', 'italic')
+      .attr('pointer-events', 'none')
+      .text(function(d) {
+        return d.label.length > 30 ? d.label.slice(0, 27) + '...' : d.label;
+      })
+      .merge(labelEls);
+    labelEls.transition().duration(400)
+      .attr('fill', function(d) { return d.color; })
+      .attr('fill-opacity', 0)
+      .attr('dy', function(d) { return -getRadius(d) - 6; });
+
+    highlightG.selectAll('*').remove();
+
+    simulation.nodes(currentNodes);
+    simulation.force('link').links(currentEdges);
+    simulation.force('center', d3.forceCenter(L.CX, L.VY));
+    simulation.alpha(0.8).restart();
+
+    if (statsEl) statsEl.textContent = currentNodes.length + ' nodos · ' + currentEdges.length + ' aristas';
+  }
+
+  simulation.on('tick', function() {
+    if (linkEls) linkEls
+      .attr('x1', function(d) { return d.source.x; }).attr('y1', function(d) { return d.source.y; })
+      .attr('x2', function(d) { return d.target.x; }).attr('y2', function(d) { return d.target.y; });
+    if (nodeEls) nodeEls
+      .attr('cx', function(d) { return d.x; }).attr('cy', function(d) { return d.y; });
+    if (labelEls) labelEls
+      .attr('x', function(d) { return d.x; }).attr('y', function(d) { return d.y; });
+  });
+
+  updateGraph();
+
+  function applyZoom() {
+    var t = d3.zoomIdentity.translate(L.VX, L.VY).scale(L.baseScale).translate(-L.VX, -L.VY);
+    svg.call(zoom.transform, t);
+    g.attr('transform', 'translate(' + L.SHIFT + ',0) ' + t);
+    updateLabelsForScale(L.baseScale);
+  }
+  applyZoom();
+
+  /* Relayout ante resize / rotación / cambio de modo (debounce 150ms) */
+  var resizeTimer = null;
+  function onResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      computeLayout();
+      simulation.force('center', d3.forceCenter(L.CX, L.VY));
+      var cur = d3.zoomTransform(svgEl).k;
+      // Si cambió el modo (compact ↔ desktop) volvemos a la escala base;
+      // si no, mantenemos el zoom con el centro nuevo.
+      if (root.classList.contains('mmp-compact') || cur < 0.4 || cur > 2) {
+        applyZoom();
+      } else {
+        var t = d3.zoomIdentity.translate(L.VX, L.VY).scale(cur).translate(-L.VX, -L.VY);
+        svg.call(zoom.transform, t);
+        g.attr('transform', 'translate(' + L.SHIFT + ',0) ' + t);
+        updateLabelsForScale(cur);
+      }
+      simulation.alpha(0.3).restart();
+    }, 150);
+  }
+  if (window.ResizeObserver) {
+    new ResizeObserver(onResize).observe(root);
+    new ResizeObserver(onResize).observe(container);
+  } else {
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+  }
+
+  simulation.alphaTarget(0.08).alphaDecay(0.01);
+
+  /* Rotación lenta después de 10s; respeta prefers-reduced-motion */
+  var rotAngle = 0;
+  var rotRaf = null;
+  var ROT_SPEED = 0.035;
+  var ROTATION_START_DELAY = 10000;
+  var initTime = Date.now();
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function rotateGraph() {
+    if (Date.now() - initTime < ROTATION_START_DELAY) {
+      rotRaf = requestAnimationFrame(rotateGraph);
+      return;
+    }
+    rotAngle = (rotAngle + ROT_SPEED) % 360;
+    rotG.attr('transform', 'rotate(' + rotAngle + ',' + L.CX + ',' + L.VY + ')');
+    rotRaf = requestAnimationFrame(rotateGraph);
+  }
+  rotRaf = requestAnimationFrame(rotateGraph);
+}
+
+fetch(DATA_URL)
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (loading) loading.remove();
+    initGraph(data);
+  })
+  .catch(function(err) {
+    if (loading) loading.textContent = 'Error al cargar datos: ' + err.message;
+  });
+
+})();
+</script>
